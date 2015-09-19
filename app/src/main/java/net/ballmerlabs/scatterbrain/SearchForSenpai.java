@@ -77,6 +77,7 @@ public class SearchForSenpai extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        net.init();
         if(net != null) {
             //net.register(PORT);
             net.discoverServices();

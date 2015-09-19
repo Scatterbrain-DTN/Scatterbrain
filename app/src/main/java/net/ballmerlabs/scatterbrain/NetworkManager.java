@@ -5,7 +5,11 @@ import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.SocketException;
+import java.util.Enumeration;
+
 import android.util.Log;
 
 /**
@@ -24,25 +28,36 @@ public class NetworkManager {
     private NsdManager.RegistrationListener regListener;
     private String serviceName;
     private Context context;
+    private boolean regListenerRegistered;
+    private boolean discovering;
     private NetworkCallback callback;
     public final String SERVICE_NAME = "Scatterbrain";
     public final String SERVICE_TYPE = "_http._tcp.";
     public final String TAG = "LanCommunications";
+    private int port;
 
     public NetworkManager(Context myContext, int port, NetworkCallback onFound) {
         context = myContext;
         callback = onFound;
+        this.port  = port;
+        regListenerRegistered = false;
+        discovering = false;
+
+    }
+
+    public void init() {
         this.startRegistrationListener();
         this.register(port);
         this.initializeServerSocket();
         this.initializeDiscoveryListener();
         this.initializeResolveListener();
-
     }
 
     // NsdHelper's tearDown method
     public void tearDown() {
+            if(regListenerRegistered)
         nman.unregisterService(regListener);
+            if(discovering)
         nman.stopServiceDiscovery(discoveryListener);
     }
 
@@ -53,10 +68,38 @@ public class NetworkManager {
         ninfo.setServiceName(SERVICE_NAME);
         ninfo.setServiceType(SERVICE_TYPE);
         ninfo.setPort(port);
+        ninfo.setHost(getIp());
 
         nman =  (NsdManager) context.getSystemService(Context.NSD_SERVICE);
         nman.registerService(ninfo,NsdManager.PROTOCOL_DNS_SD, regListener);
     }
+
+
+    /*gets the ip of the active interface. TODO: this method just autoselects the first active interface */
+    public InetAddress getIp(){
+        Enumeration<NetworkInterface> ifaces = null;
+        try {
+             ifaces = NetworkInterface.getNetworkInterfaces();
+
+        if(ifaces != null) {
+           while(ifaces.hasMoreElements()) {
+               NetworkInterface inter = ifaces.nextElement();
+                if(inter.isUp()) {
+                    Enumeration<InetAddress> addressList = inter.getInetAddresses();
+                    return addressList.nextElement();  //TODO: stupid error handling here (and down)
+                }
+
+            }
+        }
+        }
+        catch(SocketException s) {
+            Log.e(TAG, "AAAAAAGH! a socketException has occurred");
+            return null;
+        }
+
+        return null;
+    }
+
 
     public void initializeServerSocket() {
         try {
@@ -83,13 +126,15 @@ public class NetworkManager {
             @Override
             public void onServiceRegistered(NsdServiceInfo serviceInfo) {
                     serviceName = serviceInfo.getServiceName();
+                    regListenerRegistered = true;
             }
 
             @Override
             public void onServiceUnregistered(NsdServiceInfo serviceInfo) {
-
+                regListenerRegistered = false;
             }
         };
+
 
       //  nman.discoverServices(SERVICE_TYPE, nman.PROTOCOL_DNS_SD, discoveryListener);
 
@@ -116,12 +161,14 @@ public class NetworkManager {
             @Override
             public void onDiscoveryStarted(String serviceType) {
                 Log.d(TAG,"Service discovery started!");
+                discovering = true;
 
             }
 
             @Override
             public void onDiscoveryStopped(String serviceType) {
                 Log.d(TAG,"Service discovery stopped!");
+                discovering = false;
 
             }
 
@@ -134,11 +181,15 @@ public class NetworkManager {
                 }
                 else if(serviceInfo.getServiceType().equals(serviceName)) {
                     Log.i(TAG, "Service name matches, but I had to change it.");
-                    callback.run();
-                } else if (serviceInfo.getServiceName().contains(SERVICE_NAME)) {
-                    Log.i(TAG,"Service name matches. Nice to meet ya.");
                     nman.resolveService(serviceInfo, resolveListener);
-                    callback.run();
+                } else if (serviceInfo.getServiceName().contains(SERVICE_NAME)) {
+                    Log.i(TAG, "Service name matches. Nice to meet ya.");
+                    try {
+                        nman.resolveService(serviceInfo, resolveListener);
+                    }catch (IllegalArgumentException e) {
+                        Log.e(TAG,
+                                "Horible hack going on. The developer is a total malglico");
+                    }
                 }
             }
 
@@ -152,8 +203,25 @@ public class NetworkManager {
 
     }
 
+    public void handleServiceDiscovered(NsdServiceInfo serviceInfo) {
+
+        if(serviceInfo.getHost() != null) {
+                callback.run();
+
+        }
+        else {
+            Log.e(TAG,"Error: host is null somehow");
+        }
+
+    }
+
     public void discoverServices() {
-        nman.discoverServices(SERVICE_TYPE, nman.PROTOCOL_DNS_SD, discoveryListener);
+
+        if(nman != null)
+            nman.discoverServices(SERVICE_TYPE, nman.PROTOCOL_DNS_SD, discoveryListener);
+        else {
+            Log.d(TAG,"Could not run a discovery, maybe next time?");
+        }
 
     }
 
@@ -176,6 +244,7 @@ public class NetworkManager {
                 currentService = in;
                 int port = currentService.getPort();
                 InetAddress host = currentService.getHost();
+                handleServiceDiscovered(currentService);
 
             }
         };

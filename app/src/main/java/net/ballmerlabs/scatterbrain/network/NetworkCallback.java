@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain;
+package net.ballmerlabs.scatterbrain.network;
 
 /**
  * Created by gnu3ra on 9/10/15.

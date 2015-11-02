@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain;
+package net.ballmerlabs.scatterbrain.network;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +7,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.NetworkCallback;
+import net.ballmerlabs.scatterbrain.network.NetworkManager;
 
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;

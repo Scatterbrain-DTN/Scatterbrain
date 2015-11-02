@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain;
+package net.ballmerlabs.scatterbrain.network;
 
 import android.content.Context;
 import android.net.nsd.NsdManager;

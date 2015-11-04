@@ -15,7 +15,6 @@ import java.util.HashMap;
  * Imnplemnets a sort of queue for messages. Messages are added when recieved and can be
  * retrieved all at once for burst transmission. Mesages are deleted when older than a certain
  * age.
- * TODO: Method for selecting random messsages
  */
 public class LeDataStore {
     private SQLiteDatabase db;
@@ -98,15 +97,6 @@ public class LeDataStore {
 
     public ArrayList<HashMap> getMessages() {
 
-        String[] cols =  {
-                MsgDataDb.MessageQueue._ID,
-        MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS,
-                MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
-                MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
-                MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,
-                MsgDataDb.MessageQueue.COLUMN_NAME_UUID,
-                MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT,
-                MsgDataDb.MessageQueue.COLUMN_NAME_SIG};
         Cursor cu = db.rawQuery("SELECT * FROM " + MsgDataDb.MessageQueue.TABLE_NAME,null);
 
         ArrayList<HashMap> finalresult = new ArrayList<HashMap>();

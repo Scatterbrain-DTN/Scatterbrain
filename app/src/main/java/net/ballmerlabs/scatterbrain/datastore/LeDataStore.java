@@ -15,6 +15,7 @@ import java.util.HashMap;
  * Imnplemnets a sort of queue for messages. Messages are added when recieved and can be
  * retrieved all at once for burst transmission. Mesages are deleted when older than a certain
  * age.
+ * TODO: Method for selecting random messsages
  */
 public class LeDataStore {
     private SQLiteDatabase db;
@@ -106,14 +107,35 @@ public class LeDataStore {
                 MsgDataDb.MessageQueue.COLUMN_NAME_UUID,
                 MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT,
                 MsgDataDb.MessageQueue.COLUMN_NAME_SIG};
-        Cursor cu = db.query(MsgDataDb.MessageQueue.TABLE_NAME,
-                cols,
-                null,
-                null,
-                null,
-                null,
-                null
-                );
+        Cursor cu = db.rawQuery("SELECT * FROM " + MsgDataDb.MessageQueue.TABLE_NAME,null);
+
+        ArrayList<HashMap> finalresult = new ArrayList<HashMap>();
+        HashMap<String,String> result;
+        cu.moveToFirst();
+        //check here for overrun problems
+        while(!cu.isAfterLast()) {
+            result = new HashMap<String, String>();
+            result.clear();
+            for(int i  =0; i<cu.getColumnCount() ; i++) {
+                result.put(names[i], cu.getString(i));
+            }
+            finalresult.add(result);
+        }
+
+        return finalresult;
+
+    }
+
+
+
+    /*
+     * Gets n rows from the datastore in a random order. For use when there is no time to transmit
+     * the entire datastore.
+     */
+    public ArrayList<HashMap> getTopRandomMessages(int count) {
+        Cursor cu = db.rawQuery("SELECT * FROM" + MsgDataDb.MessageQueue.TABLE_NAME
+                + "ORDER BY RANDOM() LIMIT" + count  + "1",null);
+
 
         ArrayList<HashMap> finalresult = new ArrayList<HashMap>();
         HashMap<String,String> result;

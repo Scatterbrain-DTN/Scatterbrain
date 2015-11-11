@@ -40,7 +40,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
-    public BluetoothSpewer(Activity mainActivity) throws LeNotSupportedException {
+    public BluetoothSpewer(Activity mainActivity, NetworkCallback rcv) throws LeNotSupportedException {
         this.mainActivity = mainActivity;
         if (!BleUtil.isBLESupported(mainActivity)) {
             throw (new LeNotSupportedException());
@@ -120,13 +120,12 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
                     subMessage = subMessage.substring(5,6+len);
                     Log.e("Address", newDevice.getAddress());
                     Log.e("Data", BleUtil.asHex(newScanRecord));
-                    boolean enter = subMessage.length() == 16;
-                    enter = enter && !subMessage.substring(15).equals("-");
-                    enter = enter || subMessage.length() < 16;
+
+
                     //gui element manimulating ommitted
                     //textViewToChange.setText(oldText + subMessage.substring(0, subMessage.length() - 1) + (enter ? "\n" : ""));
 
-                    //TODO: handle incoming message
+                    //TODO: handle incoming message (right here)
 
                     ui = ui == 2 ? -1 : ui;
                     ui ++;
@@ -206,4 +205,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
 
+
 }
+
+

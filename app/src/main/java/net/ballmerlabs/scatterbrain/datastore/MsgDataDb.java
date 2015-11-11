@@ -18,6 +18,7 @@ public final class MsgDataDb {
         public static final String COLUMN_NAME_UUID = "uuid";
         public static final String COLUMN_NAME_RECIPIENT = "recip";
         public static final String COLUMN_NAME_SIG = "sig";
+        public static final String COLUMN_NAME_FLAGS = "flags";
 
     }
 
@@ -34,7 +35,8 @@ public final class MsgDataDb {
                     MessageQueue.COLUMN_NAME_REPLYTO + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_CONTENTS + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_RECIPIENT + COMMA_SEP +
-                    MessageQueue.COLUMN_NAME_SIG + COMMA_SEP + " )";
+                    MessageQueue.COLUMN_NAME_SIG + COMMA_SEP +
+                    MessageQueue.COLUMN_NAME_FLAGS + COMMA_SEP + " )";
 
     public static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + MessageQueue.TABLE_NAME;

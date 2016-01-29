@@ -24,6 +24,7 @@ When two people pass on the street, Scatterbrain wirelessly exchanges messages, 
 sent by friends. The end result is a system where a single message can spread to an entire city, 
 even if the mesh does not. When a message is sent, it is stored on the receiving device and
 retransmitted to any other peers met in the future. This app uses the BLEMingle library (https://github.com/GitGarage/BLEMingleDroid) for eventual compatability with iOS.
+Check out the protocol at https://github.com/gnu3ra/Scatterbrain-Protocol if you want to help out making services for the network.
 
 ### Wow! Can I use it now?
 Sadly, no. The protocol is still far from complete. The UI in the android app is a placeholder

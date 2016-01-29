@@ -19,16 +19,17 @@ public class DeviceProfile {
     };
 
 
-    private deviceType type;
-    private MobileStatus status;
-    private HardwareServices services;
+    protected deviceType type;
+    protected MobileStatus status;
+    protected HardwareServices services;
 
     public final byte protocolVersion = 2;
-    private byte congestion;
+    protected byte congestion;
     public DeviceProfile (deviceType type, MobileStatus status, HardwareServices services) {
         this.type = type;
         this.services = services;
         this.status = status;
+        congestion = 0;
     }
 
     public void  update(deviceType type, MobileStatus status, HardwareServices services) {
@@ -52,4 +53,8 @@ public class DeviceProfile {
     public byte getProtocolVersion() {
         return protocolVersion;
     }
+
+    public byte getCongestion() { return congestion; }
+
+    public void setCongestion(byte congestion) { this.congestion = congestion; }
 }

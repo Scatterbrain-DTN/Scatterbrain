@@ -8,11 +8,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
-import net.ballmerlabs.scatterbrain.network.BluetoothSpewer;
-import net.ballmerlabs.scatterbrain.network.LeNotSupportedException;
+import net.ballmerlabs.scatterbrain.network.BLE.BluetoothSpewer;
+import net.ballmerlabs.scatterbrain.network.BLE.LeNotSupportedException;
 import net.ballmerlabs.scatterbrain.network.NetworkCallback;
-
-import java.io.FileDescriptor;
 
 public class BackgroundMessageSwapService extends Service {
 

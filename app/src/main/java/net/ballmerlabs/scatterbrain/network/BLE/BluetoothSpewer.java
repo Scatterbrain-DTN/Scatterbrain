@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain.network;
+package net.ballmerlabs.scatterbrain.network.BLE;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -8,7 +8,6 @@ import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
-import android.os.Handler;
 import android.util.Log;
 
 import com.bitgarage.blemingledroid.BleUtil;
@@ -17,8 +16,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.ballmerlabs.scatterbrain.MainActivity;
-import net.ballmerlabs.scatterbrain.network.LeNotSupportedException;
+import net.ballmerlabs.scatterbrain.network.NetworkCallback;
 
 /**
  * Created by gnu3ra on 10/31/15.

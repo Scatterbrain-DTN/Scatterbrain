@@ -55,7 +55,7 @@ public class LeDataStore {
      * sticks a message into the datastore at the front?.
      */
     public void enqueueMessage(String subject, String contents, int ttl, String replyto, String uuid,
-                               String recipient, String sig, String flags) {
+                               String recipient, String from, String flags,  String sig) {
         Log.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS, contents);
@@ -65,6 +65,7 @@ public class LeDataStore {
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_UUID, uuid);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT, recipient);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG,sig);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FROM,from);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS,flags);
 
         long newRowId;

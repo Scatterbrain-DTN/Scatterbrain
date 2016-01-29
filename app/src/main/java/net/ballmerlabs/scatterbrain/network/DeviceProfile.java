@@ -5,6 +5,8 @@ package net.ballmerlabs.scatterbrain.network;
  */
 public class DeviceProfile {
 
+    protected String mac;
+
     public static enum deviceType {
         ANDROID, IOS, LINUX
     };
@@ -25,11 +27,12 @@ public class DeviceProfile {
 
     public final byte protocolVersion = 2;
     protected byte congestion;
-    public DeviceProfile (deviceType type, MobileStatus status, HardwareServices services) {
+    public DeviceProfile (deviceType type, MobileStatus status, HardwareServices services, String mac) {
         this.type = type;
         this.services = services;
         this.status = status;
         congestion = 0;
+        this.mac = mac;
     }
 
     public void  update(deviceType type, MobileStatus status, HardwareServices services) {
@@ -57,4 +60,7 @@ public class DeviceProfile {
     public byte getCongestion() { return congestion; }
 
     public void setCongestion(byte congestion) { this.congestion = congestion; }
+    public String getMac(){ return this.mac;}
+
+    public void setMac(String mac){this.mac = mac;}
 }

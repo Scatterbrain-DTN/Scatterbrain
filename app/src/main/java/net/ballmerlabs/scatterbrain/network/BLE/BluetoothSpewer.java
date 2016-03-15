@@ -16,7 +16,9 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.NetworkCallback;
+import net.ballmerlabs.scatterbrain.network.RecievedCallback;
 
 /**
  * Created by gnu3ra on 10/31/15.
@@ -133,6 +135,18 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
             }
             startByte++;
         }
+    }
+
+
+    /* fancy parser for parsing a recieved advertise packet */
+    public void makeDeviceProfile(String advertiseMessage, String address) {
+
+    }
+
+
+    /* used for communicating with the high level API */
+    public void registerAdvertiseRecievedCallback(RecievedCallback<DeviceProfile> profile) {
+
     }
 
 

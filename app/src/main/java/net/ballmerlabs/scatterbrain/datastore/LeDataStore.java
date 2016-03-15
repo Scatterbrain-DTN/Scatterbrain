@@ -11,24 +11,24 @@ import java.util.HashMap;
 
 /**
  * Created by gnu3ra on 11/3/15.
- *
+ * <p/>
  * Imnplemnets a sort of queue for messages. Messages are added when recieved and can be
  * retrieved all at once for burst transmission. Mesages are deleted when older than a certain
  * age.
  */
 public class LeDataStore {
     private SQLiteDatabase db;
-    private MsgDbHelper  helper;
+    private MsgDbHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";
     private Cursor c;
     public final String[] names = {MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS,
-    MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
-    MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
-    MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,
-    MsgDataDb.MessageQueue.COLUMN_NAME_UUID,
-    MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT,
-    MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
+            MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
+            MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
+            MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,
+            MsgDataDb.MessageQueue.COLUMN_NAME_UUID,
+            MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT,
+            MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS};
 
     public LeDataStore(Activity mainActivity, int trim) {
@@ -47,26 +47,22 @@ public class LeDataStore {
     }
 
 
-
-
-
-
     /*
      * sticks a message into the datastore at the front?.
      */
     public void enqueueMessage(String subject, String contents, int ttl, String replyto, String uuid,
-                               String recipient, String from, String flags,  String sig) {
+                               String recipient, String from, String flags, String sig) {
         Log.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS, contents);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT, subject);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,replyto);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO, replyto);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_UUID, uuid);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT, recipient);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG,sig);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FROM,from);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS,flags);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FROM, from);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);
 
         long newRowId;
         newRowId = db.insert(MsgDataDb.MessageQueue.TABLE_NAME,
@@ -94,31 +90,46 @@ public class LeDataStore {
 
 
     /*
-     * (Hopefully) returns an array list of string to string maps with all the data
+     * (Hopefully) returns an array list of Message objects with all the data
      * in the datastore in it.
      */
 
-    public ArrayList<HashMap> getMessages() {
+    public ArrayList<Message> getMessages() {
 
-        Cursor cu = db.rawQuery("SELECT * FROM " + MsgDataDb.MessageQueue.TABLE_NAME,null);
+        Cursor cu = db.rawQuery("SELECT "+
+                        MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_TTL +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_UUID +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_FROM +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_SIG +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
+                " FROM " + MsgDataDb.MessageQueue.TABLE_NAME, null);
 
-        ArrayList<HashMap> finalresult = new ArrayList<HashMap>();
-        HashMap<String,String> result;
+        ArrayList<Message> finalresult = new ArrayList<Message>();
         cu.moveToFirst();
         //check here for overrun problems
-        while(!cu.isAfterLast()) {
-            result = new HashMap<String, String>();
-            result.clear();
-            for(int i  =0; i<cu.getColumnCount() ; i++) {
-                result.put(names[i], cu.getString(i));
-            }
-            finalresult.add(result);
+        while (!cu.isAfterLast()) {
+            String subject = cu.getString(0);
+            String contents = cu.getString(1);
+            int ttl = cu.getInt(2);
+            String replyto = cu.getString(3);
+            String uuid = cu.getString(4);
+            String recipient = cu.getString(5);
+            String from = cu.getString(6);
+            String flags = cu.getString(7);
+            String sig = cu.getString(8);
+
+
+            finalresult.add(new Message(subject, contents, ttl, replyto, uuid,
+                   recipient,from,flags,  sig));
         }
 
         return finalresult;
 
     }
-
 
 
     /*
@@ -127,17 +138,17 @@ public class LeDataStore {
      */
     public ArrayList<HashMap> getTopRandomMessages(int count) {
         Cursor cu = db.rawQuery("SELECT * FROM" + MsgDataDb.MessageQueue.TABLE_NAME
-                + "ORDER BY RANDOM() LIMIT" + count  + "1",null);
+                + "ORDER BY RANDOM() LIMIT" + count + "1", null);
 
 
         ArrayList<HashMap> finalresult = new ArrayList<HashMap>();
-        HashMap<String,String> result;
+        HashMap<String, String> result;
         cu.moveToFirst();
         //check here for overrun problems
-        while(!cu.isAfterLast()) {
+        while (!cu.isAfterLast()) {
             result = new HashMap<String, String>();
             result.clear();
-            for(int i  =0; i<cu.getColumnCount() ; i++) {
+            for (int i = 0; i < cu.getColumnCount(); i++) {
                 result.put(names[i], cu.getString(i));
             }
             finalresult.add(result);
@@ -146,8 +157,6 @@ public class LeDataStore {
         return finalresult;
 
     }
-
-
 
 
 }

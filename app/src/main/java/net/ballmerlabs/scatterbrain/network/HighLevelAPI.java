@@ -5,13 +5,21 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  * external applications
  */
 public class HighLevelAPI {
-    private DeviceProfile profile;
+    private DeviceProfile MyProfile;
 
     public HighLevelAPI(DeviceProfile profile) {
-        this.profile = profile;
+        this.MyProfile = profile;
     }
 
     public void Advertise() {
+
+    }
+
+    public void sendData(DeviceProfile target) {
+
+    }
+
+    public void queryServices(DeviceProfile target) {
 
     }
 }

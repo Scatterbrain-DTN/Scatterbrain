@@ -10,6 +10,7 @@ import android.util.Log;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.BLE.BluetoothSpewer;
 import net.ballmerlabs.scatterbrain.network.BLE.LeNotSupportedException;
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.NetworkCallback;
 
 public class BackgroundMessageSwapService extends Service {
@@ -18,11 +19,13 @@ public class BackgroundMessageSwapService extends Service {
     LeDataStore store;
     Activity mainActivity;
     public final String TAG = "MessageSwapService";
+    public DeviceProfile myprofile;
 
     IBinder myBinder = new BinderInterface();
 
-    public BackgroundMessageSwapService(Activity mainActivity) {
+    public BackgroundMessageSwapService(Activity mainActivity, DeviceProfile myprofile) {
         this.mainActivity = mainActivity;
+        this.myprofile = myprofile;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class BackgroundMessageSwapService extends Service {
         store = new LeDataStore(mainActivity,1000);
         LeGet le = new LeGet();
         try {
-            bleSpew = new BluetoothSpewer(mainActivity,le);
+            bleSpew = new BluetoothSpewer(mainActivity,le, myprofile);
 
         }
         catch(LeNotSupportedException e) {

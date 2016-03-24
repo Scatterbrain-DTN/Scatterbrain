@@ -30,7 +30,7 @@ public class SearchForSenpai extends AppCompatActivity {
         senpai_notice.setVisibility(View.INVISIBLE);
         foundRun = new NetworkCallback() {
             @Override
-            public void run() {
+            public void run(String tmp) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

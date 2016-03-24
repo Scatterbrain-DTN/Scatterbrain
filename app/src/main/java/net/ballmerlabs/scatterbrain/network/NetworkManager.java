@@ -206,7 +206,8 @@ public class NetworkManager {
     public void handleServiceDiscovered(NsdServiceInfo serviceInfo) {
 
         if(serviceInfo.getHost() != null) {
-                callback.run();
+                String tmp = "";
+                callback.run(tmp);
 
         }
         else {

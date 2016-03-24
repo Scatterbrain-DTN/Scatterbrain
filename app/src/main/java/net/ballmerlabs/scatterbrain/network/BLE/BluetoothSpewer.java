@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.ballmerlabs.scatterbrain.datastore.Message;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.NetworkCallback;
 import net.ballmerlabs.scatterbrain.network.RecievedCallback;
@@ -35,12 +36,12 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     public boolean isscanning = false;
     public String[] used = new String[3];
     public int ui = 0;
-
+    public DeviceProfile currentDevice;
 
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
-    public BluetoothSpewer(Activity mainActivity, NetworkCallback rcv) throws LeNotSupportedException {
+    public BluetoothSpewer(Activity mainActivity, NetworkCallback rcv, DeviceProfile me) throws LeNotSupportedException {
         this.mainActivity = mainActivity;
         if (!BleUtil.isBLESupported(mainActivity)) {
             throw (new LeNotSupportedException());
@@ -57,6 +58,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
         }
 
+        currentDevice = me;
         stopScan();
         startScan();
     }
@@ -150,12 +152,89 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     }
 
 
+    /*
+     * Takes a message object and parameters for routing over bluetooth and generates
+     * a string for transmit over Scatterbrain protocol
+     */
+    public String encodeBlockData(String body, boolean text, DeviceProfile to) {
+        byte firstbyte = 1;
+        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
+        String recievermac = to.getMac().replace(":","");
+        byte textOrBin;
+        if(text)
+            textOrBin = 1;
+        else
+            textOrBin = 0;
+        if((sendermac.length() == 12) && (recievermac.length() == 12)) {
+            String finalProtocol =  firstbyte + sendermac + recievermac + textOrBin + body;
+            return finalProtocol;
+        }
+
+        return null;
+    }
+
+
+    public String encodeAdvertise() {
+        byte firstbyte = 0;
+        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":", "");
+        byte devtype;
+
+        DeviceProfile.deviceType type = currentDevice.getType();
+        if(type == DeviceProfile.deviceType.ANDROID)
+            devtype = 0;
+        else if(type == DeviceProfile.deviceType.IOS)
+            devtype = 1;
+        else if(type == DeviceProfile.deviceType.LINUX)
+            devtype = 2;
+        else
+            devtype = -1;
+
+        byte mobile;
+
+        DeviceProfile.MobileStatus mob = currentDevice.getStatus();
+        if(mob == DeviceProfile.MobileStatus.STATIONARY)
+            mobile = 0;
+        else if(mob == DeviceProfile.MobileStatus.MOBILE)
+            mobile = 1;
+        else if(mob == DeviceProfile.MobileStatus.VERYMOBILE)
+            mobile = 2;
+        else
+            mobile = -1;
+
+        byte version = currentDevice.getProtocolVersion(); //TODO: change this when operational
+
+        byte congestion = currentDevice.getCongestion(); //TODO: implimnet congestion checking.
+
+        byte hwservices = 0;
+
+        DeviceProfile.HardwareServices serv = currentDevice.getServices();
+
+        if(serv == DeviceProfile.HardwareServices.WIFIP2P)
+            hwservices |= (1<<0);
+        if(serv == DeviceProfile.HardwareServices.WIFICLIENT)
+            hwservices |= (1<<1);
+        if(serv == DeviceProfile.HardwareServices.WIFIAP)
+            hwservices |= (1<<2);
+        if(serv == DeviceProfile.HardwareServices.BLUETOOTH)
+            hwservices |= (1<<3);
+        if(serv == DeviceProfile.HardwareServices.INTERNET)
+            hwservices |= (1<<4);
+
+        if((congestion > 0) && (mobile > 0) && (devtype > 0))
+            return firstbyte + sendermac + devtype + mobile + version + congestion + hwservices;
+
+
+        return null;
+
+    }
+
+
 
     /*
      *Sends a message. Hopefully will not be corruped between iOS and Android
      * (I am trying to stick to standards)
      */
-    public void sendMessage(String msg) {
+    public void transmitMesage(String msg) {
         stagedMsg = msg;
         Thread thread = new Thread(new Runnable() {
             @Override

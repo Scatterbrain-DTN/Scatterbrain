@@ -156,75 +156,83 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
      */
-    public String encodeBlockData(String body, boolean text, DeviceProfile to) {
-        byte firstbyte = 1;
-        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
-        String recievermac = to.getMac().replace(":","");
-        byte textOrBin;
-        if(text)
-            textOrBin = 1;
-        else
-            textOrBin = 0;
-        if((sendermac.length() == 12) && (recievermac.length() == 12)) {
-            String finalProtocol =  firstbyte + sendermac + recievermac + textOrBin + body;
-            return finalProtocol;
-        }
+    public byte[] encodeBlockData(byte body[], boolean text, DeviceProfile to) {
 
-        return null;
+        byte result[] = new byte[26 + body.length];
+
+        result[0] = 1;
+        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
+        if(sendermac.length() != 12)
+            return null; //TODO: error logging here
+        byte sendermacbytes[] = sendermac.getBytes();
+        for(int x=0;x<sendermacbytes.length;x++) {
+            result[x+1] = sendermacbytes[x];
+        }
+        String receivermac = to.getMac().replace(":","");
+        if(receivermac.length() != 12)
+            return null;
+        byte receivermacbytes[] = receivermac.getBytes();
+        for(int x=0;x<receivermacbytes.length;x++) {
+            result[x+13] = receivermacbytes[x];
+        }
+        if(text)
+            result[26] = 1;
+        else
+            result[26] = 0;
+
+        for(int x=0;x<body.length;x++) {
+            result[x+27] = body[x];
+        }
+        return result;
     }
 
 
-    public String encodeAdvertise() {
-        byte firstbyte = 0;
-        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":", "");
-        byte devtype;
+    public byte[] encodeAdvertise() {
+        byte result[] = new byte[7];
+        result[0] = 0;
 
         DeviceProfile.deviceType type = currentDevice.getType();
         if(type == DeviceProfile.deviceType.ANDROID)
-            devtype = 0;
+            result[1] = 0;
         else if(type == DeviceProfile.deviceType.IOS)
-            devtype = 1;
+            result[1] = 1;
         else if(type == DeviceProfile.deviceType.LINUX)
-            devtype = 2;
+            result[1] = 2;
         else
-            devtype = -1;
-
-        byte mobile;
+            return null;
+        ;
 
         DeviceProfile.MobileStatus mob = currentDevice.getStatus();
         if(mob == DeviceProfile.MobileStatus.STATIONARY)
-            mobile = 0;
+            result[2] = 0;
         else if(mob == DeviceProfile.MobileStatus.MOBILE)
-            mobile = 1;
+            result[2] = 1;
         else if(mob == DeviceProfile.MobileStatus.VERYMOBILE)
-            mobile = 2;
+            result[2] = 2;
         else
-            mobile = -1;
+            return null;
 
-        byte version = currentDevice.getProtocolVersion(); //TODO: change this when operational
+        result[3] = currentDevice.getProtocolVersion(); //TODO: change this when operation
+        result[4] = 0; //this is just dumb
 
-        byte congestion = currentDevice.getCongestion(); //TODO: implimnet congestion checking.
+        result[5] = currentDevice.getCongestion(); //TODO: implimnet congestion checking.
 
-        byte hwservices = 0;
+        result[6] = 0;
 
         DeviceProfile.HardwareServices serv = currentDevice.getServices();
 
         if(serv == DeviceProfile.HardwareServices.WIFIP2P)
-            hwservices |= (1<<0);
+            result[6] |= (1<<0);
         if(serv == DeviceProfile.HardwareServices.WIFICLIENT)
-            hwservices |= (1<<1);
+            result[6] |= (1<<1);
         if(serv == DeviceProfile.HardwareServices.WIFIAP)
-            hwservices |= (1<<2);
+            result[6] |= (1<<2);
         if(serv == DeviceProfile.HardwareServices.BLUETOOTH)
-            hwservices |= (1<<3);
+            result[6] |= (1<<3);
         if(serv == DeviceProfile.HardwareServices.INTERNET)
-            hwservices |= (1<<4);
+            result[6] |= (1<<4);
 
-        if((congestion > 0) && (mobile > 0) && (devtype > 0))
-            return firstbyte + sendermac + devtype + mobile + version + congestion + hwservices;
-
-
-        return null;
+        return result;
 
     }
 
@@ -234,7 +242,8 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
      *Sends a message. Hopefully will not be corruped between iOS and Android
      * (I am trying to stick to standards)
      */
-    public void transmitMesage(String msg) {
+    public void transmitMesage(byte mesg[]) {
+        String msg = new String(mesg);
         stagedMsg = msg;
         Thread thread = new Thread(new Runnable() {
             @Override

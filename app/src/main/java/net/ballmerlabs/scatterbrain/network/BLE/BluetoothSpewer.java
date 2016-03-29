@@ -156,85 +156,29 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
      */
-    public byte[] encodeBlockData(byte body[], boolean text, DeviceProfile to) {
+    private byte[] encodeBlockData(byte body[], boolean text, DeviceProfile to) {
+        BlockDataPacket bdpacket = new BlockDataPacket(body, text, to);
 
-        byte result[] = new byte[26 + body.length];
-
-        result[0] = 1;
-        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
-        if(sendermac.length() != 12)
-            return null; //TODO: error logging here
-        byte sendermacbytes[] = sendermac.getBytes();
-        for(int x=0;x<sendermacbytes.length;x++) {
-            result[x+1] = sendermacbytes[x];
-        }
-        String receivermac = to.getMac().replace(":","");
-        if(receivermac.length() != 12)
-            return null;
-        byte receivermacbytes[] = receivermac.getBytes();
-        for(int x=0;x<receivermacbytes.length;x++) {
-            result[x+13] = receivermacbytes[x];
-        }
-        if(text)
-            result[26] = 1;
+        if(!bdpacket.isInvalid())
+            return bdpacket.getContents();
         else
-            result[26] = 0;
-
-        for(int x=0;x<body.length;x++) {
-            result[x+27] = body[x];
-        }
-        return result;
+            return null;
     }
 
 
-    public byte[] encodeAdvertise() {
+    private byte[] encodeAdvertise() {
         byte result[] = new byte[7];
-        result[0] = 0;
 
-        DeviceProfile.deviceType type = currentDevice.getType();
-        if(type == DeviceProfile.deviceType.ANDROID)
-            result[1] = 0;
-        else if(type == DeviceProfile.deviceType.IOS)
-            result[1] = 1;
-        else if(type == DeviceProfile.deviceType.LINUX)
-            result[1] = 2;
+        AdvertisePacket adpack = new AdvertisePacket(currentDevice);
+        if(!adpack.isInvalid())
+            return adpack.getContents();
         else
             return null;
-        ;
-
-        DeviceProfile.MobileStatus mob = currentDevice.getStatus();
-        if(mob == DeviceProfile.MobileStatus.STATIONARY)
-            result[2] = 0;
-        else if(mob == DeviceProfile.MobileStatus.MOBILE)
-            result[2] = 1;
-        else if(mob == DeviceProfile.MobileStatus.VERYMOBILE)
-            result[2] = 2;
-        else
-            return null;
-
-        result[3] = currentDevice.getProtocolVersion(); //TODO: change this when operation
-        result[4] = 0; //this is just dumb
-
-        result[5] = currentDevice.getCongestion(); //TODO: implimnet congestion checking.
-
-        result[6] = 0;
-
-        DeviceProfile.HardwareServices serv = currentDevice.getServices();
-
-        if(serv == DeviceProfile.HardwareServices.WIFIP2P)
-            result[6] |= (1<<0);
-        if(serv == DeviceProfile.HardwareServices.WIFICLIENT)
-            result[6] |= (1<<1);
-        if(serv == DeviceProfile.HardwareServices.WIFIAP)
-            result[6] |= (1<<2);
-        if(serv == DeviceProfile.HardwareServices.BLUETOOTH)
-            result[6] |= (1<<3);
-        if(serv == DeviceProfile.HardwareServices.INTERNET)
-            result[6] |= (1<<4);
-
-        return result;
 
     }
+
+
+
 
 
 

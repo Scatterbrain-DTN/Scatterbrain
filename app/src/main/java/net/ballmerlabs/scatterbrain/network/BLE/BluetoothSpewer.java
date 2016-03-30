@@ -150,31 +150,31 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     public void registerAdvertiseRecievedCallback(RecievedCallback<DeviceProfile> profile) {
 
     }
-
-
     /*
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
      */
-    private byte[] encodeBlockData(byte body[], boolean text, DeviceProfile to) {
+    private BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
         BlockDataPacket bdpacket = new BlockDataPacket(body, text, to);
-
-        if(!bdpacket.isInvalid())
-            return bdpacket.getContents();
-        else
-            return null;
+        return bdpacket;
     }
 
 
-    private byte[] encodeAdvertise() {
+    private AdvertisePacket encodeAdvertise() {
         byte result[] = new byte[7];
 
         AdvertisePacket adpack = new AdvertisePacket(currentDevice);
-        if(!adpack.isInvalid())
-            return adpack.getContents();
-        else
-            return null;
+        return adpack;
+    }
 
+    private AdvertisePacket decodeAdvertise(byte in[]) {
+        AdvertisePacket ad = new AdvertisePacket(in);
+        return ad;
+    }
+
+    private BlockDataPacket decodeBlockData(byte in[]) {
+        BlockDataPacket b = new BlockDataPacket(in);
+        return b;
     }
 
 

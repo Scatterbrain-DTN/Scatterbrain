@@ -6,6 +6,10 @@ package net.ballmerlabs.scatterbrain.network.BLE;
 public abstract class BLEPacket {
     public byte contents[];
     public boolean invalid;
+
+    public BLEPacket() {
+        invalid = true;
+    }
     public BLEPacket(int size) {
         contents = new byte[size];
         invalid = false;

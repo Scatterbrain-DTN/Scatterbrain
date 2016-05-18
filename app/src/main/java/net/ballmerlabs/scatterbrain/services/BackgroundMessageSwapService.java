@@ -23,9 +23,10 @@ public class BackgroundMessageSwapService extends Service {
 
     IBinder myBinder = new BinderInterface();
 
-    public BackgroundMessageSwapService(Activity mainActivity, DeviceProfile myprofile) {
+    public BackgroundMessageSwapService(Activity mainActivity, DeviceProfile myprofile, BluetoothSpewer spew) {
         this.mainActivity = mainActivity;
         this.myprofile = myprofile;
+        this.bleSpew = spew;
     }
 
     @Override
@@ -52,15 +53,6 @@ public class BackgroundMessageSwapService extends Service {
         //TODO: remove hardcoded datastore trim size.
         store = new LeDataStore(mainActivity,1000);
         LeGet le = new LeGet();
-        try {
-            bleSpew = new BluetoothSpewer(mainActivity,le, myprofile);
-
-        }
-        catch(LeNotSupportedException e) {
-            Log.e(TAG,"BLE is not supported. Sorry.");
-        }
-
-
     }
 
     public String processMessage(String msg) {

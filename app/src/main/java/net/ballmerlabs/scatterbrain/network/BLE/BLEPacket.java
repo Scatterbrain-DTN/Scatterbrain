@@ -15,6 +15,7 @@ public abstract class BLEPacket {
         invalid = false;
     }
 
+    public byte getHeader() { return contents[0];};
     public boolean isInvalid() {
         return invalid;
     }

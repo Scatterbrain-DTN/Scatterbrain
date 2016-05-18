@@ -26,6 +26,7 @@ public class ChatboxFragment extends Fragment {
     private ListView messageTimeline;
     private ArrayAdapter<String> Messages;
     private Button sendButton;
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -77,6 +78,10 @@ public class ChatboxFragment extends Fragment {
         Messages.add(MsgBox.getText().toString());
         MsgBox.setText("");
 
+    }
+
+    public void addMessage(String message) {
+        Messages.add(message);
     }
 
     @Override

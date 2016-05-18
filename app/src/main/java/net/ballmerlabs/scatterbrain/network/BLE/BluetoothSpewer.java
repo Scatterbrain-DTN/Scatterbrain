@@ -20,7 +20,7 @@ import net.ballmerlabs.scatterbrain.datastore.Message;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.NetworkCallback;
 import net.ballmerlabs.scatterbrain.network.RecievedCallback;
-
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
 /**
  * Created by gnu3ra on 10/31/15.
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
@@ -36,12 +36,13 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     public boolean isscanning = false;
     public String[] used = new String[3];
     public int ui = 0;
+    private GlobalNet net;
     public DeviceProfile currentDevice;
 
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
-    public BluetoothSpewer(Activity mainActivity, NetworkCallback rcv, DeviceProfile me) throws LeNotSupportedException {
+    public BluetoothSpewer(Activity mainActivity,DeviceProfile me, GlobalNet globnet) throws LeNotSupportedException {
         this.mainActivity = mainActivity;
         if (!BleUtil.isBLESupported(mainActivity)) {
             throw (new LeNotSupportedException());
@@ -57,10 +58,9 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
         }
-
+        net = globnet;
         currentDevice = me;
-        stopScan();
-        startScan();
+
     }
 
 
@@ -125,9 +125,9 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
                     //gui element manimulating ommitted
-                    //textViewToChange.setText(oldText + subMessage.substring(0, subMessage.length() - 1) + (enter ? "\n" : ""));
+                    //textViewToChange.setText(oldText + subMessage.substring(0, subMessage.length() - 1) + (enter ? "\n" : ""))
 
-                    //TODO: handle incoming message (right here)
+                    net.appendPacket(decodePacket(subMessage.getBytes()));
 
                     ui = ui == 2 ? -1 : ui;
                     ui ++;
@@ -162,9 +162,18 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
     private AdvertisePacket encodeAdvertise() {
         byte result[] = new byte[7];
-
         AdvertisePacket adpack = new AdvertisePacket(currentDevice);
         return adpack;
+    }
+
+
+    private BLEPacket decodePacket(byte in[]) {
+        if(in[0] == 0)
+            return decodeAdvertise(in);
+        else if(in[0] == 1)
+            return decodeBlockData(in);
+        else
+            return null;
     }
 
     private AdvertisePacket decodeAdvertise(byte in[]) {

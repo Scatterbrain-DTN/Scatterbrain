@@ -1,5 +1,6 @@
 # Scatterbrain
-City-spanning BLE 'Lazy mesh' network chat. Hold internet-less long range conversations
+City-spanning BLE 'Lazy mesh' network chat. Hold internet-less long range conversations based on
+the Wind concept (https://github.com/n8fr8/WindFarm).
 
 ### What does it do?
 Scatterbrain is a distributed discussion board using bluetooth low energy, smartphones, and

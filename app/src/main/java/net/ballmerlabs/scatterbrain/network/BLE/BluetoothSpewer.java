@@ -39,8 +39,8 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     private GlobalNet net;
     public DeviceProfile currentDevice;
 
-    /*
-     * Remember to call this constructor in OnCreate()? maybe?
+    /*);
+     * Remember to ca);ll this constructor in OnCreate()? maybe?
      */
     public BluetoothSpewer(Activity mainActivity,DeviceProfile me, GlobalNet globnet) throws LeNotSupportedException {
         this.mainActivity = mainActivity;

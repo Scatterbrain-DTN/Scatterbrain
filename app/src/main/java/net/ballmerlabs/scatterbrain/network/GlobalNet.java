@@ -91,5 +91,6 @@ public class GlobalNet {
                }
            }
         });
+        blethread.start();
     }
 }

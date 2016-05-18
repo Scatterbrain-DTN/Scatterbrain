@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
- * Created by user on 5/17/16.
+ * Global network management framework
  */
 public class GlobalNet {
     private BluetoothSpewer bleman;
@@ -35,7 +35,7 @@ public class GlobalNet {
         armed = false;
         err = "";
         bleman = null;
-        packetqueue = new ArrayList<BLEPacket>();
+        packetqueue = new ArrayList<>();
         main = mainActivity;
         prof = me;
     }
@@ -72,8 +72,9 @@ public class GlobalNet {
             public void run() {
                bleman.startScan();
                ArrayAdapter<String> Messages;
-               Messages = new ArrayAdapter<String>(main,android.R.layout.simple_list_item_1);
-               while(true) {
+               Messages = new ArrayAdapter<>(main,android.R.layout.simple_list_item_1);
+               boolean go = true;
+               while(go) {
                     BLEPacket in = dequeuePacket();
                     if(!in.invalid) {
                         if(in.getHeader() == 0)

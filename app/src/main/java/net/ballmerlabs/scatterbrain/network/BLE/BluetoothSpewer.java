@@ -177,13 +177,11 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     }
 
     private AdvertisePacket decodeAdvertise(byte in[]) {
-        AdvertisePacket ad = new AdvertisePacket(in);
-        return ad;
+        return new AdvertisePacket(in);
     }
 
     private BlockDataPacket decodeBlockData(byte in[]) {
-        BlockDataPacket b = new BlockDataPacket(in);
-        return b;
+        return new BlockDataPacket(in);
     }
 
 
@@ -196,8 +194,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
      * (I am trying to stick to standards)
      */
     public void transmitMesage(byte mesg[]) {
-        String msg = new String(mesg);
-        stagedMsg = msg;
+        stagedMsg = new String(mesg);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -247,9 +244,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
         @Override
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             CONNECTED = true;
-            if(settingsInEffect != null) {
-            }
-            else {
+            if(settingsInEffect == null) {
                 Log.d(TAG,"onStartSuccess, settingInEffect is null");
             }
             super.onStartSuccess(settingsInEffect);

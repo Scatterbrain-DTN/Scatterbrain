@@ -50,9 +50,14 @@ public class GlobalNet {
     }
 
     public BLEPacket dequeuePacket() {
-        BLEPacket result = packetqueue.get(0);
-        packetqueue.remove(0);
-        return result;
+        if(packetqueue.size() > 0) {
+            BLEPacket result = packetqueue.get(0);
+            packetqueue.remove(0);
+            return result;
+        }
+        else
+            return null;
+
     }
 
     public void sendBlePacket(BLEPacket s) {
@@ -76,7 +81,7 @@ public class GlobalNet {
                boolean go = true;
                while(go) {
                     BLEPacket in = dequeuePacket();
-                    if(!in.invalid) {
+                    if(in != null && !in.invalid ) {
                         if(in.getHeader() == 0)
                             Messages.add("[Advertise packet]");
                         else if(in.getHeader() == 1)

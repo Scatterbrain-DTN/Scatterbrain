@@ -88,7 +88,7 @@ public class GlobalNet {
                             Messages.add(new String(((BlockDataPacket)in).body));
                     }
                    try {
-                       wait(100);
+                       Thread.sleep(100);
                    }
                    catch(InterruptedException e) {
                        Log.d(TAG,"BLE Packet Handler thread interrupted for some odd reason");

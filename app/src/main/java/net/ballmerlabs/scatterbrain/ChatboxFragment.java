@@ -1,6 +1,7 @@
 package net.ballmerlabs.scatterbrain;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothClass;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,7 +31,8 @@ public class ChatboxFragment extends Fragment {
     private ListView messageTimeline;
     private ArrayAdapter<String> Messages;
     private Button sendButton;
-
+    private GlobalNet globnet;
+    private DeviceProfile profile;
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -43,6 +49,11 @@ public class ChatboxFragment extends Fragment {
 
     public ChatboxFragment() {
         // Required empty public constructor
+    }
+
+    /* copies over network object from main activity */
+    public void registerNetwork(GlobalNet globnet) {
+        this.globnet = globnet;
     }
 
 
@@ -73,9 +84,15 @@ public class ChatboxFragment extends Fragment {
         return rootView;
     }
 
+    public void setDeviceProfile(DeviceProfile me) {
+        this.profile = me;
+    }
+
     //adds a message to the list and clears the input field
     private void updateList() {
         Messages.add(MsgBox.getText().toString());
+        BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
+        globnet.sendBlePacket(bd);
         MsgBox.setText("");
 
     }
@@ -87,8 +104,8 @@ public class ChatboxFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER));
+      //  ((MainActivity) activity).onSectionAttached(
+        //        getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
 

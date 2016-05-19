@@ -27,8 +27,14 @@ public class MainActivity extends AppCompatActivity
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     /* global network manager */
-    private GlobalNet globnet;
+    public GlobalNet globnet;
 
+
+    /*
+     * Placeholder device profile.
+     *
+     */
+    public DeviceProfile profile;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -36,14 +42,23 @@ public class MainActivity extends AppCompatActivity
     private CharSequence mTitle;
 
 
+    /*
+     * Holds messaging queue and message box
+     */
+    private ChatboxFragment mChatboxFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
-        globnet = new GlobalNet(this, new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
-                DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000"));
+        profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
+                DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
+        globnet = new GlobalNet(this, profile);
         globnet.initBLE();
+
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -53,6 +68,11 @@ public class MainActivity extends AppCompatActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        mChatboxFragment = (ChatboxFragment) getSupportFragmentManager().findFragmentById(R.id.chatbox_fragment);
+
+        mChatboxFragment.registerNetwork(globnet);
+        mChatboxFragment.setDeviceProfile(profile);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
@@ -66,6 +86,10 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction()
                 .replace(R.id.container, ChatboxFragment.newInstance(position + 1))
                 .commit();
+    }
+
+    public GlobalNet getNetwork() {
+        return globnet;
     }
 
     public void onSectionAttached(int number) {

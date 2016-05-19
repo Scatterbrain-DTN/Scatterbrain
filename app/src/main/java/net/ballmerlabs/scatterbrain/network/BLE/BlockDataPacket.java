@@ -19,7 +19,7 @@ public class BlockDataPacket extends BLEPacket{
 
 
     public BlockDataPacket(byte body[], boolean text, DeviceProfile to) {
-            super(26+body.length);
+            super(27+body.length);
             this.body = body;
             this.text = text;
             this.to = to;
@@ -80,8 +80,8 @@ public class BlockDataPacket extends BLEPacket{
         else
             contents[26] = 0;
 
-        for(int x=0;x<body.length;x++) {
-            contents[x+27] = body[x];
+        for(int x=27;x<body.length;x++) {
+            contents[x] = body[x];
         }
 
         return contents;

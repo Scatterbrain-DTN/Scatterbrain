@@ -1,21 +1,15 @@
 package net.ballmerlabs.scatterbrain.network;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothClass;
 import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 
-import net.ballmerlabs.scatterbrain.ChatboxFragment;
-import net.ballmerlabs.scatterbrain.MainActivity;
-import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.BLE.BLEPacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BluetoothSpewer;
 import net.ballmerlabs.scatterbrain.network.BLE.LeNotSupportedException;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 /**
  * Global network management framework

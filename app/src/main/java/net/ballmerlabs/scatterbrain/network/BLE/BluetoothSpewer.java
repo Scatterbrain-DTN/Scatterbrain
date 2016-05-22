@@ -206,7 +206,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
                 }
                 while(stagedMsg.length() > 0) {
                     String subMesssage;
-                    if(stagedMsg.length() > 0) {
+                    if(stagedMsg.length() > 8) {
                         subMesssage = stagedMsg.substring(0,8) + "-";
                         stagedMsg = stagedMsg.substring(8);
                         for(int i=0; i<20;i++) {

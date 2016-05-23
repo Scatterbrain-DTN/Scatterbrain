@@ -57,11 +57,14 @@ public class WifiManager extends BroadcastReceiver {
 
     }
 
-    /* registers a listener for actions when peers changed */
+    /* registers a listener for actions when peers changed (onPeersAvailable)
+     *  Call before scan() to set a function to catch peers
+     *  */
     public void registerPeerListListener(WifiP2pManager.PeerListListener listener) {
         peerlistener = listener;
     }
 
+    /* handling if scan succeeded or failed. Does nothing with peers */
     public void registerScanActionListener(WifiP2pManager.ActionListener scan) {
         this.scanlistener = scan;
     }
@@ -76,6 +79,8 @@ public class WifiManager extends BroadcastReceiver {
     public WifiP2pManager getManager() {
         return manager;
     }
+
+    
 
     public void scan() {
         manager.discoverPeers(chan, scanlistener);

@@ -46,7 +46,7 @@ public class WifiManager extends BroadcastReceiver {
      * Remember to call this constructor in OnCreate()? maybe?
      */
     public WifiManager(Activity mainActivity, DeviceProfile me, GlobalNet globnet, WifiP2pManager p2pman,
-                       WifiP2pManager.Channel chan) throws LeNotSupportedException {
+                       WifiP2pManager.Channel chan) {
         this.mainActivity = mainActivity;
         this.mainActivity = mainActivity;
         this.chan = chan;

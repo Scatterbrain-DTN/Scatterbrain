@@ -1,5 +1,7 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.content.BroadcastReceiver;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,7 +37,6 @@ public class NormalActivity extends AppCompatActivity {
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
         globnet = new GlobalNet(this, profile);
-        globnet.initBLE();
 
         //messagebox handeling
         sendButton = (Button) this.findViewById(R.id.send);
@@ -51,9 +52,24 @@ public class NormalActivity extends AppCompatActivity {
     private void updateList() {
         Messages.add(MsgBox.getText().toString());
         BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
-        globnet.sendBlePacket(bd);
+        globnet.sendPacket(bd);
         MsgBox.setText("");
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(globnet.getP2preceiver() != null &&
+                globnet.getP2pIntenetFilter() != null)
+            this.registerReceiver(globnet.getP2preceiver(), globnet.getP2pIntenetFilter());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(globnet.getP2preceiver() != null)
+            this.unregisterReceiver(globnet.getP2preceiver());
     }
 
     public void addMessage(String message) {

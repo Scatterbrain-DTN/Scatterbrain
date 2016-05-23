@@ -42,7 +42,8 @@ public class WifiManager extends BroadcastReceiver {
     private WifiP2pManager manager;
     private WifiP2pManager.Channel chan;
     private WifiP2pManager.PeerListListener peerlistener;
-
+    private WifiP2pManager.ActionListener connectlistener;
+    private WifiP2pManager.ActionListener scanlistener;
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
@@ -57,11 +58,28 @@ public class WifiManager extends BroadcastReceiver {
     }
 
     /* registers a listener for actions when peers changed */
-    public void registerPeerListener(WifiP2pManager.PeerListListener listener) {
+    public void registerPeerListListener(WifiP2pManager.PeerListListener listener) {
         peerlistener = listener;
     }
 
+    public void registerScanActionListener(WifiP2pManager.ActionListener scan) {
+        this.scanlistener = scan;
+    }
 
+    /* registers a listener for action on connect to a peer */
+    public void registerConnectActionListener(WifiP2pManager.ActionListener listener) {
+        connectlistener = listener;
+    }
+
+
+    /* gets the manager */
+    public WifiP2pManager getManager() {
+        return manager;
+    }
+
+    public void scan() {
+        manager.discoverPeers(chan, scanlistener);
+    }
 
     /* Receiver for intents from wifi p2p framework */
     @Override

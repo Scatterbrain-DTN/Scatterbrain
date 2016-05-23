@@ -11,6 +11,7 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
@@ -40,6 +41,7 @@ public class WifiManager extends BroadcastReceiver {
     private Activity mainActivity;
     private WifiP2pManager manager;
     private WifiP2pManager.Channel chan;
+    private WifiP2pManager.PeerListListener peerlistener;
 
     /*
      * Remember to call this constructor in OnCreate()? maybe?
@@ -54,12 +56,18 @@ public class WifiManager extends BroadcastReceiver {
 
     }
 
+    /* registers a listener for actions when peers changed */
+    public void registerPeerListener(WifiP2pManager.PeerListListener listener) {
+        peerlistener = listener;
+    }
+
 
 
     /* Receiver for intents from wifi p2p framework */
     @Override
     public void onReceive(Context c, Intent i) {
         String action = i.getAction();
+        //detect if the connection changes state
         if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             int state = i.getIntExtra(manager.EXTRA_WIFI_STATE, -1);
             if( state == manager.WIFI_P2P_STATE_ENABLED) {
@@ -67,6 +75,13 @@ public class WifiManager extends BroadcastReceiver {
             }
             else {
                 //not enabled
+            }
+        }
+        else if(manager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+            if(peerlistener != null)
+                manager.requestPeers(chan, peerlistener);
+            else {
+                Log.e(TAG, "PeerListener is null. Is it not set?");
             }
         }
     }

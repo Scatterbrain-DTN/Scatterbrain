@@ -11,6 +11,8 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
@@ -26,6 +28,7 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.RecievedCallback;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +47,8 @@ public class WifiManager extends BroadcastReceiver {
     private WifiP2pManager.PeerListListener peerlistener;
     private WifiP2pManager.ActionListener connectlistener;
     private WifiP2pManager.ActionListener scanlistener;
+    private HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
+
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
@@ -54,7 +59,7 @@ public class WifiManager extends BroadcastReceiver {
         this.chan = chan;
         this.manager = p2pman;
         net = globnet;
-
+        connectedList = new HashMap<>();
     }
 
     /* registers a listener for actions when peers changed (onPeersAvailable)
@@ -80,7 +85,24 @@ public class WifiManager extends BroadcastReceiver {
         return manager;
     }
 
-    
+
+    /* connect to a peer and push it onto the connected list */
+    public void connectToPeer(final WifiP2pManager.Channel c,final  WifiP2pDevice target) {
+        final WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = target.deviceAddress;
+        manager.connect(c, config, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                connectedList.put(target, config);
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Log.e(TAG, "Failed to connect to device " + target.deviceName + "with address " +
+                target.deviceAddress);
+            }
+        });
+    }
 
     public void scan() {
         manager.discoverPeers(chan, scanlistener);

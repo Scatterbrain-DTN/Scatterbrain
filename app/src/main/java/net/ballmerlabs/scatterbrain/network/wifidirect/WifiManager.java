@@ -40,55 +40,20 @@ public class WifiManager extends BroadcastReceiver {
     private Activity mainActivity;
     private WifiP2pManager manager;
     private WifiP2pManager.Channel chan;
-    public DeviceProfile currentDevice;
 
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
-    public WifiManager(Activity mainActivity, DeviceProfile me, GlobalNet globnet, WifiP2pManager p2pman,
+    public WifiManager(Activity mainActivity, GlobalNet globnet, WifiP2pManager p2pman,
                        WifiP2pManager.Channel chan) {
         this.mainActivity = mainActivity;
         this.mainActivity = mainActivity;
         this.chan = chan;
         this.manager = p2pman;
         net = globnet;
-        currentDevice = me;
 
     }
 
-     /*
-     * Takes a message object and parameters for routing over bluetooth and generates
-     * a string for transmit over Scatterbrain protocol
-     */
-    private BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
-        BlockDataPacket bdpacket = new BlockDataPacket(body, text, to);
-        return bdpacket;
-    }
-
-
-    private AdvertisePacket encodeAdvertise() {
-        byte result[] = new byte[7];
-        AdvertisePacket adpack = new AdvertisePacket(currentDevice);
-        return adpack;
-    }
-
-
-    private BLEPacket decodePacket(byte in[]) {
-        if(in[0] == 0)
-            return decodeAdvertise(in);
-        else if(in[0] == 1)
-            return decodeBlockData(in);
-        else
-            return null;
-    }
-
-    private AdvertisePacket decodeAdvertise(byte in[]) {
-        return new AdvertisePacket(in);
-    }
-
-    private BlockDataPacket decodeBlockData(byte in[]) {
-        return new BlockDataPacket(in);
-    }
 
 
     /* Receiver for intents from wifi p2p framework */

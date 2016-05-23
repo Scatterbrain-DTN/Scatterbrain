@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import net.ballmerlabs.scatterbrain.network.BLE.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BLEPacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BluetoothSpewer;
@@ -69,12 +70,53 @@ public class GlobalNet {
         return p2pIntenetFilter;
     }
 
+    /*
+     * Takes a message object and parameters for routing over bluetooth and generates
+     * a string for transmit over Scatterbrain protocol
+     */
+    private BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
+        BlockDataPacket bdpacket = new BlockDataPacket(body, text, to);
+        return bdpacket;
+    }
+
+
+    /*
+     * encodes advertise packet with current device profile as source
+     */
+    private AdvertisePacket encodeAdvertise() {
+        byte result[] = new byte[7];
+        AdvertisePacket adpack = new AdvertisePacket(prof);
+        return adpack;
+    }
+
+
+    /*
+     * decodes a packet for casting into packet types
+     */
+    private BLEPacket decodePacket(byte in[]) {
+        if(in[0] == 0)
+            return decodeAdvertise(in);
+        else if(in[0] == 1)
+            return decodeBlockData(in);
+        else
+            return null;
+    }
+
+    private AdvertisePacket decodeAdvertise(byte in[]) {
+        return new AdvertisePacket(in);
+    }
+
+    private BlockDataPacket decodeBlockData(byte in[]) {
+        return new BlockDataPacket(in);
+    }
+
+
 
     /* inits on startup of app */
     public void init() {
         manager = (WifiP2pManager) main.getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(main, main.getMainLooper(), null);
-        p2preceiver = new WifiManager(main, prof,this, manager,channel);
+        p2preceiver = new WifiManager(main,this, manager,channel);
         p2pIntenetFilter = new IntentFilter();
         p2pIntenetFilter.addAction(manager.WIFI_P2P_STATE_CHANGED_ACTION);
         p2pIntenetFilter.addAction(manager.WIFI_P2P_PEERS_CHANGED_ACTION);

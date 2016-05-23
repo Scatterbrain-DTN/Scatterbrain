@@ -8,6 +8,10 @@ import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
 import com.bitgarage.blemingledroid.BleUtil;
@@ -28,20 +32,25 @@ import java.util.regex.Pattern;
  * Created by gnu3ra on 10/31/15.
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
  */
-public class WifiManager {
+public class WifiManager extends BroadcastReceiver {
     public boolean CONNECTED = false;
     private String TAG = "WiFi_daemon";
     private android.os.Handler threadHandler = new android.os.Handler();
     private GlobalNet net;
     private Activity mainActivity;
+    private WifiP2pManager manager;
+    private WifiP2pManager.Channel chan;
     public DeviceProfile currentDevice;
 
-    /*);
-     * Remember to ca);ll this constructor in OnCreate()? maybe?
+    /*
+     * Remember to call this constructor in OnCreate()? maybe?
      */
-    public WifiManager(Activity mainActivity, DeviceProfile me, GlobalNet globnet) throws LeNotSupportedException {
+    public WifiManager(Activity mainActivity, DeviceProfile me, GlobalNet globnet, WifiP2pManager p2pman,
+                       WifiP2pManager.Channel chan) throws LeNotSupportedException {
         this.mainActivity = mainActivity;
         this.mainActivity = mainActivity;
+        this.chan = chan;
+        this.manager = p2pman;
         net = globnet;
         currentDevice = me;
 
@@ -78,6 +87,13 @@ public class WifiManager {
 
     private BlockDataPacket decodeBlockData(byte in[]) {
         return new BlockDataPacket(in);
+    }
+
+
+    /* Receiver for intents from wifi p2p framework */
+    @Override
+    public void onReceive(Context c, Intent i) {
+
     }
 }
 

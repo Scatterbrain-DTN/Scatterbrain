@@ -55,6 +55,7 @@ public class WifiManager extends BroadcastReceiver {
         currentDevice = me;
 
     }
+
      /*
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
@@ -93,7 +94,16 @@ public class WifiManager extends BroadcastReceiver {
     /* Receiver for intents from wifi p2p framework */
     @Override
     public void onReceive(Context c, Intent i) {
-
+        String action = i.getAction();
+        if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+            int state = i.getIntExtra(manager.EXTRA_WIFI_STATE, -1);
+            if( state == manager.WIFI_P2P_STATE_ENABLED) {
+                //wifi p2p is enabled
+            }
+            else {
+                //not enabled
+            }
+        }
     }
 }
 

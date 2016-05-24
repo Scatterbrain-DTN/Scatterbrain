@@ -12,8 +12,6 @@ import android.widget.ArrayAdapter;
 import net.ballmerlabs.scatterbrain.network.BLE.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BLEPacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
-import net.ballmerlabs.scatterbrain.network.BLE.BluetoothSpewer;
-import net.ballmerlabs.scatterbrain.network.BLE.LeNotSupportedException;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
 
 import java.util.ArrayList;

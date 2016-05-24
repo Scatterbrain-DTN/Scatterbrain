@@ -1,37 +1,18 @@
 package net.ballmerlabs.scatterbrain.network.wifidirect;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.AdvertiseCallback;
-import android.bluetooth.le.AdvertiseData;
-import android.bluetooth.le.AdvertiseSettings;
-import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
-import com.bitgarage.blemingledroid.BleUtil;
-
-import net.ballmerlabs.scatterbrain.network.BLE.AdvertisePacket;
-import net.ballmerlabs.scatterbrain.network.BLE.BLEPacket;
-import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
-import net.ballmerlabs.scatterbrain.network.BLE.LeNotSupportedException;
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
-import net.ballmerlabs.scatterbrain.network.RecievedCallback;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Created by gnu3ra on 10/31/15.
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
@@ -128,6 +109,9 @@ public class WifiManager extends BroadcastReceiver {
             else {
                 Log.e(TAG, "PeerListener is null. Is it not set?");
             }
+        }
+        else if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+            WifiP2pInfo info = i.getParcelableExtra(manager.EXTRA_WIFI_P2P_INFO);
         }
     }
 }

@@ -13,6 +13,9 @@ import android.util.Log;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Created by gnu3ra on 10/31/15.
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
@@ -85,6 +88,15 @@ public class WifiManager extends BroadcastReceiver {
         });
     }
 
+    /* garbage collector like function run periodically to remove disconnected devices. */
+    private void cleanupConnections() {
+        for(Map.Entry<WifiP2pDevice, WifiP2pConfig> s: connectedList.entrySet()) {
+            if(s.getKey().status != WifiP2pDevice.CONNECTED) {
+                connectedList.remove(s.getKey());
+            }
+        }
+    }
+
     public void scan() {
         manager.discoverPeers(chan, scanlistener);
     }
@@ -111,7 +123,7 @@ public class WifiManager extends BroadcastReceiver {
             }
         }
         else if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-            WifiP2pInfo info = i.getParcelableExtra(manager.EXTRA_WIFI_P2P_INFO);
+            cleanupConnections();
         }
     }
 }

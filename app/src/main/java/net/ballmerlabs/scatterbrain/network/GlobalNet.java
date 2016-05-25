@@ -112,6 +112,7 @@ public class GlobalNet {
 
     /* inits on startup of app */
     public void init() {
+        Log.v(TAG, "Running GlobalNet Init");
         manager = (WifiP2pManager) main.getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(main, main.getMainLooper(), null);
         p2preceiver = new WifiManager(main,this, manager,channel);

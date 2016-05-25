@@ -75,12 +75,16 @@ public class WifiManager extends BroadcastReceiver {
 
     /* connect to a peer and push it onto the connected list */
     public void connectToPeer(final WifiP2pManager.Channel c,final  WifiP2pDevice target) {
+        Log.i(TAG, "Manually connecting to peer " + target.deviceName + " with  address " +
+        target.deviceAddress);
+
         final WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = target.deviceAddress;
         manager.connect(c, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 connectedList.put(target, config);
+                Log.v(TAG, "Connection succeeded for " + target.deviceName);
             }
 
             @Override
@@ -93,6 +97,7 @@ public class WifiManager extends BroadcastReceiver {
 
     /* garbage collector like function run periodically to remove disconnected devices. */
     private void cleanupConnections() {
+        Log.v(TAG, "Running connection list garbage collector");
         final Thread connectionGC = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -111,6 +116,7 @@ public class WifiManager extends BroadcastReceiver {
     }
 
     public void scan() {
+        Log.v(TAG, "Scanning for peers");
         manager.discoverPeers(chan, scanlistener);
     }
 
@@ -120,15 +126,18 @@ public class WifiManager extends BroadcastReceiver {
         String action = i.getAction();
         //detect if the connection changes state
         if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+            Log.v(TAG, "Recieved WIFI_P2P_CONNECTION_CHANGED_ACTION");
             int state = i.getIntExtra(manager.EXTRA_WIFI_STATE, -1);
             if( state == manager.WIFI_P2P_STATE_ENABLED) {
                 //wifi p2p is enabled
             }
             else {
+                Log.v(TAG, "Wifi p2p is not enabled");
                 //not enabled
             }
         }
         else if(manager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+            Log.v(TAG, "Received WIFI_P2P_PEERS_CHANGED_ACTION");
             if(peerlistener != null)
                 manager.requestPeers(chan, peerlistener);
             else {
@@ -136,11 +145,13 @@ public class WifiManager extends BroadcastReceiver {
             }
         }
         else if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+            Log.v(TAG, "Received WIFI_P2P_CONNECTION_CHANGED_ACTION");
             if(manager == null)
                 return;
             NetworkInfo networkInfo = (NetworkInfo) i.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             if(networkInfo.isConnected()) {
+                Log.v(TAG, "We are connected!!");
                 /*
                  * uses DirectConnnectionInfoListener to start actual tcp/ip
                  * connection
@@ -148,6 +159,7 @@ public class WifiManager extends BroadcastReceiver {
                 manager.requestConnectionInfo(chan, new DirectConnectionInfoListener(connectedList));
             }
             else {
+                Log.v(TAG, "Disconnected or failed connection.");
                 cleanupConnections();
             }
         }

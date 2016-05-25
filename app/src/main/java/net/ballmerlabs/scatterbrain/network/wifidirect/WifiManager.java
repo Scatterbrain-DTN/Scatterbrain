@@ -90,11 +90,19 @@ public class WifiManager extends BroadcastReceiver {
 
     /* garbage collector like function run periodically to remove disconnected devices. */
     private void cleanupConnections() {
-        for(Map.Entry<WifiP2pDevice, WifiP2pConfig> s: connectedList.entrySet()) {
-            if(s.getKey().status != WifiP2pDevice.CONNECTED) {
-                connectedList.remove(s.getKey());
+        final Thread connectionGC = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (connectedList) {
+                    for (Map.Entry<WifiP2pDevice, WifiP2pConfig> s : connectedList.entrySet()) {
+                        if (s.getKey().status != WifiP2pDevice.CONNECTED) {
+                            connectedList.remove(s.getKey());
+                        }
+                    }
+                }
             }
-        }
+        });
+
     }
 
     public void scan() {

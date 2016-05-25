@@ -8,7 +8,9 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.BLE.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BLEPacket;
 import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
@@ -31,7 +33,7 @@ public class GlobalNet {
     private Thread wifiScanThread;
     public final int scanTimeMillis = 5000;
 
-    public GlobalNet(Activity mainActivity, DeviceProfile me) {
+    public GlobalNet(final Activity mainActivity, DeviceProfile me) {
         packetqueue = new ArrayList<>();
         main = mainActivity;
         prof = me;

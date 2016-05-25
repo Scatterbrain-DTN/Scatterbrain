@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
@@ -22,6 +23,7 @@ public class NormalActivity extends AppCompatActivity {
     private Button sendButton;
     private GlobalNet globnet;
     private DeviceProfile profile;
+    private TextView peersView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class NormalActivity extends AppCompatActivity {
         globnet = new GlobalNet(this, profile);
 
         globnet.startWifiDirectLoopThread();
+
+
 
         //messagebox handeling
         sendButton = (Button) this.findViewById(R.id.send);

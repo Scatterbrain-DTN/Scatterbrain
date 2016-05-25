@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -33,18 +34,23 @@ public class WifiManager extends BroadcastReceiver {
     private WifiP2pManager.ActionListener connectlistener;
     private WifiP2pManager.ActionListener scanlistener;
     private HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
+    private IntentFilter p2pIntenetFilter;
 
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
-    public WifiManager(Activity mainActivity, GlobalNet globnet, WifiP2pManager p2pman,
-                       WifiP2pManager.Channel chan) {
+    public WifiManager(Activity mainActivity, GlobalNet globnet) {
         this.mainActivity = mainActivity;
         this.mainActivity = mainActivity;
-        this.chan = chan;
-        this.manager = p2pman;
         net = globnet;
         connectedList = new HashMap<>();
+        this.manager = (WifiP2pManager) mainActivity.getSystemService(Context.WIFI_P2P_SERVICE);
+        this.chan = manager.initialize(mainActivity, mainActivity.getMainLooper(), null);
+        p2pIntenetFilter = new IntentFilter();
+        p2pIntenetFilter.addAction(manager.WIFI_P2P_STATE_CHANGED_ACTION);
+        p2pIntenetFilter.addAction(manager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        p2pIntenetFilter.addAction(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        p2pIntenetFilter.addAction(manager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
     }
 
     /* registers a listener for actions when peers changed (onPeersAvailable)

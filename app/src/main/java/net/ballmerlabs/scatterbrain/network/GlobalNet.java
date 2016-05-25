@@ -26,8 +26,8 @@ public class GlobalNet {
     public final String TAG = "GlobNet";
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
-    ;private BroadcastReceiver p2preceiver;
-    private IntentFilter p2pIntenetFilter;
+    private BroadcastReceiver p2preceiver;
+    private WifiManager p2phelper;
 
     public GlobalNet(Activity mainActivity, DeviceProfile me) {
         packetqueue = new ArrayList<>();
@@ -63,11 +63,7 @@ public class GlobalNet {
     public BroadcastReceiver getP2preceiver() {
         return p2preceiver;
     }
-
-    public IntentFilter getP2pIntenetFilter() {
-        return p2pIntenetFilter;
-    }
-
+    
     /*
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
@@ -108,18 +104,18 @@ public class GlobalNet {
         return new BlockDataPacket(in);
     }
 
+    public void startWifiDirectLoopThread() {
+
+    }
+
+    public void stopWifiDirectLoopThread() {
+
+    }
 
 
     /* inits on startup of app */
     public void init() {
         Log.v(TAG, "Running GlobalNet Init");
-        manager = (WifiP2pManager) main.getSystemService(Context.WIFI_P2P_SERVICE);
-        channel = manager.initialize(main, main.getMainLooper(), null);
-        p2preceiver = new WifiManager(main,this, manager,channel);
-        p2pIntenetFilter = new IntentFilter();
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_STATE_CHANGED_ACTION);
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
     }
 }

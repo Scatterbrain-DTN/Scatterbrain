@@ -30,7 +30,7 @@ public class WifiManager extends BroadcastReceiver {
     private Activity mainActivity;
     private WifiP2pManager manager;
     private WifiP2pManager.Channel chan;
-    private WifiP2pManager.PeerListListener peerlistener;
+    private ScatterPeerListener peerlistener;
     private WifiP2pManager.ActionListener connectlistener;
     private WifiP2pManager.ActionListener scanlistener;
     private HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
@@ -51,13 +51,7 @@ public class WifiManager extends BroadcastReceiver {
         p2pIntenetFilter.addAction(manager.WIFI_P2P_PEERS_CHANGED_ACTION);
         p2pIntenetFilter.addAction(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         p2pIntenetFilter.addAction(manager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-    }
-
-    /* registers a listener for actions when peers changed (onPeersAvailable)
-     *  Call before scan() to set a function to catch peers
-     *  */
-    public void registerPeerListListener(WifiP2pManager.PeerListListener listener) {
-        peerlistener = listener;
+        peerlistener = new ScatterPeerListener();
     }
 
     /* handling if scan succeeded or failed. Does nothing with peers */
@@ -70,12 +64,19 @@ public class WifiManager extends BroadcastReceiver {
         connectlistener = listener;
     }
 
+    public IntentFilter getP2pIntenetFilter() {
+        return p2pIntenetFilter;
+    }
 
     /* gets the manager */
     public WifiP2pManager getManager() {
         return manager;
     }
 
+
+    public ScatterPeerListener getPeerListener() {
+        return peerlistener;
+    }
 
 
 

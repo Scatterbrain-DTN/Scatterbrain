@@ -38,6 +38,8 @@ public class NormalActivity extends AppCompatActivity {
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
         globnet = new GlobalNet(this, profile);
 
+        globnet.startWifiDirectLoopThread();
+
         //messagebox handeling
         sendButton = (Button) this.findViewById(R.id.send);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -59,14 +61,16 @@ public class NormalActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        globnet.startWifiDirectLoopThread();
         super.onResume();
         if(globnet.getP2preceiver() != null &&
-                globnet.getP2pIntenetFilter() != null)
-            this.registerReceiver(globnet.getP2preceiver(), globnet.getP2pIntenetFilter());
+                globnet.getP2pIntentFilter() != null)
+            this.registerReceiver(globnet.getP2preceiver(), globnet.getP2pIntentFilter());
     }
 
     @Override
     protected void onPause() {
+        globnet.stopWifiDirectLoopThread();
         super.onPause();
         if(globnet.getP2preceiver() != null)
             this.unregisterReceiver(globnet.getP2preceiver());

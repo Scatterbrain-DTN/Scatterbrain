@@ -28,13 +28,27 @@ public class GlobalNet {
     private WifiP2pManager.Channel channel;
     private BroadcastReceiver p2preceiver;
     public WifiManager directmanager;
+    private Thread wifiScanThread;
 
     public GlobalNet(Activity mainActivity, DeviceProfile me) {
         packetqueue = new ArrayList<>();
         main = mainActivity;
         prof = me;
         directmanager = new WifiManager(main, this);
+        wifiScanThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    directmanager.scan();
+                    Thread.sleep(1000);
+                }
+                catch(InterruptedException e) {
+                    Log.e(TAG, "Caught InterruptedException in wifi update thread");
+                }
+            }
+        });
     }
+
 
 
     /* appends a packet to the queue */
@@ -71,6 +85,11 @@ public class GlobalNet {
     }
 
 
+    public IntentFilter getP2pIntentFilter() {
+        return directmanager.getP2pIntenetFilter();
+    }
+
+
     /*
      * encodes advertise packet with current device profile as source
      */
@@ -78,6 +97,10 @@ public class GlobalNet {
         byte result[] = new byte[7];
         AdvertisePacket adpack = new AdvertisePacket(prof);
         return adpack;
+    }
+
+    public WifiManager getWifiManager() {
+        return directmanager;
     }
 
 

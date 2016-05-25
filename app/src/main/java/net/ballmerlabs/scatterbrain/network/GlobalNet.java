@@ -125,10 +125,10 @@ public class GlobalNet {
     }
 
     public void startWifiDirectLoopThread() {
-
+        wifiScanThread.start();
     }
 
     public void stopWifiDirectLoopThread() {
-
+        wifiScanThread.stop();
     }
 }

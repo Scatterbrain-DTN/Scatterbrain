@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -135,7 +136,20 @@ public class WifiManager extends BroadcastReceiver {
             }
         }
         else if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-            cleanupConnections();
+            if(manager == null)
+                return;
+            NetworkInfo networkInfo = (NetworkInfo) i.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+            if(networkInfo.isConnected()) {
+                /*
+                 * uses DirectConnnectionInfoListener to start actual tcp/ip
+                 * connection
+                 */
+                manager.requestConnectionInfo(chan, new DirectConnectionInfoListener(connectedList));
+            }
+            else {
+                cleanupConnections();
+            }
         }
     }
 }

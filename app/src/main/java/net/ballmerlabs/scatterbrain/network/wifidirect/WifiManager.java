@@ -103,6 +103,8 @@ public class WifiManager extends BroadcastReceiver {
             }
         });
 
+        connectionGC.start();
+
     }
 
     public void scan() {

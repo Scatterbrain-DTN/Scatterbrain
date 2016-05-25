@@ -70,6 +70,8 @@ public class WifiManager extends BroadcastReceiver {
     }
 
 
+
+
     /* connect to a peer and push it onto the connected list */
     public void connectToPeer(final WifiP2pManager.Channel c,final  WifiP2pDevice target) {
         final WifiP2pConfig config = new WifiP2pConfig();

@@ -27,16 +27,14 @@ public class GlobalNet {
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
     private BroadcastReceiver p2preceiver;
-    private WifiManager p2phelper;
+    public WifiManager directmanager;
 
     public GlobalNet(Activity mainActivity, DeviceProfile me) {
         packetqueue = new ArrayList<>();
         main = mainActivity;
         prof = me;
+        directmanager = new WifiManager(main, this);
     }
-
-
-
 
 
     /* appends a packet to the queue */
@@ -45,12 +43,11 @@ public class GlobalNet {
     }
 
     public BLEPacket dequeuePacket() {
-        if(packetqueue.size() > 0) {
+        if (packetqueue.size() > 0) {
             BLEPacket result = packetqueue.get(0);
             packetqueue.remove(0);
             return result;
-        }
-        else
+        } else
             return null;
 
     }
@@ -63,7 +60,7 @@ public class GlobalNet {
     public BroadcastReceiver getP2preceiver() {
         return p2preceiver;
     }
-    
+
     /*
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
@@ -88,9 +85,9 @@ public class GlobalNet {
      * decodes a packet for casting into packet types
      */
     private BLEPacket decodePacket(byte in[]) {
-        if(in[0] == 0)
+        if (in[0] == 0)
             return decodeAdvertise(in);
-        else if(in[0] == 1)
+        else if (in[0] == 1)
             return decodeBlockData(in);
         else
             return null;
@@ -109,13 +106,6 @@ public class GlobalNet {
     }
 
     public void stopWifiDirectLoopThread() {
-
-    }
-
-
-    /* inits on startup of app */
-    public void init() {
-        Log.v(TAG, "Running GlobalNet Init");
 
     }
 }

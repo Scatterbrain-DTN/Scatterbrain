@@ -29,6 +29,7 @@ public class GlobalNet {
     private BroadcastReceiver p2preceiver;
     public WifiManager directmanager;
     private Thread wifiScanThread;
+    public final int scanTimeMillis = 5000;
 
     public GlobalNet(Activity mainActivity, DeviceProfile me) {
         packetqueue = new ArrayList<>();
@@ -39,8 +40,10 @@ public class GlobalNet {
             @Override
             public void run() {
                 try {
-                    directmanager.scan();
-                    Thread.sleep(1000);
+                    while(true) {
+                        directmanager.scan();
+                        Thread.sleep(scanTimeMillis);
+                    }
                 }
                 catch(InterruptedException e) {
                     Log.e(TAG, "Caught InterruptedException in wifi update thread");

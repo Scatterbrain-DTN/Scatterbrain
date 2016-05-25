@@ -61,7 +61,7 @@ public class NormalActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        globnet.startWifiDirectLoopThread();
+       // globnet.startWifiDirectLoopThread();
         super.onResume();
         if(globnet.getP2preceiver() != null &&
                 globnet.getP2pIntentFilter() != null)
@@ -70,7 +70,7 @@ public class NormalActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        globnet.stopWifiDirectLoopThread();
+        //globnet.stopWifiDirectLoopThread();
         super.onPause();
         if(globnet.getP2preceiver() != null)
             this.unregisterReceiver(globnet.getP2preceiver());

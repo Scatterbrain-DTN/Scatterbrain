@@ -16,7 +16,7 @@ public class DeviceProfile {
     };
 
     public static enum HardwareServices {
-        WIFIP2P, WIFICLIENT, WIFIAP, BLUETOOTH,
+        WIFIP2P, WIRegFICLIENT, WIFIAP, BLUETOOTH,
         BLUETOOTHLE, INTERNET
     };
 

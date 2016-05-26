@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,8 @@ import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Global network management framework
@@ -31,7 +34,9 @@ public class GlobalNet {
     private BroadcastReceiver p2preceiver;
     public WifiManager directmanager;
     private Thread wifiScanThread;
+    private WifiP2pDnsSdServiceInfo serviceInfo;
     public final int scanTimeMillis = 5000;
+    public final int SERVER_PORT = 8222;
 
     public GlobalNet(final Activity mainActivity, DeviceProfile me) {
         packetqueue = new ArrayList<>();
@@ -69,6 +74,44 @@ public class GlobalNet {
         } else
             return null;
 
+    }
+
+    /*
+     * Registers a service for autodiscovery
+     */
+    public void registerService(DeviceProfile profile) {
+        manager.removeLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.v(TAG, "Deregistered discovery service");
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Log.e(TAG, "Failed to deregister discovery service");
+            }
+        });
+        Map record = new HashMap<>();
+        record.put("listenport", String.valueOf(SERVER_PORT));
+        record.put("protocolVersion", "0"); //TODO: add actual version
+        record.put("deviceType", profile.getType().toString());
+        record.put("mobileStatus", profile.getStatus().toString());
+        record.put("congestion", String.valueOf(profile.getCongestion()));
+        record.put("hwServices", profile.getServices().toString());
+
+        WifiP2pDnsSdServiceInfo serviceInfo =
+                WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp",record);
+        manager.addLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.v(TAG, "Successfully registered Scatterbrain service for discovery");
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Log.e(TAG, "Failed to register Scatterbrain discovery service: + " + reason );
+            }
+        });
     }
 
     /* sends a packet asynchronously */

@@ -2,20 +2,16 @@ package net.ballmerlabs.scatterbrain.network;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.R;
-import net.ballmerlabs.scatterbrain.network.BLE.AdvertisePacket;
-import net.ballmerlabs.scatterbrain.network.BLE.BLEPacket;
-import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
+import net.ballmerlabs.scatterbrain.network.wifidirect.BlockDataPacket;
+import net.ballmerlabs.scatterbrain.network.wifidirect.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
+import net.ballmerlabs.scatterbrain.network.wifidirect.WifiPacket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +21,7 @@ import java.util.Map;
  * Global network management framework
  */
 public class GlobalNet {
-    private ArrayList<BLEPacket> packetqueue;
+    private ArrayList<WifiPacket> packetqueue;
     private Activity main;
     private DeviceProfile prof;
     public final String TAG = "GlobNet";
@@ -62,13 +58,13 @@ public class GlobalNet {
 
 
     /* appends a packet to the queue */
-    public void appendPacket(BLEPacket p) {
+    public void appendPacket(WifiPacket p) {
         packetqueue.add(p);
     }
 
-    public BLEPacket dequeuePacket() {
+    public WifiPacket dequeuePacket() {
         if (packetqueue.size() > 0) {
-            BLEPacket result = packetqueue.get(0);
+            WifiPacket result = packetqueue.get(0);
             packetqueue.remove(0);
             return result;
         } else
@@ -114,11 +110,6 @@ public class GlobalNet {
         });
     }
 
-    /* sends a packet asynchronously */
-    public void sendPacket(BLEPacket s) {
-
-    }
-
     public BroadcastReceiver getP2preceiver() {
         return p2preceiver;
     }
@@ -155,7 +146,7 @@ public class GlobalNet {
     /*
      * decodes a packet for casting into packet types
      */
-    private BLEPacket decodePacket(byte in[]) {
+    private WifiPacket decodePacket(byte in[]) {
         if (in[0] == 0)
             return decodeAdvertise(in);
         else if (in[0] == 1)

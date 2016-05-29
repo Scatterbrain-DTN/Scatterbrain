@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain.network.wifidirect;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 /**
@@ -7,6 +8,8 @@ import android.os.AsyncTask;
  */
 public abstract class WifiAsyncTask extends AsyncTask {
 
+    public WifiAsyncTask(Context context) {
 
+    }
 
 }

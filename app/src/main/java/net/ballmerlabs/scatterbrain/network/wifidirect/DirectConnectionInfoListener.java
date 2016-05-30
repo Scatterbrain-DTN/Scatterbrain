@@ -6,6 +6,8 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.HashMap;
@@ -16,7 +18,14 @@ import java.util.HashMap;
 public class DirectConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
     HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
     public final String TAG = "ConnectionInfoListener";
-    public DirectConnectionInfoListener(HashMap<WifiP2pDevice, WifiP2pConfig> connectedList) {
+    public GlobalNet globnet;
+    public WifiManager manager;
+
+    public DirectConnectionInfoListener(HashMap<WifiP2pDevice, WifiP2pConfig> connectedList,
+                                        WifiManager manager, GlobalNet globnet) {
+
+        this.manager = manager;
+        this.globnet = globnet;
         this.connectedList = connectedList;
     }
 
@@ -26,6 +35,7 @@ public class DirectConnectionInfoListener implements WifiP2pManager.ConnectionIn
         if(info.groupFormed && info.isGroupOwner) {
             //start server and make others connect
             Log.i(TAG, "Device is the group owner with address " + address.toString());
+
         }
         else if(info.groupFormed) {
             Log.i(TAG, "Device is connected to group with address "+ address.toString());

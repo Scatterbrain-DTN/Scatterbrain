@@ -163,7 +163,7 @@ public class WifiManager extends BroadcastReceiver {
                  * uses DirectConnnectionInfoListener to start actual tcp/ip
                  * connection
                  */
-                manager.requestConnectionInfo(chan, new DirectConnectionInfoListener(connectedList));
+                manager.requestConnectionInfo(chan, new DirectConnectionInfoListener(connectedList, this, net ));
             }
             else {
                 Log.v(TAG, "Disconnected or failed connection.");

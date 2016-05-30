@@ -43,6 +43,18 @@ public class ClientAsyncTask extends WifiAsyncTask{
         catch(IOException e) {
             Log.e(TAG,"IOException when creating socket");
         }
+        finally {
+            if(socket != null) {
+                if(socket.isConnected()) {
+                    try {
+                        socket.close();
+                    }
+                    catch(IOException e) {
+                        //we will swallow this. Sorry 
+                    }
+                }
+            }
+        }
 
         return null;
     }

@@ -51,7 +51,7 @@ public class WifiManager extends BroadcastReceiver {
         p2pIntenetFilter.addAction(manager.WIFI_P2P_PEERS_CHANGED_ACTION);
         p2pIntenetFilter.addAction(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         p2pIntenetFilter.addAction(manager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        peerlistener = new ScatterPeerListener(mainActivity);
+        peerlistener = new ScatterPeerListener(mainActivity, this, globnet);
     }
 
     /* handling if scan succeeded or failed. Does nothing with peers */

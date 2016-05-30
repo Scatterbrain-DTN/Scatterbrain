@@ -49,6 +49,9 @@ public class GlobalNet {
         wifiHandler = looper.getHandler();
     }
 
+    public WifiP2pManager.Channel getChannel() {
+        return channel;
+    }
 
 
     /* appends a packet to the queue */

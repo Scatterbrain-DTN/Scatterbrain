@@ -1,11 +1,14 @@
 package net.ballmerlabs.scatterbrain.network.wifidirect;
 
 import android.app.Activity;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.provider.Settings;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
 import java.util.ArrayList;
 
@@ -18,7 +21,13 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     public final int maxsize = 5;
     private Activity mainActivity;
     private TextView peersView;
-    public ScatterPeerListener(Activity mainActivity) {
+    private WifiManager manager;
+    private GlobalNet globnet;
+    private WifiP2pManager.Channel channel;
+    public ScatterPeerListener(Activity mainActivity, WifiManager manager, GlobalNet globnet) {
+        this.manager = manager;
+        this.globnet = globnet;
+        this.channel = globnet.getChannel();
         haspeers = false;
         this.mainActivity  =  mainActivity;
         peerstack = new ArrayList<>();
@@ -37,6 +46,10 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
             for(int x=0;x<size-maxsize;x++) {
                     peerstack.remove(0);
             }
+        }
+
+        for(WifiP2pDevice d : peers.getDeviceList()) {
+            manager.connectToPeer(channel, d);
         }
     }
 

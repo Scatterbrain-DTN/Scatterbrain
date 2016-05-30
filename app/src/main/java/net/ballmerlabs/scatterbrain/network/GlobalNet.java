@@ -10,6 +10,7 @@ import android.util.Log;
 
 import net.ballmerlabs.scatterbrain.network.wifidirect.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.AdvertisePacket;
+import net.ballmerlabs.scatterbrain.network.wifidirect.WifiDirectLooper;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiPacket;
 
@@ -31,6 +32,8 @@ public class GlobalNet {
     public WifiManager directmanager;
     private Thread wifiScanThread;
     private WifiP2pDnsSdServiceInfo serviceInfo;
+    private WifiDirectLooper looper;
+
     public final int scanTimeMillis = 5000;
     public final int SERVER_PORT = 8222;
 
@@ -53,6 +56,7 @@ public class GlobalNet {
                 }
             }
         });
+        looper = new WifiDirectLooper(this);
     }
 
 

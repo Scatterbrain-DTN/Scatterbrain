@@ -54,6 +54,10 @@ public class WifiManager extends BroadcastReceiver {
         peerlistener = new ScatterPeerListener(mainActivity, this, globnet);
     }
 
+    public WifiP2pManager.Channel getChannel() {
+        return chan;
+    }
+
     /* handling if scan succeeded or failed. Does nothing with peers */
     public void registerScanActionListener(WifiP2pManager.ActionListener scan) {
         this.scanlistener = scan;

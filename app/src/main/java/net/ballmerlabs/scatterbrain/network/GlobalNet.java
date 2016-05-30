@@ -47,6 +47,7 @@ public class GlobalNet {
         runScanThread = false;
         looper = new WifiDirectLooper(this);
         wifiHandler = looper.getHandler();
+        channel = directmanager.getChannel();
     }
 
     public WifiP2pManager.Channel getChannel() {

@@ -15,12 +15,12 @@ import java.util.ArrayList;
 /**
  * Class to send text/sms messages over scatterbrain wifi p2p
  */
-public class MessagingAsyncTask extends WifiAsyncTask {
+public class ServerAsyncTask extends WifiAsyncTask {
 
     public final int SERVERPORT = 8222;
-    public final String TAG = "MessagingAsyncTask";
+    public final String TAG = "ServerAsyncTask";
 
-    public MessagingAsyncTask(Context context, ArrayAdapter<String> messageList) {
+    public ServerAsyncTask(Context context, ArrayAdapter<String> messageList) {
         super(context);
     }
 

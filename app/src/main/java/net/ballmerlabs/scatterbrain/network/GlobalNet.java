@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
@@ -30,9 +31,10 @@ public class GlobalNet {
     private WifiP2pManager.Channel channel;
     private BroadcastReceiver p2preceiver;
     public WifiManager directmanager;
-    private Thread wifiScanThread;
     private WifiP2pDnsSdServiceInfo serviceInfo;
     private WifiDirectLooper looper;
+    private final Handler wifiHandler;
+    private boolean runScanThread;
 
     public final int scanTimeMillis = 5000;
     public final int SERVER_PORT = 8222;
@@ -42,21 +44,9 @@ public class GlobalNet {
         main = mainActivity;
         prof = me;
         directmanager = new WifiManager(main, this);
-        wifiScanThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while(true) {
-                        directmanager.scan();
-                        Thread.sleep(scanTimeMillis);
-                    }
-                }
-                catch(InterruptedException e) {
-                    Log.e(TAG, "Caught InterruptedException in wifi update thread");
-                }
-            }
-        });
+        runScanThread = false;
         looper = new WifiDirectLooper(this);
+        wifiHandler = looper.getHandler();
     }
 
 
@@ -167,11 +157,23 @@ public class GlobalNet {
         return new BlockDataPacket(in);
     }
 
-    public void startWifiDirectLoopThread() {
-        wifiScanThread.start();
+    public void startWifiDirctLoopThread() {
+        Log.v(TAG, "Starting wifi direct scan thread");
+        runScanThread = true;
+        Runnable scanr = new Runnable() {
+            @Override
+            public void run() {
+                    directmanager.scan();
+                    if(runScanThread)
+                        wifiHandler.postDelayed(this,scanTimeMillis);
+                    else
+                        Log.v(TAG, "Stopping wifi direct scan thread");
+            }
+        };
+        wifiHandler.postDelayed(scanr, 1000);
     }
 
     public void stopWifiDirectLoopThread() {
-        wifiScanThread.stop();
+        runScanThread = false;
     }
 }

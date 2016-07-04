@@ -17,6 +17,7 @@ public class WifiDirectLooper extends Thread {
     public WifiDirectLooper(GlobalNet globnet) {
         super();
         this.globnet = globnet;
+        handler = new Handler();
     }
 
     public Handler getHandler() {

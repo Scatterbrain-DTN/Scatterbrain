@@ -5,6 +5,7 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.R;
@@ -24,6 +25,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     private WifiManager manager;
     private GlobalNet globnet;
     private WifiP2pManager.Channel channel;
+    private final String TAG = "PeerListener";
     public ScatterPeerListener(Activity mainActivity, WifiManager manager, GlobalNet globnet) {
         this.manager = manager;
         this.globnet = globnet;
@@ -37,6 +39,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peers) {
+        Log.v(TAG, "Found peers!");
         haspeers = true;
         peerstack.add(peers);
         peersView.setText(dumpStack());

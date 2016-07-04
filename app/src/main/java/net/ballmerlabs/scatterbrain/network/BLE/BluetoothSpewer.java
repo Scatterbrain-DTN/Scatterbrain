@@ -127,7 +127,6 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
                     //gui element manimulating ommitted
                     //textViewToChange.setText(oldText + subMessage.substring(0, subMessage.length() - 1) + (enter ? "\n" : ""))
 
-                    net.appendPacket(decodePacket(subMessage.getBytes()));
 
                     ui = ui == 2 ? -1 : ui;
                     ui ++;

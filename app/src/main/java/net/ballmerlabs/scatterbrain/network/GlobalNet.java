@@ -3,12 +3,14 @@ package net.ballmerlabs.scatterbrain.network;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.wifidirect.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiDirectLooper;
@@ -33,8 +35,12 @@ public class GlobalNet {
     public WifiManager directmanager;
     private WifiP2pDnsSdServiceInfo serviceInfo;
     private WifiDirectLooper looper;
-    private final Handler wifiHandler;
+    private Handler wifiHandler;
     private boolean runScanThread;
+
+    //used for service discovery
+    final HashMap<String, String> buddies = new HashMap<String, String>();
+
 
     public final int scanTimeMillis = 5000;
     public final int SERVER_PORT = 8222;
@@ -48,6 +54,7 @@ public class GlobalNet {
         looper = new WifiDirectLooper(this);
         wifiHandler = looper.getHandler();
         channel = directmanager.getChannel();
+        manager = directmanager.getManager();
     }
 
     public WifiP2pManager.Channel getChannel() {
@@ -74,6 +81,17 @@ public class GlobalNet {
      * Registers a service for autodiscovery
      */
     public void registerService(DeviceProfile profile) {
+
+        Map record = new HashMap<>();
+        record.put("listenport", String.valueOf(SERVER_PORT));
+        record.put("protocolVersion", "0"); //TODO: add actual version
+        record.put("deviceType", profile.getType().toString());
+        record.put("mobileStatus", profile.getStatus().toString());
+        record.put("congestion", String.valueOf(profile.getCongestion()));
+        record.put("hwServices", profile.getServices().toString());
+
+        WifiP2pDnsSdServiceInfo serviceInfo =
+                WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp",record);
         manager.removeLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -85,16 +103,6 @@ public class GlobalNet {
                 Log.e(TAG, "Failed to deregister discovery service");
             }
         });
-        Map record = new HashMap<>();
-        record.put("listenport", String.valueOf(SERVER_PORT));
-        record.put("protocolVersion", "0"); //TODO: add actual version
-        record.put("deviceType", profile.getType().toString());
-        record.put("mobileStatus", profile.getStatus().toString());
-        record.put("congestion", String.valueOf(profile.getCongestion()));
-        record.put("hwServices", profile.getServices().toString());
-
-        WifiP2pDnsSdServiceInfo serviceInfo =
-                WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp",record);
         manager.addLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -103,10 +111,74 @@ public class GlobalNet {
 
             @Override
             public void onFailure(int reason) {
-                Log.e(TAG, "Failed to register Scatterbrain discovery service: + " + reason );
+                String reason_s;
+                switch(reason) {
+                    case WifiP2pManager.P2P_UNSUPPORTED:
+                        reason_s = "P2P_UNSUPPORTED";
+                        break;
+                    case WifiP2pManager.BUSY:
+                        reason_s = "P2P_BUSY";
+                        break;
+                    case WifiP2pManager.ERROR:
+                        reason_s = "P2P_ERROR";
+                        break;
+                    default:
+                        reason_s = "HUH?";
+                        break;
+                }
+                Log.e(TAG, "Failed to register Scatterbrain discovery service: " + reason_s );
             }
         });
     }
+
+    /* discovers nearby scatterbrain devices */
+    public void discoverServices() {
+        WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
+            @Override
+        /* Callback includes:
+         * fullDomain: full domain name: e.g "printer._ipp._tcp.local."
+         * record: TXT record dta as a map of key/value pairs.
+         * device: The device running the advertised service.
+         */
+
+            public void onDnsSdTxtRecordAvailable(
+                    String fullDomain, Map record, WifiP2pDevice device) {
+                Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
+                buddies.put(device.deviceAddress, (String)record.get("buddyname"));
+            }
+        };
+
+        WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
+            @Override
+            public void onDnsSdServiceAvailable(String instanceName, String registrationType,
+                                                WifiP2pDevice resourceType) {
+
+                // Update the device name with the human-friendly version from
+                // the DnsTxtRecord, assuming one arrived.
+                resourceType.deviceName = buddies
+                        .containsKey(resourceType.deviceAddress) ? buddies
+                        .get(resourceType.deviceAddress) : resourceType.deviceName;
+
+                // Add to the custom adapter defined specifically for showing
+                // wifi devices.
+                WiFiDirectServicesList fragment = (WiFiDirectServicesList) getFragmentManager()
+                        .findFragmentById(R.id.frag_peerlist);
+                WiFiDevicesAdapter adapter = ((WiFiDevicesAdapter) fragment
+                        .getListAdapter());
+
+                adapter.add(resourceType);
+                adapter.notifyDataSetChanged();
+                Log.d(TAG, "onBonjourServiceAvailable " + instanceName);
+            }
+        };
+
+        manager.setDnsSdResponseListeners(channel, servListener, txtListener);
+
+
+
+
+    }
+
 
     public BroadcastReceiver getP2preceiver() {
         return p2preceiver;
@@ -164,17 +236,19 @@ public class GlobalNet {
     public void startWifiDirctLoopThread() {
         Log.v(TAG, "Starting wifi direct scan thread");
         runScanThread = true;
+        final Handler wifiHan =looper.getHandler();
         Runnable scanr = new Runnable() {
             @Override
             public void run() {
                     directmanager.scan();
+                    Log.v(TAG, "Scanning...");
                     if(runScanThread)
-                        wifiHandler.postDelayed(this,scanTimeMillis);
+                        wifiHan.postDelayed(this,scanTimeMillis);
                     else
                         Log.v(TAG, "Stopping wifi direct scan thread");
             }
         };
-        wifiHandler.postDelayed(scanr, 1000);
+        wifiHan.postDelayed(scanr, 1000);
     }
 
     public void stopWifiDirectLoopThread() {

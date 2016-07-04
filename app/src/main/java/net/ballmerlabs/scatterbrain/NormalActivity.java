@@ -40,7 +40,8 @@ public class NormalActivity extends AppCompatActivity {
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
         globnet = new GlobalNet(this, profile);
 
-        globnet.startWifiDirectLoopThread();
+        globnet.registerService(profile);
+        globnet.startWifiDirctLoopThread();
 
 
 
@@ -58,7 +59,7 @@ public class NormalActivity extends AppCompatActivity {
     private void updateList() {
         Messages.add(MsgBox.getText().toString());
         BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
-        globnet.sendPacket(bd);
+
         MsgBox.setText("");
 
     }

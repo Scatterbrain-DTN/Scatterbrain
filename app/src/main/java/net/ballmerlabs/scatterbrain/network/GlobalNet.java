@@ -93,7 +93,7 @@ public class GlobalNet {
         record.put("hwServices", profile.getServices().toString());
 
         WifiP2pDnsSdServiceInfo serviceInfo =
-                WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp",record);
+                WifiP2pDnsSdServiceInfo.newInstance("_ScatterBrain", "_presence._tcp",record);
         manager.removeLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -170,8 +170,21 @@ public class GlobalNet {
         };
 
         manager.setDnsSdResponseListeners(channel, servListener, txtListener);
-        
 
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        manager.addServiceRequest(channel,
+                serviceRequest,
+                new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+
+                    }
+                });
     }
 
 
@@ -237,6 +250,20 @@ public class GlobalNet {
             public void run() {
 
                     directmanager.scan();
+                    manager.discoverServices(channel, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            Log.v(TAG, "Discovered a service. Senpai noticed you!");
+                        }
+
+                        @Override
+                        public void onFailure(int reason) {
+                            Log.e(TAG,"failed to discover service");
+                            if(reason == WifiP2pManager.P2P_UNSUPPORTED) {
+                                Log.e(TAG, "P2P not supported");
+                            }
+                        }
+                    });
                     Log.v(TAG, "Scanning...");
                     if(runScanThread)
                         wifiHan.postDelayed(this,scanTimeMillis);

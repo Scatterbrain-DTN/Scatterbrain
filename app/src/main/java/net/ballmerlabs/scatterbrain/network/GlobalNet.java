@@ -249,7 +249,8 @@ public class GlobalNet {
             @Override
             public void run() {
 
-                    directmanager.scan();
+                    //directmanager.scan();
+                    discoverServices();
                     manager.discoverServices(channel, new WifiP2pManager.ActionListener() {
                         @Override
                         public void onSuccess() {
@@ -258,9 +259,20 @@ public class GlobalNet {
 
                         @Override
                         public void onFailure(int reason) {
-                            Log.e(TAG,"failed to discover service");
                             if(reason == WifiP2pManager.P2P_UNSUPPORTED) {
                                 Log.e(TAG, "P2P not supported");
+                            }
+                            else if(reason == WifiP2pManager.ERROR) {
+                                Log.e(TAG, "Service discovery failed, internal error");
+                            }
+                            else if(reason == WifiP2pManager.BUSY) {
+                                Log.e(TAG, "Service discovery failed, busy");
+                            }
+                            else if(reason == WifiP2pManager.NO_SERVICE_REQUESTS) {
+                                Log.e(TAG, "Service discovery failed, no service requests");
+                            }
+                            else {
+                                Log.e(TAG, "Discovery failed with code " + reason);
                             }
                         }
                     });

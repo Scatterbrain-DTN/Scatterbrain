@@ -33,7 +33,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
         haspeers = false;
         this.mainActivity  =  mainActivity;
         peerstack = new ArrayList<>();
-       peersView = (TextView) mainActivity.findViewById(R.id.PeersView);
+
 
     }
 

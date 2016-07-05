@@ -6,9 +6,11 @@ import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.wifidirect.BlockDataPacket;
@@ -161,21 +163,14 @@ public class GlobalNet {
 
                 // Add to the custom adapter defined specifically for showing
                 // wifi devices.
-                WiFiDirectServicesList fragment = (WiFiDirectServicesList) getFragmentManager()
-                        .findFragmentById(R.id.frag_peerlist);
-                WiFiDevicesAdapter adapter = ((WiFiDevicesAdapter) fragment
-                        .getListAdapter());
-
-                adapter.add(resourceType);
-                adapter.notifyDataSetChanged();
+               TextView peersView = (TextView) main.findViewById(R.id.PeersView);
+                peersView.setText("Senpai noticed you!!");
                 Log.d(TAG, "onBonjourServiceAvailable " + instanceName);
             }
         };
 
         manager.setDnsSdResponseListeners(channel, servListener, txtListener);
-
-
-
+        
 
     }
 
@@ -240,6 +235,7 @@ public class GlobalNet {
         Runnable scanr = new Runnable() {
             @Override
             public void run() {
+
                     directmanager.scan();
                     Log.v(TAG, "Scanning...");
                     if(runScanThread)

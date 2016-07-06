@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain.network;
+package net.ballmerlabs.scatterbrain;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

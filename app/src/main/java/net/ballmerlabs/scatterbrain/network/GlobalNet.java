@@ -94,6 +94,8 @@ public class GlobalNet {
 
         WifiP2pDnsSdServiceInfo serviceInfo =
                 WifiP2pDnsSdServiceInfo.newInstance("_ScatterBrain", "_presence._tcp",record);
+
+        /*
         manager.removeLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -105,6 +107,7 @@ public class GlobalNet {
                 Log.e(TAG, "Failed to deregister discovery service");
             }
         });
+        */
         manager.addLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -146,7 +149,12 @@ public class GlobalNet {
             public void onDnsSdTxtRecordAvailable(
                     String fullDomain, Map record, WifiP2pDevice device) {
                 Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-                buddies.put(device.deviceAddress, (String)record.get("buddyname"));
+                //buddies.put(device.deviceAddress, (String)record.get("buddyname"));
+
+                // Add to the custom adapter defined specifically for showing
+                // wifi devices.
+                TextView peersView = (TextView) main.findViewById(R.id.PeersView);
+                peersView.setText("Senpai noticed you!!");
             }
         };
 
@@ -182,9 +190,37 @@ public class GlobalNet {
 
                     @Override
                     public void onFailure(int reason) {
-
+                            Log.e(TAG, "Failed to add servicerequest");
                     }
                 });
+
+        manager.discoverServices(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                //Log.v(TAG, "Discovered a service. Senpai noticed you!");
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                if(reason == WifiP2pManager.P2P_UNSUPPORTED) {
+                    Log.e(TAG, "P2P not supported");
+                }
+                else if(reason == WifiP2pManager.ERROR) {
+                    Log.e(TAG, "Service discovery failed, internal error");
+                }
+                else if(reason == WifiP2pManager.BUSY) {
+                    Log.e(TAG, "Service discovery failed, busy");
+                }
+                else if(reason == WifiP2pManager.NO_SERVICE_REQUESTS) {
+                    Log.e(TAG, "Service discovery failed, no service requests");
+                }
+                else {
+                    Log.e(TAG, "Discovery failed with code " + reason);
+                }
+            }
+        });
+
+
     }
 
 
@@ -245,37 +281,14 @@ public class GlobalNet {
         Log.v(TAG, "Starting wifi direct scan thread");
         runScanThread = true;
         final Handler wifiHan =looper.getHandler();
+        registerService(prof);
         Runnable scanr = new Runnable() {
             @Override
             public void run() {
 
                     //directmanager.scan();
+                  //
                     discoverServices();
-                    manager.discoverServices(channel, new WifiP2pManager.ActionListener() {
-                        @Override
-                        public void onSuccess() {
-                            Log.v(TAG, "Discovered a service. Senpai noticed you!");
-                        }
-
-                        @Override
-                        public void onFailure(int reason) {
-                            if(reason == WifiP2pManager.P2P_UNSUPPORTED) {
-                                Log.e(TAG, "P2P not supported");
-                            }
-                            else if(reason == WifiP2pManager.ERROR) {
-                                Log.e(TAG, "Service discovery failed, internal error");
-                            }
-                            else if(reason == WifiP2pManager.BUSY) {
-                                Log.e(TAG, "Service discovery failed, busy");
-                            }
-                            else if(reason == WifiP2pManager.NO_SERVICE_REQUESTS) {
-                                Log.e(TAG, "Service discovery failed, no service requests");
-                            }
-                            else {
-                                Log.e(TAG, "Discovery failed with code " + reason);
-                            }
-                        }
-                    });
                     Log.v(TAG, "Scanning...");
                     if(runScanThread)
                         wifiHan.postDelayed(this,scanTimeMillis);

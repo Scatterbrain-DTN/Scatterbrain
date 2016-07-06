@@ -40,7 +40,7 @@ public class NormalActivity extends AppCompatActivity {
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
         globnet = new GlobalNet(this, profile);
 
-        globnet.registerService(profile);
+        //globnet.registerService(profile);
         globnet.startWifiDirctLoopThread();
 
 

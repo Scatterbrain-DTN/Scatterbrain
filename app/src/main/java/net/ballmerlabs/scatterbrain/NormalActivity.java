@@ -55,7 +55,7 @@ public class NormalActivity extends AppCompatActivity {
     //adds a message to the list and clears the input field
     private void updateList() {
         Messages.add(MsgBox.getText().toString());
-       //\ BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
+       // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
         MsgBox.setText("");
 
@@ -68,6 +68,7 @@ public class NormalActivity extends AppCompatActivity {
         if(globnet.getP2preceiver() != null &&
                 globnet.getP2pIntentFilter() != null)
             this.registerReceiver(globnet.getP2preceiver(), globnet.getP2pIntentFilter());
+        globnet.startWifiDirctLoopThread();
     }
 
     @Override
@@ -76,6 +77,8 @@ public class NormalActivity extends AppCompatActivity {
         super.onPause();
         if(globnet.getP2preceiver() != null)
             this.unregisterReceiver(globnet.getP2preceiver());
+
+        globnet.stopWifiDirectLoopThread();
     }
 
     public void addMessage(String message) {

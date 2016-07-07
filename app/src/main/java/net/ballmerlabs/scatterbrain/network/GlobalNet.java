@@ -40,6 +40,9 @@ public class GlobalNet {
     private Handler wifiHandler;
     private boolean runScanThread;
 
+    //scan loop thread handler
+    public  Handler wifiHan;
+
     //used for service discovery
     final HashMap<String, String> buddies = new HashMap<String, String>();
 
@@ -280,7 +283,7 @@ public class GlobalNet {
     public void startWifiDirctLoopThread() {
         Log.v(TAG, "Starting wifi direct scan thread");
         runScanThread = true;
-        final Handler wifiHan =looper.getHandler();
+        wifiHan =looper.getHandler();
         registerService(prof);
         Runnable scanr = new Runnable() {
             @Override
@@ -300,6 +303,6 @@ public class GlobalNet {
     }
 
     public void stopWifiDirectLoopThread() {
-        runScanThread = false;
+            runScanThread = false;
     }
 }

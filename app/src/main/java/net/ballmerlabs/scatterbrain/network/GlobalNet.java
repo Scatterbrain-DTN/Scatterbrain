@@ -87,13 +87,13 @@ public class GlobalNet {
         Map record = new HashMap<>();
         record.put("listenport", String.valueOf(SERVER_PORT));
         record.put("protocolVersion", "0"); //TODO: add actual version
-        record.put("deviceType", profile.getType().toString());
-        record.put("mobileStatus", profile.getStatus().toString());
-        record.put("congestion", String.valueOf(profile.getCongestion()));
-        record.put("hwServices", profile.getServices().toString());
+        //record.put("deviceType", profile.getType().toString());
+        //record.put("mobileStatus", profile.getStatus().toString());
+        //record.put("congestion", String.valueOf(profile.getCongestion()));
+        //record.put("hwServices", profile.getServices().toString());
 
         WifiP2pDnsSdServiceInfo serviceInfo =
-                WifiP2pDnsSdServiceInfo.newInstance("_ScatterBrain", "_presence._tcp",record);
+                WifiP2pDnsSdServiceInfo.newInstance("_Scatterbrain", "_presence._tcp",record);
 
         /*
         manager.removeLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
@@ -185,7 +185,7 @@ public class GlobalNet {
                 new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
-
+                        Log.v(TAG, "Suggesfully added a servicerequest");
                     }
 
                     @Override
@@ -285,10 +285,10 @@ public class GlobalNet {
         Runnable scanr = new Runnable() {
             @Override
             public void run() {
-
-                    //directmanager.scan();
+                //directmanager.scan();
                   //
-                    discoverServices();
+
+                discoverServices();
                     Log.v(TAG, "Scanning...");
                     if(runScanThread)
                         wifiHan.postDelayed(this,scanTimeMillis);

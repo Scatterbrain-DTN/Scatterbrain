@@ -6,6 +6,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".SearchForSenpai">
 
+
     <TextView android:text="@string/hello_world" android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
@@ -37,3 +38,4 @@
         android:visibility="invisible" />
 
 </RelativeLayout>
+

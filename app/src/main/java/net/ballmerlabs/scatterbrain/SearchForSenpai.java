@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,6 +27,7 @@ public class SearchForSenpai extends AppCompatActivity {
         setContentView(R.layout.activity_search_for_senpai);
         progress = (ProgressBar) findViewById(R.id.progressBar);
         progress.setProgress(0);
+
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
         trunk = new MainTrunk(this);
@@ -40,6 +42,11 @@ public class SearchForSenpai extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search_for_senpai, menu);
         return true;
+    }
+
+    public void launchSettings(MenuItem item) {
+        Intent intent = new Intent(this,SettingsActivity.class);
+        startActivity(intent);
     }
 
     @Override

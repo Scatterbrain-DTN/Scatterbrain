@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
@@ -26,12 +27,12 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     private GlobalNet globnet;
     private WifiP2pManager.Channel channel;
     private final String TAG = "PeerListener";
-    public ScatterPeerListener(Activity mainActivity, WifiManager manager, GlobalNet globnet) {
-        this.manager = manager;
-        this.globnet = globnet;
-        this.channel = globnet.getChannel();
+    public ScatterPeerListener(MainTrunk trunk) {
+        this.manager = trunk.globnet.getWifiManager();
+        this.globnet = trunk.globnet;
+        this.channel = globnet.getWifiManager().getChannel();
         haspeers = false;
-        this.mainActivity  =  mainActivity;
+        this.mainActivity  =  trunk.mainActivity;
         peerstack = new ArrayList<>();
 
 

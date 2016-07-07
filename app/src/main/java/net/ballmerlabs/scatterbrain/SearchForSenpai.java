@@ -9,15 +9,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetworkCallback;
 import net.ballmerlabs.scatterbrain.network.NetworkManager;
 
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
-    private NetworkManager net;
-    private NetworkCallback foundRun;
     private TextView senpai_notice;
-    private final int PORT = 3000;
+    private MainTrunk trunk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,20 +28,7 @@ public class SearchForSenpai extends AppCompatActivity {
         progress.setProgress(0);
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
-        foundRun = new NetworkCallback() {
-            @Override
-            public void run(String tmp) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        senpai_notice.setVisibility(View.VISIBLE);
-                    }
-                });
-            }
-        };
-        net = new NetworkManager(super.getApplicationContext(), PORT, foundRun);
-
-
+        trunk = new MainTrunk(this);
     }
 
     public void setNoticeVisibility() {
@@ -71,27 +58,27 @@ public class SearchForSenpai extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if(net != null) {
-            net.tearDown();
-        }
+    protected void onResume() {
+        // trunk.globnet.startWifiDirectLoopThread();
+        super.onResume();
+        if(trunk.globnet.getWifiManager().getP2preceiver() != null &&
+                trunk.globnet.getP2pIntentFilter() != null)
+            this.registerReceiver(trunk.globnet.getWifiManager().getP2preceiver(), trunk.globnet.getP2pIntentFilter());
+        trunk.globnet.getWifiManager().startWifiDirctLoopThread();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        net.init();
-        if(net != null) {
-            //net.register(PORT);
-            net.discoverServices();
-        }
-    }
+    protected void onPause() {
+        //trunk.trunk.globnet.stopWifiDirectLoopThread();
+        super.onPause();
+        if(trunk.globnet.getWifiManager().getP2preceiver() != null)
+            this.unregisterReceiver(trunk.globnet.getWifiManager().getP2preceiver());
 
+        trunk.globnet.getWifiManager().stopWifiDirectLoopThread();
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        net.tearDown();
     }
 }

@@ -21,6 +21,7 @@ public class NormalActivity extends AppCompatActivity {
     private GlobalNet globnet;
     private DeviceProfile profile;
     private TextView peersView;
+    private MainTrunk trunk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +34,6 @@ public class NormalActivity extends AppCompatActivity {
         Messages = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         messageTimeline.setAdapter(Messages);
 
-        profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
-                DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
-        globnet = new GlobalNet(this, profile);
-
-        //globnet.registerService(profile);
-        globnet.startWifiDirctLoopThread();
-
-
-
         //messagebox handeling
         sendButton = (Button) this.findViewById(R.id.send);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +42,8 @@ public class NormalActivity extends AppCompatActivity {
                 updateList();
             }
         });
+
+        trunk = new MainTrunk(this);
     }
 
     //adds a message to the list and clears the input field
@@ -61,24 +55,25 @@ public class NormalActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onResume() {
-       // globnet.startWifiDirectLoopThread();
+        // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
-        if(globnet.getP2preceiver() != null &&
-                globnet.getP2pIntentFilter() != null)
-            this.registerReceiver(globnet.getP2preceiver(), globnet.getP2pIntentFilter());
-        globnet.startWifiDirctLoopThread();
+        if(trunk.globnet.getWifiManager().getP2preceiver() != null &&
+                trunk.globnet.getP2pIntentFilter() != null)
+            this.registerReceiver(trunk.globnet.getWifiManager().getP2preceiver(), trunk.globnet.getP2pIntentFilter());
+        trunk.globnet.getWifiManager().startWifiDirctLoopThread();
     }
 
     @Override
     protected void onPause() {
-        //globnet.stopWifiDirectLoopThread();
+        //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
-        if(globnet.getP2preceiver() != null)
-            this.unregisterReceiver(globnet.getP2preceiver());
+        if(trunk.globnet.getWifiManager().getP2preceiver() != null)
+            this.unregisterReceiver(trunk.globnet.getWifiManager().getP2preceiver());
 
-        globnet.stopWifiDirectLoopThread();
+        trunk.globnet.getWifiManager().stopWifiDirectLoopThread();
     }
 
     public void addMessage(String message) {

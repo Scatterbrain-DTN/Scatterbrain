@@ -1,7 +1,5 @@
 package net.ballmerlabs.scatterbrain;
 
-import android.content.BroadcastReceiver;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +9,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.network.BLE.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
@@ -58,7 +55,7 @@ public class NormalActivity extends AppCompatActivity {
     //adds a message to the list and clears the input field
     private void updateList() {
         Messages.add(MsgBox.getText().toString());
-        BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
+       //\ BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
         MsgBox.setText("");
 

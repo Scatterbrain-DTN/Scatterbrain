@@ -9,12 +9,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.R;
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
-import net.ballmerlabs.scatterbrain.network.GlobalNet;
-import net.ballmerlabs.scatterbrain.network.NetworkCallback;
-import net.ballmerlabs.scatterbrain.network.NetworkManager;
-
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
     private TextView senpai_notice;
@@ -47,6 +41,10 @@ public class SearchForSenpai extends AppCompatActivity {
     public void launchSettings(MenuItem item) {
         Intent intent = new Intent(this,SettingsActivity.class);
         startActivity(intent);
+    }
+
+    public void resetText(MenuItem item) {
+        senpai_notice.setVisibility(View.INVISIBLE);
     }
 
     @Override

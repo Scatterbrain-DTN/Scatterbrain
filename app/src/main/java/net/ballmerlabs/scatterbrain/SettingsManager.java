@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public class SettingsManager {
     public DeviceProfile profile;
-    public int scanTimeMillis = 5000;
+    public int scanTimeMillis = 10001;
     public int SERVER_PORT = 8222;
 
     public SettingsManager() {

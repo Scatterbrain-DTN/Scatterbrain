@@ -7,12 +7,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
     private TextView senpai_notice;
     private MainTrunk trunk;
+    private SeekBar scanFrequencyBar;
+    private TextView scanFrequencyText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +31,35 @@ public class SearchForSenpai extends AppCompatActivity {
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
         trunk = new MainTrunk(this);
+
+        scanFrequencyText = (TextView) findViewById(R.id.scanTimeText);
+
+        scanFrequencyBar = (SeekBar) findViewById(R.id.scanTimeSlider);
+        scanFrequencyBar.setProgress(50);
+        Integer i = ((50000-500)/50)+500;
+        scanFrequencyText.setText(i.toString() + "ms");
+        trunk.settings.scanTimeMillis = i;
+        scanFrequencyBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    Integer i = progress * ((50000-500)/100)+500;
+                    scanFrequencyText.setText(i.toString()+"ms");
+                    trunk.settings.scanTimeMillis = i;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                trunk.globnet.getWifiManager().stopWifiDirectLoopThread();
+                trunk.globnet.getWifiManager().startWifiDirctLoopThread();
+            }
+        });
+
+
     }
 
     public void setNoticeVisibility() {

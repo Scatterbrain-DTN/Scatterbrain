@@ -15,7 +15,7 @@
         android:textAlignment="center"
         android:autoText="false"
         android:gravity="center"
-        android:textSize="50dp" />
+        android:textSize="20dp" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
@@ -57,6 +57,27 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/scanTimeSlider" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/scanning"
+        android:id="@+id/scanningText"
+        android:layout_above="@+id/scanTimeSlider"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ProgressBar
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scanningViz"
+        android:layout_above="@+id/scanTimeSlider"
+        android:layout_toRightOf="@+id/scanningText"
+        android:layout_alignRight="@+id/scanTimeText"
+        android:layout_alignEnd="@+id/scanTimeText"
+        android:layout_alignTop="@+id/scanningText" />
 
 </RelativeLayout>
 

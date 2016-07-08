@@ -18,6 +18,8 @@ public class SearchForSenpai extends AppCompatActivity {
     private MainTrunk trunk;
     private SeekBar scanFrequencyBar;
     private TextView scanFrequencyText;
+    private ProgressBar scanningViz;
+    private Thread scanningvUpdateThread;
 
 
     @Override
@@ -59,6 +61,26 @@ public class SearchForSenpai extends AppCompatActivity {
             }
         });
 
+        scanningViz = (ProgressBar) findViewById(R.id.scanningViz);
+
+         scanningvUpdateThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    for(int x=0;x<100;x++) {
+                        scanningViz.setProgress(x);
+                        try {
+                            Thread.sleep(trunk.settings.scanTimeMillis/1000);
+                        }
+                        catch(Exception e) {
+
+                        }
+                    }
+                }
+            }
+        });
+
+        scanningvUpdateThread.start();
 
     }
 

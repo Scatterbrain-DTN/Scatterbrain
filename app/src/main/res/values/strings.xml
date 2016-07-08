@@ -12,6 +12,8 @@
 
     <string name="action_settings">Settings</string>
 
+    <string name="scanning">Scanning: </string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_search_for_senpai">Search For Senpai</string>
@@ -32,6 +34,7 @@
     <string name="pref_default_display_name">...</string>
 
     <string name="pref_title_add_friends_to_messages">Placeholder radio button</string>
+    <string name="backgroundservice" >Background Service</string>
     <string-array name="pref_example_list_titles">
         <item>Yes</item>
         <item>No</item>

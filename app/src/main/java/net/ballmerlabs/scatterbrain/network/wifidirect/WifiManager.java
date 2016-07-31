@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -277,6 +278,29 @@ public class WifiManager extends BroadcastReceiver {
         });
     }
 
+    public void connectToDevice(WifiP2pDevice dev) {
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = dev.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+
+        manager.connect(channel, config, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                //this gets broadcast to WifiDirectBroadcastReceiver
+                //here
+                TextView senpai_notice = (TextView) mainActivity.findViewById(R.id.notice_text);
+                senpai_notice.setVisibility(View.VISIBLE);
+                senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Log.e(TAG, "Failed to connect to wifidirect device");
+            }
+        });
+    }
+
+
     /* discovers nearby scatterbrain devices */
     public void discoverServices() {
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
@@ -295,9 +319,14 @@ public class WifiManager extends BroadcastReceiver {
                 // Add to the custom adapter defined specifically for showing
                 // wifi devices
 
+
+
+
                 //here
                 TextView senpai_notice = (TextView) mainActivity.findViewById(R.id.notice_text);
                 senpai_notice.setVisibility(View.VISIBLE);
+
+                connectToDevice(device);
             }
         };
 

@@ -23,7 +23,7 @@ public class MainTrunk {
     public MainTrunk(Activity main) {
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
-        blman = new ScatterBluetoothManager();
+        blman = new ScatterBluetoothManager(this);
         globnet = new GlobalNet(main, this);
         settings = new SettingsManager();
         mainActivity = main;

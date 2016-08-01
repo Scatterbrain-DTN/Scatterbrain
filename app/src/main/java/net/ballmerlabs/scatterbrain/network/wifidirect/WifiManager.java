@@ -135,7 +135,6 @@ public class WifiManager extends BroadcastReceiver {
                     Log.v(TAG, "Stopping wifi direct scan thread");
             }
         };
-        wifiHan.postDelayed(scanr, 5000);
     }
 
     public void stopWifiDirectLoopThread() {

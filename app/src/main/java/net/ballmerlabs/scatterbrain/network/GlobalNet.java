@@ -46,6 +46,7 @@ public class GlobalNet {
         this.trunk = trunk;
         directmanager = new WifiManager(main, trunk);
         //peerlistener = new ScatterPeerListener(trunk);
+        directmanager.stopWifiDirectLoopThread();
 
     }
 

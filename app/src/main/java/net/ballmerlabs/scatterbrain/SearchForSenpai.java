@@ -38,8 +38,7 @@ public class SearchForSenpai extends AppCompatActivity {
         scanFrequencyText = (TextView) findViewById(R.id.scanTimeText);
 
 
-        blman = new ScatterBluetoothManager();
-        blman.init();
+        trunk.blman.init();
         if(!blman.getAdapter().isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent,blman.REQUEST_ENABLE_BT);

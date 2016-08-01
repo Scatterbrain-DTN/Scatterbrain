@@ -21,6 +21,7 @@ public class SearchForSenpai extends AppCompatActivity {
     private MainTrunk trunk;
     private TextView scanFrequencyText;
     private ScatterBluetoothManager blman;
+    private SeekBar scanFrequencyBar;
 
 
     @Override
@@ -37,6 +38,33 @@ public class SearchForSenpai extends AppCompatActivity {
 
         scanFrequencyText = (TextView) findViewById(R.id.scanTimeText);
 
+        scanFrequencyText = (TextView) findViewById(R.id.scanTimeText);
+
+        scanFrequencyBar = (SeekBar) findViewById(R.id.scanTimeSlider);
+        scanFrequencyBar.setProgress(50);
+        Integer i = ((30000-2000)/50)+2000;
+        scanFrequencyText.setText(i.toString() + "ms");
+        trunk.settings.scanTimeMillis = i;
+        scanFrequencyBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Integer i = progress * ((30000-2000)/100)+2000;
+                scanFrequencyText.setText(i.toString()+"ms");
+                trunk.settings.bluetoothScanTimeMillis = i;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                trunk.blman.stopDiscoverLoopThread();
+                trunk.blman.stopDiscoverLoopThread();
+            }
+        });
+
 
         trunk.blman.init();
         if(!trunk.blman.getAdapter().isEnabled()) {
@@ -44,6 +72,7 @@ public class SearchForSenpai extends AppCompatActivity {
             enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(enableAndDiscoverBtIntent);
         }
+
     }
 
     public void setNoticeVisibility() {

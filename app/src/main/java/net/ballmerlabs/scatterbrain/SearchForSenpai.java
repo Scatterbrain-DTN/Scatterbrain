@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,14 +11,16 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
+
 import org.w3c.dom.Text;
 
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
     private TextView senpai_notice;
     private MainTrunk trunk;
-    private SeekBar scanFrequencyBar;
     private TextView scanFrequencyText;
+    private ScatterBluetoothManager blman;
 
 
     @Override
@@ -34,32 +37,13 @@ public class SearchForSenpai extends AppCompatActivity {
 
         scanFrequencyText = (TextView) findViewById(R.id.scanTimeText);
 
-        scanFrequencyBar = (SeekBar) findViewById(R.id.scanTimeSlider);
-        scanFrequencyBar.setProgress(50);
-        Integer i = ((50000-500)/50)+500;
-        scanFrequencyText.setText(i.toString() + "ms");
-        trunk.settings.scanTimeMillis = i;
-        scanFrequencyBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Integer i = progress * ((50000-500)/100)+500;
-                    scanFrequencyText.setText(i.toString()+"ms");
-                    trunk.settings.scanTimeMillis = i;
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                trunk.globnet.getWifiManager().stopWifiDirectLoopThread();
-                trunk.globnet.getWifiManager().startWifiDirctLoopThread();
-            }
-        });
-
-
+        blman = new ScatterBluetoothManager();
+        blman.init();
+        if(!blman.getAdapter().isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent,blman.REQUEST_ENABLE_BT);
+        }
     }
 
     public void setNoticeVisibility() {

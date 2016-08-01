@@ -39,9 +39,10 @@ public class SearchForSenpai extends AppCompatActivity {
 
 
         trunk.blman.init();
-        if(!blman.getAdapter().isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent,blman.REQUEST_ENABLE_BT);
+        if(!trunk.blman.getAdapter().isEnabled()) {
+            Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
+            startActivity(enableAndDiscoverBtIntent);
         }
     }
 

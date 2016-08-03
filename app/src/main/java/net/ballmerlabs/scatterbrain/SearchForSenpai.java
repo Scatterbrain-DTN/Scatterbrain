@@ -61,18 +61,30 @@ public class SearchForSenpai extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 trunk.blman.stopDiscoverLoopThread();
-                trunk.blman.stopDiscoverLoopThread();
+                trunk.blman.startDiscoverLoopThread();
             }
         });
 
-
-        trunk.blman.init();
         if(!trunk.blman.getAdapter().isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, trunk.blman.REQUEST_ENABLE_BT);
+        }
+
+
+
+
+        trunk.blman.startDiscoverLoopThread();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestcode, int resultcode, Intent intenet) {
+        if(requestcode == trunk.blman.REQUEST_ENABLE_BT) {
             Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(enableAndDiscoverBtIntent);
+            trunk.blman.init();
         }
-
     }
 
     public void setNoticeVisibility() {
@@ -114,20 +126,20 @@ public class SearchForSenpai extends AppCompatActivity {
     protected void onResume() {
         // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
-        if(trunk.globnet.getWifiManager().getP2preceiver() != null &&
+        if(trunk.blman.mReceiver != null &&
                 trunk.globnet.getP2pIntentFilter() != null)
-            this.registerReceiver(trunk.globnet.getWifiManager().getP2preceiver(), trunk.globnet.getP2pIntentFilter());
-        trunk.globnet.getWifiManager().startWifiDirctLoopThread();
+            this.registerReceiver(trunk.blman.mReceiver, trunk.blman.filter);
+        trunk.blman.startDiscoverLoopThread();
     }
 
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
-        if(trunk.globnet.getWifiManager().getP2preceiver() != null)
-            this.unregisterReceiver(trunk.globnet.getWifiManager().getP2preceiver());
+        if(trunk.blman.mReceiver != null)
+            this.unregisterReceiver(trunk.blman.mReceiver);
 
-        trunk.globnet.getWifiManager().stopWifiDirectLoopThread();
+        trunk.blman.stopDiscoverLoopThread();
     }
 
     @Override

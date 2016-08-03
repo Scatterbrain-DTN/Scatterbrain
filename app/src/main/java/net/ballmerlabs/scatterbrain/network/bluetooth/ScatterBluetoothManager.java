@@ -31,40 +31,65 @@ public class ScatterBluetoothManager {
     public boolean runScanThread;
     public Handler bluetoothHan;
     public BluetoothLooper looper;
+    public IntentFilter filter;
+    public  Runnable scanr;
+    public ScatterAcceptThread acceptThread;
 
     public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                Log.v(TAG,"Found a bluetooth device!");
+
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 tmpList.add(device);
+                connectToDevice(device);
             }
             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                foundList = tmpList;
+                foundList = (ArrayList<BluetoothDevice>) tmpList.clone();
                 tmpList.clear();
+                //for(BluetoothDevice d : foundList)  {
+
+               // }
+                if(runScanThread)
+                    bluetoothHan.postDelayed(scanr,trunk.settings.bluetoothScanTimeMillis);
+                else
+                    Log.v(TAG, "Stopping wifi direct scan thread");
             }
-            looper = new BluetoothLooper(trunk.globnet);
-            bluetoothHan = new Handler();
-            runScanThread =false;
+
         }
     };
 
-    public ScatterBluetoothManager(MainTrunk trunk) {
-        this.trunk = trunk;
-        foundList = new ArrayList<>();
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        trunk.mainActivity.registerReceiver(mReceiver,filter);
+    //this should return a handler object later
+    public void connectToDevice(BluetoothDevice device) {
+        ScatterConnectThread connthread = new ScatterConnectThread(device, trunk);
+        connthread.run();
     }
 
-    public void init() {
-
+    public ScatterBluetoothManager(MainTrunk trunk) {
+        this.trunk = trunk;
+        looper = new BluetoothLooper(trunk.globnet);
+        bluetoothHan = new Handler();
+        runScanThread =false;
+        foundList = new ArrayList<>();
+        tmpList = new ArrayList<>();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.filter = filter;
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        trunk.mainActivity.registerReceiver(mReceiver,filter);
         adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
             Log.e(TAG, "ERROR, bluetooth not supported");
         }
+    }
 
+    public void init() {
+
+
+
+        acceptThread = new ScatterAcceptThread(trunk,adapter);
+        acceptThread.start();
     }
 
     public BluetoothAdapter getAdapter() {
@@ -75,19 +100,17 @@ public class ScatterBluetoothManager {
         Log.v(TAG, "Starting wifi direct scan thread");
         runScanThread = true;
         bluetoothHan =looper.getHandler();
-        Runnable scanr = new Runnable() {
+        scanr = new Runnable() {
             @Override
             public void run() {
                 //directmanager.scan();
                 //
                 Log.v(TAG, "Scanning...");
+
                 adapter.startDiscovery();
-                if(runScanThread)
-                    bluetoothHan.postDelayed(this,trunk.settings.bluetoothScanTimeMillis);
-                else
-                    Log.v(TAG, "Stopping wifi direct scan thread");
             }
         };
+        bluetoothHan.post(scanr);
     }
 
     public void stopDiscoverLoopThread() {

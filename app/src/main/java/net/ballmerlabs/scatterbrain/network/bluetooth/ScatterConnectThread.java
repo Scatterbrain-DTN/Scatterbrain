@@ -55,15 +55,13 @@ public class ScatterConnectThread extends Thread {
         }
 
         trunk.blman.onSucessfulConnect(mmDevice, mmSocket);
-
+        setSenpai();
         try {
             mmSocket.close();
         }
         catch(IOException e) {
 
         }
-
-
         bleman.startDiscoverLoopThread();
 
     }

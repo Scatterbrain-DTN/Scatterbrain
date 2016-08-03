@@ -5,8 +5,11 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
+import net.ballmerlabs.scatterbrain.R;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -19,6 +22,7 @@ public class ScatterAcceptThread extends Thread {
     private BluetoothServerSocket mmServerSocket = null;
     private MainTrunk trunk;
     public ScatterAcceptThread(MainTrunk trunk, BluetoothAdapter adapter) {
+        trunk.blman.acceptThreadRunning = true;
         this.trunk = trunk;
         BluetoothServerSocket tmp = null;
         try {
@@ -38,13 +42,16 @@ public class ScatterAcceptThread extends Thread {
         while (true) {
             try {
                 socket = mmServerSocket.accept();
+                trunk.blman.isAccepting = true;
                 trunk.blman.onSucessfulAccept(socket);
+                trunk.blman.isAccepting = false;
             } catch (IOException e) {
                 break;
             }
 
 
         }
+        trunk.blman.acceptThreadRunning = false;
     }
 
 
@@ -55,5 +62,6 @@ public class ScatterAcceptThread extends Thread {
 
 
         }
+        trunk.blman.acceptThreadRunning = false;
     }
 }

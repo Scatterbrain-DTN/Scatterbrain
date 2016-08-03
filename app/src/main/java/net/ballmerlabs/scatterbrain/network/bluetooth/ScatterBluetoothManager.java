@@ -39,6 +39,9 @@ public class ScatterBluetoothManager {
     public IntentFilter filter;
     public  Runnable scanr;
     public ScatterAcceptThread acceptThread;
+    public ScatterConnectThread currentconnection;
+    public boolean isAccepting;
+    public boolean acceptThreadRunning;
 
     public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -56,9 +59,9 @@ public class ScatterBluetoothManager {
                 tmpList.clear();
                 //for(BluetoothDevice d : foundList)  {
 
-               // }
-                if(runScanThread)
-                    bluetoothHan.postDelayed(scanr,trunk.settings.bluetoothScanTimeMillis);
+                // }
+                if (runScanThread)
+                    bluetoothHan.postDelayed(scanr, 10000);
                 else
                     Log.v(TAG, "Stopping wifi direct scan thread");
             }
@@ -68,8 +71,10 @@ public class ScatterBluetoothManager {
 
     //this should return a handler object later
     public void connectToDevice(BluetoothDevice device) {
-        ScatterConnectThread connthread = new ScatterConnectThread(device, trunk);
-        connthread.run();
+        if(!isAccepting) {
+            currentconnection = new ScatterConnectThread(device, trunk);
+            currentconnection.run();
+        }
     }
 
     public ScatterBluetoothManager(MainTrunk trunk) {
@@ -87,14 +92,15 @@ public class ScatterBluetoothManager {
         if (adapter == null) {
             Log.e(TAG, "ERROR, bluetooth not supported");
         }
+        isAccepting = false;
+        acceptThreadRunning = false;
     }
 
     public void init() {
-
-
-
-        acceptThread = new ScatterAcceptThread(trunk,adapter);
-        acceptThread.start();
+        if(!acceptThreadRunning) {
+            acceptThread = new ScatterAcceptThread(trunk, adapter);
+            acceptThread.start();
+        }
     }
 
     public BluetoothAdapter getAdapter() {
@@ -119,22 +125,41 @@ public class ScatterBluetoothManager {
     }
 
     public void onSucessfulAccept(BluetoothSocket socket) {
-        try {
-            Thread.sleep(1000);
-            socket.close();
-        }
-        catch(IOException c) {
+         try {
+             trunk.mainActivity.runOnUiThread(new Runnable() {
+                 @Override
+                 public void run() {
+                     TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
+                     senpai_notice.setVisibility(View.VISIBLE);
+                     senpai_notice.setText("Senpai NOTICED YOU! \n and you accepted a connection from senpai!");
 
-        }
-        catch(InterruptedException e) {
+                 }
+             });
+             socket.close();
+         }
+       catch(IOException c) {
 
         }
     }
 
     public void onSucessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
-        TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
-        senpai_notice.setVisibility(View.VISIBLE);
-        senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
+
+        try {
+            trunk.mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
+                    senpai_notice.setVisibility(View.VISIBLE);
+                    senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
+                }
+            });
+
+            socket.close();
+      }
+        catch(IOException e) {
+
+
+       }
     }
 
     public void stopDiscoverLoopThread() {

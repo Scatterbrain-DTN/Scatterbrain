@@ -38,14 +38,11 @@ public class ScatterAcceptThread extends Thread {
         while (true) {
             try {
                 socket = mmServerSocket.accept();
-                Thread.sleep(1000);
-                socket.close();
+                trunk.blman.onSucessfulAccept(socket);
             } catch (IOException e) {
                 break;
             }
-            catch(InterruptedException e) {
 
-            }
 
         }
     }

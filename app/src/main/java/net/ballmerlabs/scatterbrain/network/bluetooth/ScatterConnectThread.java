@@ -54,7 +54,7 @@ public class ScatterConnectThread extends Thread {
             return;
         }
 
-        setSenpai();
+        trunk.blman.onSucessfulConnect(mmDevice, mmSocket);
 
         try {
             mmSocket.close();
@@ -69,8 +69,6 @@ public class ScatterConnectThread extends Thread {
     }
 
     public void setSenpai() {
-        TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
-        senpai_notice.setVisibility(View.VISIBLE);
-        senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
+
     }
 }

@@ -3,16 +3,21 @@ package net.ballmerlabs.scatterbrain.network.bluetooth;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
+import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -111,6 +116,25 @@ public class ScatterBluetoothManager {
             }
         };
         bluetoothHan.post(scanr);
+    }
+
+    public void onSucessfulAccept(BluetoothSocket socket) {
+        try {
+            Thread.sleep(1000);
+            socket.close();
+        }
+        catch(IOException c) {
+
+        }
+        catch(InterruptedException e) {
+
+        }
+    }
+
+    public void onSucessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
+        TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
+        senpai_notice.setVisibility(View.VISIBLE);
+        senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
     }
 
     public void stopDiscoverLoopThread() {

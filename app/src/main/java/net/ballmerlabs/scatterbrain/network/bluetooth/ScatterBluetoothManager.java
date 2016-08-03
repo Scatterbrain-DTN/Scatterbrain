@@ -45,21 +45,32 @@ public class ScatterBluetoothManager {
 
     public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context,final Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 Log.v(TAG,"Found a bluetooth device!");
-
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                tmpList.add(device);
-                connectToDevice(device);
+                Thread devCreateThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        tmpList.add(device);
+                        connectToDevice(device);
+                    }
+                });
+                devCreateThread.start();
             }
             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                foundList = (ArrayList<BluetoothDevice>) tmpList.clone();
-                tmpList.clear();
-                //for(BluetoothDevice d : foundList)  {
+                Thread discoveryFinishedThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        foundList = (ArrayList<BluetoothDevice>) tmpList.clone();
+                        tmpList.clear();
+                        //for(BluetoothDevice d : foundList)  {
 
-                // }
+                        // }
+                    }
+                });
+                discoveryFinishedThread.start();
                 if (runScanThread)
                     bluetoothHan.postDelayed(scanr, 10000);
                 else

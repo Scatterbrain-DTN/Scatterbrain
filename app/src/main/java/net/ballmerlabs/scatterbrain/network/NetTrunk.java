@@ -1,6 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
 
 import android.app.Activity;
+import android.app.Service;
 
 import net.ballmerlabs.scatterbrain.SettingsManager;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
@@ -11,15 +12,14 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 public class NetTrunk {
 
     public GlobalNet globnet;
-    public NetTrunk trunk;
     public ScatterBluetoothManager blman;
     public DeviceProfile profile;
     public SettingsManager settings;
-    public Activity mainActivity;
+    public Service mainService;
 
 
-    public NetTrunk(Activity main) {
-        this.mainActivity = main;
+    public NetTrunk(Service mainService) {
+        this.mainService = mainService;
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
         globnet = new GlobalNet(this);

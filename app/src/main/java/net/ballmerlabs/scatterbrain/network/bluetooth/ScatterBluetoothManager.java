@@ -99,7 +99,7 @@ public class ScatterBluetoothManager {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        trunk.mainActivity.registerReceiver(mReceiver,filter);
+        trunk.mainService.registerReceiver(mReceiver,filter);
         adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
             Log.e(TAG, "ERROR, bluetooth not supported");
@@ -138,15 +138,6 @@ public class ScatterBluetoothManager {
 
     public void onSucessfulAccept(BluetoothSocket socket) {
          try {
-             trunk.mainActivity.runOnUiThread(new Runnable() {
-                 @Override
-                 public void run() {
-                     TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
-                     senpai_notice.setVisibility(View.VISIBLE);
-                     senpai_notice.setText("Senpai NOTICED YOU! \n and you accepted a connection from senpai!");
-
-                 }
-             });
              socket.close();
          }
        catch(IOException c) {
@@ -157,14 +148,6 @@ public class ScatterBluetoothManager {
     public void onSucessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
 
         try {
-            trunk.mainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
-                    senpai_notice.setVisibility(View.VISIBLE);
-                    senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
-                }
-            });
 
             socket.close();
       }

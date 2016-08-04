@@ -22,7 +22,6 @@ public class NormalActivity extends AppCompatActivity {
     private GlobalNet globnet;
     private DeviceProfile profile;
     private TextView peersView;
-    private NetTrunk trunk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,6 @@ public class NormalActivity extends AppCompatActivity {
             }
         });
 
-        trunk = new NetTrunk(this);
     }
 
     //adds a message to the list and clears the input field
@@ -61,20 +59,12 @@ public class NormalActivity extends AppCompatActivity {
     protected void onResume() {
         // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
-        if(trunk.globnet.getWifiManager().getP2preceiver() != null &&
-                trunk.globnet.getP2pIntentFilter() != null)
-            this.registerReceiver(trunk.globnet.getWifiManager().getP2preceiver(), trunk.globnet.getP2pIntentFilter());
-        trunk.globnet.getWifiManager().startWifiDirctLoopThread();
     }
 
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
-        if(trunk.globnet.getWifiManager().getP2preceiver() != null)
-            this.unregisterReceiver(trunk.globnet.getWifiManager().getP2preceiver());
-
-        trunk.globnet.getWifiManager().stopWifiDirectLoopThread();
     }
 
     public void addMessage(String message) {

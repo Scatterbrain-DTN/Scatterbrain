@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +29,7 @@ public class SearchForSenpai extends AppCompatActivity {
     private ScatterRoutingService service;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
-    private NetTrunk trunk;
-
+    private String TAG = "SenpaiActivity";
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -37,7 +37,10 @@ public class SearchForSenpai extends AppCompatActivity {
             ScatterRoutingService.ScatterBinder binder =
                     (ScatterRoutingService.ScatterBinder) service;
             mService = binder.getService();
+            launchBtDialog();
             scatterBound = true;
+
+
 
         }
 
@@ -51,10 +54,8 @@ public class SearchForSenpai extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent srs = new Intent(this,ScatterRoutingService.class);
-        startService(srs);
-        Intent bindIntent = new Intent(this, ScatterRoutingService.class);
-        bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
+
+
 
     }
 
@@ -78,17 +79,44 @@ public class SearchForSenpai extends AppCompatActivity {
 
 
 
-        service = new ScatterRoutingService(this);
+        service = new ScatterRoutingService();
 
+        Log.v(TAG, "Initial Initialization");
+        Intent srs = new Intent(this,ScatterRoutingService.class);
+        startService(srs);
+        Intent bindIntent = new Intent(this, ScatterRoutingService.class);
+        bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
+
+
+
+
+    }
+    public void launchBtDialog() {
+            Log.v(TAG,"Running bluetooth prompt dialog");
+            if(!mService.getBluetoothManager().getAdapter().isEnabled()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent, mService.getBluetoothManager().REQUEST_ENABLE_BT);
+                    }
+                });
+            }
+            else {
+                mService.getBluetoothManager().init();
+            }
+
+
+            mService.getBluetoothManager().startDiscoverLoopThread();
     }
 
     @Override
     protected void onActivityResult(int requestcode, int resultcode, Intent intenet) {
-        if(requestcode == trunk.blman.REQUEST_ENABLE_BT) {
+        if(requestcode == mService.getBluetoothManager().REQUEST_ENABLE_BT) {
             Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(enableAndDiscoverBtIntent);
-            trunk.blman.init();
+            mService.getBluetoothManager().init();
         }
     }
 
@@ -132,10 +160,9 @@ public class SearchForSenpai extends AppCompatActivity {
         // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
         if(scatterBound) {
-            if (trunk.blman.mReceiver != null &&
-                    trunk.globnet.getP2pIntentFilter() != null)
-                this.registerReceiver(trunk.blman.mReceiver, trunk.blman.filter);
-            trunk.blman.startDiscoverLoopThread();
+            if (mService.getBluetoothManager().mReceiver != null )
+                mService.registerReceiver(mService.getBluetoothManager().mReceiver, mService.getBluetoothManager().filter);
+            mService.getBluetoothManager().startDiscoverLoopThread();
         }
     }
 
@@ -144,10 +171,9 @@ public class SearchForSenpai extends AppCompatActivity {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
         if(scatterBound) {
-            if (trunk.blman.mReceiver != null)
-                this.unregisterReceiver(trunk.blman.mReceiver);
-
-            trunk.blman.stopDiscoverLoopThread();
+            if (mService.getBluetoothManager().mReceiver != null)
+                mService.unregisterReceiver(mService.getBluetoothManager().mReceiver);
+            mService.getBluetoothManager().stopDiscoverLoopThread();
         }
     }
 

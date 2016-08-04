@@ -37,7 +37,6 @@ public class WifiManager extends BroadcastReceiver {
     private String TAG = "WiFi_daemon";
     private android.os.Handler threadHandler = new android.os.Handler();
     private GlobalNet net;
-    private Activity mainActivity;
     private WifiP2pManager manager;
     private WifiP2pManager.Channel chan;
     private WifiP2pManager.ActionListener connectlistener;
@@ -61,13 +60,12 @@ public class WifiManager extends BroadcastReceiver {
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
-    public WifiManager(NetTrunk trunk, Activity mainActivity) {
-        this.mainActivity = mainActivity;
+    public WifiManager(NetTrunk trunk) {
         this.trunk = trunk;
         net = trunk.globnet;
         connectedList = new HashMap<>();
-        this.manager = (WifiP2pManager) mainActivity.getSystemService(Context.WIFI_P2P_SERVICE);
-        this.chan = manager.initialize(mainActivity, mainActivity.getMainLooper(), null);
+        this.manager = (WifiP2pManager) trunk.mainService.getSystemService(Context.WIFI_P2P_SERVICE);
+        this.chan = manager.initialize(trunk.mainService, trunk.mainService.getMainLooper(), null);
         p2pIntenetFilter = new IntentFilter();
         p2pIntenetFilter.addAction(manager.WIFI_P2P_STATE_CHANGED_ACTION);
         p2pIntenetFilter.addAction(manager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -226,7 +224,7 @@ public class WifiManager extends BroadcastReceiver {
     public void registerService(DeviceProfile profile) {
 
         Map record = new HashMap<>();
-        record.put("listenport", String.valueOf(mainActivity));
+        record.put("listenport", String.valueOf(trunk.mainService));
         record.put("protocolVersion", "0"); //TODO: add actual version
         //record.put("deviceType", profile.getType().toString());
         //record.put("mobileStatus", profile.getStatus().toString());

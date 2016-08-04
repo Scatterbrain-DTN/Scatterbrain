@@ -17,7 +17,6 @@ public class ScatterRoutingService extends Service {
 
     private final IBinder mBinder = new ScatterBinder();
     private NetTrunk trunk;
-    private Activity mainActivity;
 
     public class ScatterBinder extends Binder {
         public ScatterRoutingService getService() {
@@ -26,32 +25,20 @@ public class ScatterRoutingService extends Service {
     }
 
     public ScatterRoutingService() {
-
-    }
-    public ScatterRoutingService(final Activity mainActivity) {
-        super();
-        this.mainActivity = mainActivity;
     }
 
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
-        if(!trunk.blman.getAdapter().isEnabled()) {
-            mainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    mainActivity.startActivityForResult(enableBtIntent, trunk.blman.REQUEST_ENABLE_BT);
-                }
-            });
 
-        }
-        else {
-            trunk.blman.init();
-        }
-
-        trunk.blman.startDiscoverLoopThread();
         return 0;
 
+    }
+
+    public ScatterBluetoothManager getBluetoothManager() {
+        return trunk.blman;
+    }
+    public NetTrunk getTrunk() {
+        return trunk;
     }
 
     @Override
@@ -61,7 +48,7 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public void onCreate() {
-        trunk = new NetTrunk(mainActivity);
+        trunk = new NetTrunk(this);
     }
 
     @Override

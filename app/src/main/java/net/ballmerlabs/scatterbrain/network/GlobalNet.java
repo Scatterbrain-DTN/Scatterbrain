@@ -28,7 +28,7 @@ public class GlobalNet {
         packetqueue = new ArrayList<>();
         prof = trunk.profile;
         this.trunk = trunk;
-        directmanager = new WifiManager(trunk, trunk.mainActivity);
+        directmanager = new WifiManager(trunk);
         //peerlistener = new ScatterPeerListener(trunk);
         directmanager.stopWifiDirectLoopThread();
 

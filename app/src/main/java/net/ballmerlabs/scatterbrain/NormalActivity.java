@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 public class NormalActivity extends AppCompatActivity {
 
@@ -21,7 +22,7 @@ public class NormalActivity extends AppCompatActivity {
     private GlobalNet globnet;
     private DeviceProfile profile;
     private TextView peersView;
-    private MainTrunk trunk;
+    private NetTrunk trunk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class NormalActivity extends AppCompatActivity {
             }
         });
 
-        trunk = new MainTrunk(this);
+        trunk = new NetTrunk(this);
     }
 
     //adds a message to the list and clears the input field

@@ -1,50 +1,34 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.MainTrunk;
-import net.ballmerlabs.scatterbrain.R;
+import android.content.IntentFilter;
+
+
 import net.ballmerlabs.scatterbrain.network.wifidirect.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
-import net.ballmerlabs.scatterbrain.network.wifidirect.WifiDirectLooper;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiPacket;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Global network management framework
  */
 public class GlobalNet {
     private ArrayList<WifiPacket> packetqueue;
-    private Activity main;
     private DeviceProfile prof;
     public final String TAG = "GlobNet";
     public WifiManager directmanager;
-    private MainTrunk trunk;
+    private NetTrunk trunk;
     public ScatterPeerListener peerlistener;
 
 
-    public GlobalNet(final Activity mainActivity, MainTrunk trunk) {
+    public GlobalNet(NetTrunk trunk) {
         packetqueue = new ArrayList<>();
-        main = mainActivity;
         prof = trunk.profile;
         this.trunk = trunk;
-        directmanager = new WifiManager(main, trunk);
+        directmanager = new WifiManager(trunk, trunk.mainActivity);
         //peerlistener = new ScatterPeerListener(trunk);
         directmanager.stopWifiDirectLoopThread();
 

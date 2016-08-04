@@ -22,6 +22,7 @@ import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class WifiManager extends BroadcastReceiver {
     private WifiP2pDnsSdServiceInfo serviceInfo;
     private WifiDirectLooper looper;
     private BroadcastReceiver p2preceiver;
-    private MainTrunk trunk;
+    private NetTrunk trunk;
 
 
 
@@ -60,8 +61,7 @@ public class WifiManager extends BroadcastReceiver {
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
-    public WifiManager(Activity mainActivity, MainTrunk trunk) {
-        this.mainActivity = mainActivity;
+    public WifiManager(NetTrunk trunk, Activity mainActivity) {
         this.mainActivity = mainActivity;
         this.trunk = trunk;
         net = trunk.globnet;
@@ -287,9 +287,6 @@ public class WifiManager extends BroadcastReceiver {
             public void onSuccess() {
                 //this gets broadcast to WifiDirectBroadcastReceiver
                 //here
-                TextView senpai_notice = (TextView) mainActivity.findViewById(R.id.notice_text);
-                senpai_notice.setVisibility(View.VISIBLE);
-                senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
             }
 
             @Override
@@ -320,10 +317,6 @@ public class WifiManager extends BroadcastReceiver {
 
 
 
-
-                //here
-                TextView senpai_notice = (TextView) mainActivity.findViewById(R.id.notice_text);
-                senpai_notice.setVisibility(View.VISIBLE);
 
                 connectToDevice(device);
             }

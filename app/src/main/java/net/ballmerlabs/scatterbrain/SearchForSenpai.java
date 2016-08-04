@@ -1,7 +1,12 @@
 package net.ballmerlabs.scatterbrain;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
+import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 import org.w3c.dom.Text;
@@ -18,11 +25,45 @@ import org.w3c.dom.Text;
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
     private TextView senpai_notice;
-    private MainTrunk trunk;
-    private TextView scanFrequencyText;
-    private ScatterBluetoothManager blman;
-    private SeekBar scanFrequencyBar;
+    private ScatterRoutingService service;
+    private boolean scatterBound = false;
+    private ScatterRoutingService mService;
+    private NetTrunk trunk;
 
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            ScatterRoutingService.ScatterBinder binder =
+                    (ScatterRoutingService.ScatterBinder) service;
+            mService = binder.getService();
+            scatterBound = true;
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            scatterBound = false;
+        }
+    };
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent srs = new Intent(this,ScatterRoutingService.class);
+        startService(srs);
+        Intent bindIntent = new Intent(this, ScatterRoutingService.class);
+        bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(mConnection);
+        scatterBound = false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,49 +75,10 @@ public class SearchForSenpai extends AppCompatActivity {
 
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
-        trunk = new MainTrunk(this);
-
-        scanFrequencyText = (TextView) findViewById(R.id.scanTimeText);
-
-        scanFrequencyText = (TextView) findViewById(R.id.scanTimeText);
-
-        scanFrequencyBar = (SeekBar) findViewById(R.id.scanTimeSlider);
-        scanFrequencyBar.setProgress(50);
-        Integer i = ((30000-2000)/50)+2000;
-        scanFrequencyText.setText(i.toString() + "ms");
-        trunk.settings.scanTimeMillis = i;
-        scanFrequencyBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Integer i = progress * ((30000-2000)/100)+2000;
-                scanFrequencyText.setText(i.toString()+"ms");
-                trunk.settings.bluetoothScanTimeMillis = i;
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                trunk.blman.stopDiscoverLoopThread();
-                trunk.blman.startDiscoverLoopThread();
-            }
-        });
-
-        if(!trunk.blman.getAdapter().isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, trunk.blman.REQUEST_ENABLE_BT);
-        }
-        else {
-            trunk.blman.init();
-        }
 
 
 
-
-        trunk.blman.startDiscoverLoopThread();
+        service = new ScatterRoutingService(this);
 
     }
 
@@ -129,20 +131,24 @@ public class SearchForSenpai extends AppCompatActivity {
     protected void onResume() {
         // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
-        if(trunk.blman.mReceiver != null &&
-                trunk.globnet.getP2pIntentFilter() != null)
-            this.registerReceiver(trunk.blman.mReceiver, trunk.blman.filter);
-        trunk.blman.startDiscoverLoopThread();
+        if(scatterBound) {
+            if (trunk.blman.mReceiver != null &&
+                    trunk.globnet.getP2pIntentFilter() != null)
+                this.registerReceiver(trunk.blman.mReceiver, trunk.blman.filter);
+            trunk.blman.startDiscoverLoopThread();
+        }
     }
 
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
-        if(trunk.blman.mReceiver != null)
-            this.unregisterReceiver(trunk.blman.mReceiver);
+        if(scatterBound) {
+            if (trunk.blman.mReceiver != null)
+                this.unregisterReceiver(trunk.blman.mReceiver);
 
-        trunk.blman.stopDiscoverLoopThread();
+            trunk.blman.stopDiscoverLoopThread();
+        }
     }
 
     @Override

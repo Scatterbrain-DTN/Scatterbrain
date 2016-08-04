@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 import java.io.IOException;
 
@@ -18,8 +19,8 @@ public class ScatterConnectThread extends Thread {
     private  BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private ScatterBluetoothManager bleman;
-    private MainTrunk trunk;
-    public ScatterConnectThread(BluetoothDevice device, MainTrunk trunk) {
+    private NetTrunk trunk;
+    public ScatterConnectThread(BluetoothDevice device, NetTrunk trunk) {
 
         this.trunk = trunk;
         mmDevice = device;

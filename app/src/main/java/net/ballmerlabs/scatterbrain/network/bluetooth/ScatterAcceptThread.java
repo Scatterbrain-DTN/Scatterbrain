@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -20,8 +21,8 @@ import java.io.InterruptedIOException;
  */
 public class ScatterAcceptThread extends Thread {
     private BluetoothServerSocket mmServerSocket = null;
-    private MainTrunk trunk;
-    public ScatterAcceptThread(MainTrunk trunk, BluetoothAdapter adapter) {
+    private NetTrunk trunk;
+    public ScatterAcceptThread(NetTrunk trunk, BluetoothAdapter adapter) {
         trunk.blman.acceptThreadRunning = true;
         this.trunk = trunk;
         BluetoothServerSocket tmp = null;

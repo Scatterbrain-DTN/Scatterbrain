@@ -14,20 +14,16 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
  */
 public class MainTrunk {
 
-    public GlobalNet globnet;
     public DeviceProfile profile;
     public SettingsManager settings;
     public Activity mainActivity;
-    public ScatterBluetoothManager blman;
 
     public MainTrunk(Activity main) {
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
-        globnet = new GlobalNet(main, this);
         settings = new SettingsManager();
         mainActivity = main;
         //globnet.registerService(profile);
-        globnet.getWifiManager().startWifiDirctLoopThread();
-        blman = new ScatterBluetoothManager(this);
+
     }
 }

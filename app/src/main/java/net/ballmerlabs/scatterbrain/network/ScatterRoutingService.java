@@ -1,13 +1,12 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import android.app.Activity;
-import android.app.IntentService;
+import android.app.Notification;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /**
@@ -17,6 +16,7 @@ public class ScatterRoutingService extends Service {
 
     private final IBinder mBinder = new ScatterBinder();
     private NetTrunk trunk;
+    private Service me;
 
     public class ScatterBinder extends Binder {
         public ScatterRoutingService getService() {
@@ -29,7 +29,7 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
-
+        //Notification notification = new Notification(R.drawable.icon)
         return 0;
 
     }
@@ -48,6 +48,7 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public void onCreate() {
+        me = this;
         trunk = new NetTrunk(this);
     }
 

@@ -62,8 +62,7 @@ public class SearchForSenpai extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        unbindService(mConnection);
-        scatterBound = false;
+
     }
 
     @Override
@@ -157,9 +156,9 @@ public class SearchForSenpai extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
-        if(scatterBound) {
+        // trunk.globnet.startWifiDirectLoopThread();
+        if(scatterBound && false) {
             if (mService.getBluetoothManager().mReceiver != null )
                 mService.registerReceiver(mService.getBluetoothManager().mReceiver, mService.getBluetoothManager().filter);
             mService.getBluetoothManager().startDiscoverLoopThread();
@@ -170,7 +169,7 @@ public class SearchForSenpai extends AppCompatActivity {
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
-        if(scatterBound) {
+        if(scatterBound && false) {
             if (mService.getBluetoothManager().mReceiver != null)
                 mService.unregisterReceiver(mService.getBluetoothManager().mReceiver);
             mService.getBluetoothManager().stopDiscoverLoopThread();

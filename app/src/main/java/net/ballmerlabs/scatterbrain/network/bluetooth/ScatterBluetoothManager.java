@@ -136,7 +136,7 @@ public class ScatterBluetoothManager {
         bluetoothHan.post(scanr);
     }
 
-    public void onSucessfulAccept(BluetoothSocket socket) {
+    public synchronized void onSucessfulAccept(BluetoothSocket socket) {
          try {
              socket.close();
          }
@@ -145,7 +145,7 @@ public class ScatterBluetoothManager {
         }
     }
 
-    public void onSucessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
+    public synchronized void onSucessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
 
         try {
 

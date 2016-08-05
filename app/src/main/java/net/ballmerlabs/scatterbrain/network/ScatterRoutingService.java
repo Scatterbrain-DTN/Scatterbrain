@@ -1,12 +1,18 @@
 package net.ballmerlabs.scatterbrain.network;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.text.method.MultiTapKeyListener;
 
+import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
@@ -39,6 +45,32 @@ public class ScatterRoutingService extends Service {
         startForeground(1, notification);
         return 0;
 
+    }
+
+    public void noticeNotify(String title, String text) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.icon)
+                .setContentTitle(title)
+                .setContentText(text);
+        Intent resultIntent = new Intent(this, NormalActivity.class);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        stackBuilder.addParentStack(NormalActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        //2 is an id that should be updated to modify unique notifications
+        mNotificationManager.notify(2,mBuilder.build());
     }
 
     public ScatterBluetoothManager getBluetoothManager() {

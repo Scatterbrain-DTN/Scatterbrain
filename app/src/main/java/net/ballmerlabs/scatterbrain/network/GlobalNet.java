@@ -53,10 +53,6 @@ public class GlobalNet {
     }
 
 
-
-
-
-
     /*
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol

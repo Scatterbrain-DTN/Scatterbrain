@@ -15,10 +15,10 @@ public class NetTrunk {
     public ScatterBluetoothManager blman;
     public DeviceProfile profile;
     public SettingsManager settings;
-    public Service mainService;
+    public ScatterRoutingService mainService;
 
 
-    public NetTrunk(Service mainService) {
+    public NetTrunk(ScatterRoutingService mainService) {
         this.mainService = mainService;
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");

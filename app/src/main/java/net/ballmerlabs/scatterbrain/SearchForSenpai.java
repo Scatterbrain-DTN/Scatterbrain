@@ -109,6 +109,7 @@ public class SearchForSenpai extends AppCompatActivity {
             mService.getBluetoothManager().startDiscoverLoopThread();
     }
 
+
     @Override
     protected void onActivityResult(int requestcode, int resultcode, Intent intenet) {
         if(requestcode == mService.getBluetoothManager().REQUEST_ENABLE_BT) {
@@ -133,6 +134,24 @@ public class SearchForSenpai extends AppCompatActivity {
     public void launchSettings(MenuItem item) {
         Intent intent = new Intent(this,SettingsActivity.class);
         startActivity(intent);
+    }
+
+    public void toggleService(MenuItem item) {
+        if(scatterBound) {
+            Intent stop = new Intent(this, ScatterRoutingService.class);
+            unbindService(mConnection);
+            stopService(stop);
+            scatterBound = false;
+            item.setTitle("StartService");
+        }
+        else {
+            Intent start = new Intent(this, ScatterRoutingService.class);
+            startService(start);
+            Intent bindIntent = new Intent(this, ScatterRoutingService.class);
+            bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
+
+        }
+
     }
 
     public void resetText(MenuItem item) {

@@ -43,6 +43,8 @@ public class ScatterRoutingService extends Service {
         notification.setLatestEventInfo(this, getText(R.string.service_title),
                 getText(R.string.service_body), pendingIntent);
         startForeground(1, notification);
+
+        trunk.blman.startDiscoverLoopThread();
         return 0;
 
     }
@@ -93,6 +95,6 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public void onDestroy() {
-
+        trunk.blman.stopDiscoverLoopThread();
     }
 }

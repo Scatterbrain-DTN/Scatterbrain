@@ -43,6 +43,7 @@ public class ScatterAcceptThread extends Thread {
         while (true) {
             try {
                 socket = mmServerSocket.accept();
+                Log.v(trunk.blman.TAG, "Accepted a connection");
                 trunk.blman.onSucessfulAccept(socket);
             } catch (IOException e) {
                 break;

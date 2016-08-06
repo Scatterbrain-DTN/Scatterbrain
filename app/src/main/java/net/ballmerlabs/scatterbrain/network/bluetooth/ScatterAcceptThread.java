@@ -38,14 +38,12 @@ public class ScatterAcceptThread extends Thread {
 
     @Override
     public void run() {
-        Log.v(trunk.blman.TAG,"Accepted a connection" );
+        Log.v(trunk.blman.TAG,"Started accept thread" );
         BluetoothSocket socket = null;
         while (true) {
             try {
                 socket = mmServerSocket.accept();
-                trunk.blman.isAccepting = true;
                 trunk.blman.onSucessfulAccept(socket);
-                trunk.blman.isAccepting = false;
             } catch (IOException e) {
                 break;
             }

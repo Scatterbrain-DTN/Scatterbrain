@@ -139,6 +139,7 @@ public class ScatterBluetoothManager {
     public synchronized void onSucessfulAccept(BluetoothSocket socket) {
          try {
              trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
+             trunk.mainService.updateUiOnDevicesFound();
              socket.close();
          }
        catch(IOException c) {

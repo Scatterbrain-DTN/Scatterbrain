@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -14,14 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
-import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
-
-import org.w3c.dom.Text;
 
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
@@ -37,6 +31,20 @@ public class SearchForSenpai extends AppCompatActivity {
             ScatterRoutingService.ScatterBinder binder =
                     (ScatterRoutingService.ScatterBinder) service;
             mService = binder.getService();
+
+            mService.registerOnDeviceConnectedCallback(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
+                            senpai_notice.setVisibility(View.VISIBLE);
+                            senpai_notice.setText("Senpai NOTICED YOU! \n and you accepted a connection from senpai!");
+                        }
+                    });
+                }
+            });
             launchBtDialog();
             scatterBound = true;
 

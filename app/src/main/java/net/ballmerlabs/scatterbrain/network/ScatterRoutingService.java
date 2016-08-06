@@ -10,7 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.text.method.MultiTapKeyListener;
+import android.util.Log;
 
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
@@ -24,6 +24,9 @@ public class ScatterRoutingService extends Service {
     private final IBinder mBinder = new ScatterBinder();
     private NetTrunk trunk;
     private Service me;
+    private boolean bound = false;
+    public final String TAG = "ScatterRoutingService";
+    private  Runnable onDevicesFound;
 
     public class ScatterBinder extends Binder {
         public ScatterRoutingService getService() {
@@ -47,6 +50,24 @@ public class ScatterRoutingService extends Service {
         trunk.blman.startDiscoverLoopThread();
         return 0;
 
+    }
+
+    public void registerOnDeviceConnectedCallback(Runnable run) {
+        if(bound) {
+            onDevicesFound = run;
+        }
+        else {
+            Log.v(TAG,"Attempted to register UI callback when not bound for some odd reason");
+        }
+    }
+
+    public boolean updateUiOnDevicesFound() {
+        if((onDevicesFound != null) && bound) {
+            onDevicesFound.run();
+            return true;
+        }
+        else
+        return false;
     }
 
     public void noticeNotify(String title, String text) {
@@ -84,8 +105,16 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public IBinder onBind(Intent i) {
+        bound = true;
         return mBinder;
     }
+
+    @Override
+    public boolean onUnbind(Intent i) {
+        bound = false;
+        return true;
+    }
+
 
     @Override
     public void onCreate() {

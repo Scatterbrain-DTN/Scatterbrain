@@ -45,6 +45,8 @@ public class SearchForSenpai extends AppCompatActivity {
                     });
                 }
             });
+
+            mService.getBluetoothManager().startDiscoverLoopThread();
             launchBtDialog();
             scatterBound = true;
 

@@ -7,7 +7,8 @@ import net.ballmerlabs.scatterbrain.SettingsManager;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /**
- * Created by user on 8/3/16.
+ * Collection of global objects for use by scatterbrain
+ * network (inb4 'global is bad')
  */
 public class NetTrunk {
 

@@ -13,7 +13,8 @@ import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import java.io.IOException;
 
 /**
- * Created by user on 8/1/16.
+ * Represents a thread used for asychronous connections to bluetooth
+ * peers. It calls a callback function on successful connect
  */
 public class ScatterConnectThread extends Thread {
     private  BluetoothSocket mmSocket;
@@ -56,6 +57,7 @@ public class ScatterConnectThread extends Thread {
         }
 
         Log.v(trunk.blman.TAG, "Connection successful");
+        //call this function in the context of the bluetoothManager
         trunk.blman.onSuccessfulConnect(mmDevice, mmSocket);
         setSenpai();
         try {

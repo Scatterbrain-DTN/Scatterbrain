@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 /**
  * Global network management framework
+ * Currently not used much as ScatterBluetoothManager is
+ * easier
  */
 public class GlobalNet {
     private ArrayList<WifiPacket> packetqueue;

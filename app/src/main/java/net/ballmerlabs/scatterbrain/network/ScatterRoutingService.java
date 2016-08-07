@@ -17,7 +17,8 @@ import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /**
- * Created by user on 8/3/16.
+ * Represents a background service for routing packets
+ * for the scatterbrain protocol.
  */
 public class ScatterRoutingService extends Service {
 

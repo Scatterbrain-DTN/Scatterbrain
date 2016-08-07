@@ -16,7 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
-
+/*
+ * Main 'Home screen' activity for the scatterbrain testing phase.
+ */
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
     private TextView senpai_notice;

@@ -56,7 +56,7 @@ public class ScatterConnectThread extends Thread {
         }
 
         Log.v(trunk.blman.TAG, "Connection successful");
-        trunk.blman.onSucessfulConnect(mmDevice, mmSocket);
+        trunk.blman.onSuccessfulConnect(mmDevice, mmSocket);
         setSenpai();
         try {
             mmSocket.close();

@@ -1,6 +1,4 @@
-package net.ballmerlabs.scatterbrain.network.wifidirect;
-
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
+package net.ballmerlabs.scatterbrain.network;
 
 /**
  * Created by gnu3ra on 3/28/16.

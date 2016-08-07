@@ -1,8 +1,6 @@
-package net.ballmerlabs.scatterbrain.network.wifidirect;
+package net.ballmerlabs.scatterbrain.network;
 
 import android.bluetooth.BluetoothAdapter;
-
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 /**
  * Represents a block data packet

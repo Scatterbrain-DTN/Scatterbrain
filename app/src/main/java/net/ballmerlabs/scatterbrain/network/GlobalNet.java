@@ -4,11 +4,8 @@ package net.ballmerlabs.scatterbrain.network;
 import android.content.IntentFilter;
 
 
-import net.ballmerlabs.scatterbrain.network.wifidirect.BlockDataPacket;
-import net.ballmerlabs.scatterbrain.network.wifidirect.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
-import net.ballmerlabs.scatterbrain.network.wifidirect.WifiPacket;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain.network.wifidirect;
+package net.ballmerlabs.scatterbrain.network;
 
 /**
  * represents a generic BLE packet. Has byte array for packet contents

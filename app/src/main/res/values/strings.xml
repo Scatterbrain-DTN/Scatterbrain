@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Senpai Detector</string>
+    <string name="notice_text">Senpai noticed you! </string>
+    <string name="notice_title">You lucky dog!</string>
+    <string name="notice_body">After so long an agonizing wait, senpai has finally noticed you!</string>
 
+    <string name="service_ticker">Senpai detector</string>
+    <string name="service_title">Senpai Detector</string>
+    <string name="service_body">Background detection service is running...</string>
     <string name="title_section1">Full Nuclear Strike</string>
     <string name="title_section2">Launch Entomological Weapons</string>
     <string name="title_section3">Failsafe Omega</string>

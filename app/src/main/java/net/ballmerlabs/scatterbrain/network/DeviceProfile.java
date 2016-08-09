@@ -2,6 +2,7 @@ package net.ballmerlabs.scatterbrain.network;
 
 /**
  * General device information and settings storage.
+ * Used to refer to a device
  */
 public class DeviceProfile {
 

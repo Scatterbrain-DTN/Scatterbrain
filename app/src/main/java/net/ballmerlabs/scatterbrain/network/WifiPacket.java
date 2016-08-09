@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain.network.wifidirect;
+package net.ballmerlabs.scatterbrain.network;
 
 /**
  * represents a generic BLE packet. Has byte array for packet contents
@@ -8,7 +8,7 @@ public abstract class WifiPacket {
     public boolean invalid;
 
     public WifiPacket() {
-        invalid = true;
+        invalid = false;
     }
     public WifiPacket(int size) {
         contents = new byte[size];

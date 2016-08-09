@@ -15,9 +15,14 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -32,7 +37,7 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public ArrayList<BluetoothDevice> tmpList;
-    public MainTrunk trunk;
+    public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
     public BluetoothLooper looper;
@@ -88,7 +93,7 @@ public class ScatterBluetoothManager {
         }
     }
 
-    public ScatterBluetoothManager(MainTrunk trunk) {
+    public ScatterBluetoothManager(NetTrunk trunk) {
         this.trunk = trunk;
         looper = new BluetoothLooper(trunk.globnet);
         bluetoothHan = new Handler();
@@ -98,7 +103,7 @@ public class ScatterBluetoothManager {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        trunk.mainActivity.registerReceiver(mReceiver,filter);
+        trunk.mainService.registerReceiver(mReceiver,filter);
         adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
             Log.e(TAG, "ERROR, bluetooth not supported");
@@ -135,42 +140,12 @@ public class ScatterBluetoothManager {
         bluetoothHan.post(scanr);
     }
 
-    public void onSucessfulAccept(BluetoothSocket socket) {
-         try {
-             trunk.mainActivity.runOnUiThread(new Runnable() {
-                 @Override
-                 public void run() {
-                     TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
-                     senpai_notice.setVisibility(View.VISIBLE);
-                     senpai_notice.setText("Senpai NOTICED YOU! \n and you accepted a connection from senpai!");
+    public synchronized void onSucessfulAccept(BluetoothSocket socket) {
 
-                 }
-             });
-             socket.close();
-         }
-       catch(IOException c) {
-
-        }
     }
 
-    public void onSucessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
+    public synchronized void onSuccessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
 
-        try {
-            trunk.mainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    TextView senpai_notice = (TextView) trunk.mainActivity.findViewById(R.id.notice_text);
-                    senpai_notice.setVisibility(View.VISIBLE);
-                    senpai_notice.setText("Senpai NOTICED YOU! \n and you connected with senpai!");
-                }
-            });
-
-            socket.close();
-      }
-        catch(IOException e) {
-
-
-       }
     }
 
     public void stopDiscoverLoopThread() {

@@ -1,8 +1,6 @@
-package net.ballmerlabs.scatterbrain.network.wifidirect;
+package net.ballmerlabs.scatterbrain.network;
 
 import android.bluetooth.BluetoothAdapter;
-
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 /**
  * Represents a block data packet
@@ -23,6 +21,7 @@ public class BlockDataPacket extends WifiPacket {
             this.body = body;
             this.text = text;
             this.to = to;
+        invalid = false;
 
         if(init() == null)
             invalid = true;

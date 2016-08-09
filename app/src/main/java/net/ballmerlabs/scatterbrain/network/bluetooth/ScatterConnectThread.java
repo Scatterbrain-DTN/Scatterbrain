@@ -8,18 +8,24 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
- * Created by user on 8/1/16.
+ * Represents a thread used for asychronous connections to bluetooth
+ * peers. It calls a callback function on successful connect
  */
 public class ScatterConnectThread extends Thread {
     private  BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private ScatterBluetoothManager bleman;
-    private MainTrunk trunk;
-    public ScatterConnectThread(BluetoothDevice device, MainTrunk trunk) {
+    private NetTrunk trunk;
+    public ScatterConnectThread(BluetoothDevice device, NetTrunk trunk) {
 
         this.trunk = trunk;
         mmDevice = device;
@@ -54,7 +60,10 @@ public class ScatterConnectThread extends Thread {
             return;
         }
 
-        trunk.blman.onSucessfulConnect(mmDevice, mmSocket);
+        Log.v(trunk.blman.TAG, "Connection successful");
+        //call this function in the context of the bluetoothManager
+        trunk.blman.onSuccessfulConnect(mmDevice, mmSocket);
+        onConnect(mmSocket);
         setSenpai();
         try {
             mmSocket.close();
@@ -68,5 +77,35 @@ public class ScatterConnectThread extends Thread {
 
     public void setSenpai() {
 
+    }
+
+
+    public void onConnect(BluetoothSocket socket) {
+
+        try {
+            InputStream i = socket.getInputStream();
+            OutputStream o = socket.getOutputStream();
+            BluetoothDevice d = socket.getRemoteDevice();
+            trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
+            AdvertisePacket outpacket = GlobalNet.encodeAdvertise(trunk.profile);
+            o.write(outpacket.getContents());
+            byte[] buffer  =  new byte[50];
+            i.read(buffer);
+            AdvertisePacket inpacket;
+            if(buffer != null) {
+                Log.v(trunk.blman.TAG, "Decoding packet");
+                inpacket  = GlobalNet.decodeAdvertise(buffer);
+                if(!inpacket.isInvalid())
+                    trunk.mainService.updateUiOnDevicesFound();
+            }
+            else {
+                Log.e(trunk.blman.TAG, "Packet received is null");
+            }
+            socket.close();
+        }
+        catch(IOException e) {
+
+
+        }
     }
 }

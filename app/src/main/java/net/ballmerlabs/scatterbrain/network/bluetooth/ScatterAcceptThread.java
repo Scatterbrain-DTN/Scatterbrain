@@ -1,6 +1,7 @@
 package net.ballmerlabs.scatterbrain.network.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
@@ -10,9 +11,14 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.io.OutputStream;
 
 /**
  * Listens for incoming bluetooth connections
@@ -20,8 +26,8 @@ import java.io.InterruptedIOException;
  */
 public class ScatterAcceptThread extends Thread {
     private BluetoothServerSocket mmServerSocket = null;
-    private MainTrunk trunk;
-    public ScatterAcceptThread(MainTrunk trunk, BluetoothAdapter adapter) {
+    private NetTrunk trunk;
+    public ScatterAcceptThread(NetTrunk trunk, BluetoothAdapter adapter) {
         trunk.blman.acceptThreadRunning = true;
         this.trunk = trunk;
         BluetoothServerSocket tmp = null;
@@ -37,14 +43,14 @@ public class ScatterAcceptThread extends Thread {
 
     @Override
     public void run() {
-        Log.v(trunk.blman.TAG,"Accepted a connection" );
+        Log.v(trunk.blman.TAG,"Started accept thread" );
         BluetoothSocket socket = null;
         while (true) {
             try {
                 socket = mmServerSocket.accept();
-                trunk.blman.isAccepting = true;
+                Log.v(trunk.blman.TAG, "Accepted a connection");
                 trunk.blman.onSucessfulAccept(socket);
-                trunk.blman.isAccepting = false;
+                onAccept(socket);
             } catch (IOException e) {
                 break;
             }
@@ -63,5 +69,30 @@ public class ScatterAcceptThread extends Thread {
 
         }
         trunk.blman.acceptThreadRunning = false;
+    }
+
+
+    public void onAccept(BluetoothSocket socket) {
+        try {
+            InputStream i = socket.getInputStream();
+            OutputStream o = socket.getOutputStream();
+            BluetoothDevice d = socket.getRemoteDevice();
+            trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
+            AdvertisePacket outpacket = GlobalNet.encodeAdvertise(trunk.profile);
+            o.write(outpacket.getContents());
+            byte[] buffer = new byte[50];
+            i.read(buffer);
+            AdvertisePacket inpacket;
+            if(buffer != null) {
+                inpacket = GlobalNet.decodeAdvertise(buffer);
+                if(!inpacket.isInvalid()) {
+                    trunk.mainService.updateUiOnDevicesFound();
+                }
+            }
+            socket.close();
+        }
+        catch(IOException c) {
+
+        }
     }
 }

@@ -18,6 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:replace="android:theme">
+        <service android:name="net.ballmerlabs.scatterbrain.network.ScatterRoutingService" />
         <activity
             android:name=".SearchForSenpai"
             android:label="@string/app_name"

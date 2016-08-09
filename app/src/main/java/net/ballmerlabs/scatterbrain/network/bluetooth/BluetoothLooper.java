@@ -7,7 +7,7 @@ import android.os.Message;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
 /**
- * Created by user on 5/29/16.
+ * handles delayed tasks for periodic bluetooth scanning
  */
 public class BluetoothLooper extends Thread {
 

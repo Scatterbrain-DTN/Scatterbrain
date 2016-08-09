@@ -1,11 +1,13 @@
 package net.ballmerlabs.scatterbrain.network;
 
+import android.util.Log;
+
 /**
  * Created by gnu3ra on 3/28/16.
  */
 public class AdvertisePacket extends WifiPacket {
 
-
+    public static String TAG = "AdvertisePacket";
     public byte devicetype;
     public byte mobilestatus;
     public byte protocolversion[];
@@ -15,16 +17,25 @@ public class AdvertisePacket extends WifiPacket {
     public AdvertisePacket(DeviceProfile dv) {
         super(7);
         protocolversion = new byte[2];
+        invalid = false;
         if(init(dv) == null)
             invalid = true;
     }
 
 
-    public AdvertisePacket(byte raw[]) {
+    public AdvertisePacket(byte raw_in[]) {
         super(7);
-        if(raw.length != 7)
+        protocolversion = new byte[2];
+        byte[] raw = new byte[7];
+        if(raw.length < 7) {
             invalid = true;
+            Log.e(TAG, "Packet length wrong");
+            return;
+        }
         else {
+            for(int i=0;i<7;i++) {
+                raw[i] = raw_in[i];
+            }
             contents = raw;
             devicetype = contents[1];
             mobilestatus = contents[2];
@@ -45,8 +56,10 @@ public class AdvertisePacket extends WifiPacket {
             contents[1] = 1;
         else if(type == DeviceProfile.deviceType.LINUX)
             contents[1] = 2;
-        else
+        else {
+            Log.e(TAG, "Wrong device type");
             return null;
+        }
         devicetype = contents[1];
 
         DeviceProfile.MobileStatus mob = dv.getStatus();
@@ -56,8 +69,11 @@ public class AdvertisePacket extends WifiPacket {
             contents[2] = 1;
         else if(mob == DeviceProfile.MobileStatus.VERYMOBILE)
             contents[2] = 2;
-        else
+        else {
+            Log.e(TAG, "Wrong mobile status");
             return null;
+        }
+
 
         mobilestatus = contents[2];
 

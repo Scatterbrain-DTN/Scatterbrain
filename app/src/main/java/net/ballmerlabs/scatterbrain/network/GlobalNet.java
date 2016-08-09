@@ -56,7 +56,7 @@ public class GlobalNet {
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
      */
-    private BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
+    public static BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
         BlockDataPacket bdpacket = new BlockDataPacket(body, text, to);
         return bdpacket;
     }
@@ -70,7 +70,7 @@ public class GlobalNet {
     /*
      * encodes advertise packet with current device profile as source
      */
-    private AdvertisePacket encodeAdvertise() {
+    public static AdvertisePacket encodeAdvertise(DeviceProfile prof) {
         byte result[] = new byte[7];
         AdvertisePacket adpack = new AdvertisePacket(prof);
         return adpack;
@@ -93,11 +93,11 @@ public class GlobalNet {
             return null;
     }
 
-    private AdvertisePacket decodeAdvertise(byte in[]) {
+    public static AdvertisePacket decodeAdvertise(byte in[]) {
         return new AdvertisePacket(in);
     }
 
-    private BlockDataPacket decodeBlockData(byte in[]) {
+    public static BlockDataPacket decodeBlockData(byte in[]) {
         return new BlockDataPacket(in);
     }
 

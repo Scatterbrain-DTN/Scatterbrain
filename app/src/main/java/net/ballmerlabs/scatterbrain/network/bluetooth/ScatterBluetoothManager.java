@@ -15,10 +15,14 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
+import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -137,26 +141,11 @@ public class ScatterBluetoothManager {
     }
 
     public synchronized void onSucessfulAccept(BluetoothSocket socket) {
-         try {
-             trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
-             trunk.mainService.updateUiOnDevicesFound();
-             socket.close();
-         }
-       catch(IOException c) {
 
-        }
     }
 
     public synchronized void onSuccessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
 
-        try {
-            trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
-            socket.close();
-      }
-        catch(IOException e) {
-
-
-       }
     }
 
     public void stopDiscoverLoopThread() {

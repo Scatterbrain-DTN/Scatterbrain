@@ -42,7 +42,7 @@ public class SearchForSenpai extends AppCompatActivity {
                         public void run() {
                             TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
                             senpai_notice.setVisibility(View.VISIBLE);
-                            senpai_notice.setText("Senpai NOTICED YOU! \n and you accepted a connection from senpai!");
+                            senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
                         }
                     });
                 }

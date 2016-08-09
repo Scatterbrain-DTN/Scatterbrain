@@ -8,7 +8,7 @@ public abstract class WifiPacket {
     public boolean invalid;
 
     public WifiPacket() {
-        invalid = true;
+        invalid = false;
     }
     public WifiPacket(int size) {
         contents = new byte[size];

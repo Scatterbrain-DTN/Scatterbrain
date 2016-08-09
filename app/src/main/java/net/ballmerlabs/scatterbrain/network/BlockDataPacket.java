@@ -21,6 +21,7 @@ public class BlockDataPacket extends WifiPacket {
             this.body = body;
             this.text = text;
             this.to = to;
+        invalid = false;
 
         if(init() == null)
             invalid = true;

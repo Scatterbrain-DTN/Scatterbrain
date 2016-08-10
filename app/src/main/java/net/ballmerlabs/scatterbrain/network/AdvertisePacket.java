@@ -107,7 +107,7 @@ public class AdvertisePacket extends WifiPacket {
     }
 
     public DeviceProfile convertToProfile() {
-        DeviceProfile.deviceType type;
+        DeviceProfile.deviceType type = null;
         if(devicetype == 0)
             type = DeviceProfile.deviceType.ANDROID;
         else if(devicetype == 1)
@@ -115,18 +115,31 @@ public class AdvertisePacket extends WifiPacket {
         else if(devicetype == 2)
             type = DeviceProfile.deviceType.LINUX;
 
-        DeviceProfile.MobileStatus mob;
+        DeviceProfile.MobileStatus mob = null;
         if(mobilestatus == 0)
             mob = DeviceProfile.MobileStatus.STATIONARY;
-        if(mobilestatus == 1)
+        else if(mobilestatus == 1)
             mob = DeviceProfile.MobileStatus.MOBILE;
-        if(mobilestatus == 2)
+        else if(mobilestatus == 2)
             mob = DeviceProfile.MobileStatus.VERYMOBILE;
 
-        
+        DeviceProfile.HardwareServices serv = null;
+
+        if((hwservices & (1<<0)) == 1)
+            serv = DeviceProfile.HardwareServices.WIFIP2P;
+        else if((hwservices & (1<<1)) == 1)
+            serv = DeviceProfile.HardwareServices.WIFICLIENT;
+        else if((hwservices & (1<<2)) == 1)
+            serv = DeviceProfile.HardwareServices.WIFIAP;
+        else if((hwservices & (1<<3)) == 1)
+            serv = DeviceProfile.HardwareServices.BLUETOOTH;
+        else if((hwservices & (1<<4)) == 1)
+            serv = DeviceProfile.HardwareServices.INTERNET;
 
 
-        return new DeviceProfile()
+
+        //todo: Replace mac with universalID
+        return new DeviceProfile(type, mob, serv, "0000000000000000");
     }
 }
 

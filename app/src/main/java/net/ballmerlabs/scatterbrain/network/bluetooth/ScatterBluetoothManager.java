@@ -83,8 +83,8 @@ public class ScatterBluetoothManager {
                     Log.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
 
-                for(BluetoothSocket s : connectedList) {
-                    if(!s.isConnected()) {
+                for(LocalPeer s : connectedList) {
+                    if(!s.socket.isConnected()) {
                         connectedList.remove(s);
                     }
                 }
@@ -161,14 +161,15 @@ public class ScatterBluetoothManager {
             o.write(outpacket.getContents());
             byte[] buffer = new byte[50];
             i.read(buffer);
-            AdvertisePacket inpacket;
+            AdvertisePacket inpacket= null;
             if(buffer != null) {
                 inpacket = GlobalNet.decodeAdvertise(buffer);
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound();
                 }
             }
-            connectedList.add(new LocalPeer());
+            if(inpacket != null)
+                connectedList.add(new LocalPeer(inpacket.convertToProfile(), socket));
         }
         catch(IOException c) {
 

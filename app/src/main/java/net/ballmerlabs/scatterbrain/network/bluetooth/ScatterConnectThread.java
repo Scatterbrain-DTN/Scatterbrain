@@ -62,8 +62,7 @@ public class ScatterConnectThread extends Thread {
 
         Log.v(trunk.blman.TAG, "Connection successful");
         //call this function in the context of the bluetoothManager
-        trunk.blman.onSuccessfulConnect(mmDevice, mmSocket);
-        onConnect(mmSocket);
+        trunk.blman.onSuccessfulConnect(mmSocket);
         setSenpai();
         try {
             mmSocket.close();
@@ -79,33 +78,4 @@ public class ScatterConnectThread extends Thread {
 
     }
 
-
-    public void onConnect(BluetoothSocket socket) {
-
-        try {
-            InputStream i = socket.getInputStream();
-            OutputStream o = socket.getOutputStream();
-            BluetoothDevice d = socket.getRemoteDevice();
-            trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
-            AdvertisePacket outpacket = GlobalNet.encodeAdvertise(trunk.profile);
-            o.write(outpacket.getContents());
-            byte[] buffer  =  new byte[50];
-            i.read(buffer);
-            AdvertisePacket inpacket;
-            if(buffer != null) {
-                Log.v(trunk.blman.TAG, "Decoding packet");
-                inpacket  = GlobalNet.decodeAdvertise(buffer);
-                if(!inpacket.isInvalid())
-                    trunk.mainService.updateUiOnDevicesFound();
-            }
-            else {
-                Log.e(trunk.blman.TAG, "Packet received is null");
-            }
-            socket.close();
-        }
-        catch(IOException e) {
-
-
-        }
-    }
 }

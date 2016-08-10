@@ -49,8 +49,7 @@ public class ScatterAcceptThread extends Thread {
             try {
                 socket = mmServerSocket.accept();
                 Log.v(trunk.blman.TAG, "Accepted a connection");
-                trunk.blman.onSucessfulAccept(socket);
-                onAccept(socket);
+                trunk.blman.onSuccessfulConnect(socket);
             } catch (IOException e) {
                 break;
             }
@@ -71,28 +70,4 @@ public class ScatterAcceptThread extends Thread {
         trunk.blman.acceptThreadRunning = false;
     }
 
-
-    public void onAccept(BluetoothSocket socket) {
-        try {
-            InputStream i = socket.getInputStream();
-            OutputStream o = socket.getOutputStream();
-            BluetoothDevice d = socket.getRemoteDevice();
-            trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
-            AdvertisePacket outpacket = GlobalNet.encodeAdvertise(trunk.profile);
-            o.write(outpacket.getContents());
-            byte[] buffer = new byte[50];
-            i.read(buffer);
-            AdvertisePacket inpacket;
-            if(buffer != null) {
-                inpacket = GlobalNet.decodeAdvertise(buffer);
-                if(!inpacket.isInvalid()) {
-                    trunk.mainService.updateUiOnDevicesFound();
-                }
-            }
-            socket.close();
-        }
-        catch(IOException c) {
-
-        }
-    }
 }

@@ -140,12 +140,28 @@ public class ScatterBluetoothManager {
         bluetoothHan.post(scanr);
     }
 
-    public synchronized void onSucessfulAccept(BluetoothSocket socket) {
+    public synchronized void onSuccessfulConnect(BluetoothSocket socket) {
+        try {
+            InputStream i = socket.getInputStream();
+            OutputStream o = socket.getOutputStream();
+            BluetoothDevice d = socket.getRemoteDevice();
+            trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
+            AdvertisePacket outpacket = GlobalNet.encodeAdvertise(trunk.profile);
+            o.write(outpacket.getContents());
+            byte[] buffer = new byte[50];
+            i.read(buffer);
+            AdvertisePacket inpacket;
+            if(buffer != null) {
+                inpacket = GlobalNet.decodeAdvertise(buffer);
+                if(!inpacket.isInvalid()) {
+                    trunk.mainService.updateUiOnDevicesFound();
+                }
+            }
+            socket.close();
+        }
+        catch(IOException c) {
 
-    }
-
-    public synchronized void onSuccessfulConnect(BluetoothDevice device, BluetoothSocket socket) {
-
+        }
     }
 
     public void stopDiscoverLoopThread() {

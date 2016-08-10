@@ -37,6 +37,7 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public ArrayList<BluetoothDevice> tmpList;
+    public ArrayList<BluetoothSocket> connectedList;
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -50,10 +51,10 @@ public class ScatterBluetoothManager {
 
     public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context,final Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                Log.v(TAG,"Found a bluetooth device!");
+                Log.v(TAG, "Found a bluetooth device!");
                 Thread devCreateThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -63,8 +64,7 @@ public class ScatterBluetoothManager {
                     }
                 });
                 devCreateThread.start();
-            }
-            else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Thread discoveryFinishedThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -80,9 +80,17 @@ public class ScatterBluetoothManager {
                     bluetoothHan.postDelayed(scanr, 10000);
                 else
                     Log.v(TAG, "Stopping wifi direct scan thread");
-            }
+            } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
 
+                for(BluetoothSocket s : connectedList) {
+                    if(!s.isConnected()) {
+                        connectedList.remove(s);
+                    }
+                }
+            }
         }
+
+
     };
 
     //this should return a handler object later
@@ -100,6 +108,7 @@ public class ScatterBluetoothManager {
         runScanThread =false;
         foundList = new ArrayList<>();
         tmpList = new ArrayList<>();
+        connectedList = new ArrayList<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -157,7 +166,7 @@ public class ScatterBluetoothManager {
                     trunk.mainService.updateUiOnDevicesFound();
                 }
             }
-            socket.close();
+            connectedList.add(socket);
         }
         catch(IOException c) {
 

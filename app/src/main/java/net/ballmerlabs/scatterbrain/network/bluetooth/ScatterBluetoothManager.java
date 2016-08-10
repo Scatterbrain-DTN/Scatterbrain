@@ -16,6 +16,7 @@ import android.widget.TextView;
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
@@ -37,7 +38,7 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public ArrayList<BluetoothDevice> tmpList;
-    public ArrayList<BluetoothSocket> connectedList;
+    public ArrayList<LocalPeer> connectedList;
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -149,6 +150,7 @@ public class ScatterBluetoothManager {
         bluetoothHan.post(scanr);
     }
 
+
     public synchronized void onSuccessfulConnect(BluetoothSocket socket) {
         try {
             InputStream i = socket.getInputStream();
@@ -166,7 +168,7 @@ public class ScatterBluetoothManager {
                     trunk.mainService.updateUiOnDevicesFound();
                 }
             }
-            connectedList.add(socket);
+            connectedList.add(new LocalPeer());
         }
         catch(IOException c) {
 

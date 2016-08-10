@@ -105,5 +105,28 @@ public class AdvertisePacket extends WifiPacket {
         hwservices = contents[6];
         return contents;
     }
+
+    public DeviceProfile convertToProfile() {
+        DeviceProfile.deviceType type;
+        if(devicetype == 0)
+            type = DeviceProfile.deviceType.ANDROID;
+        else if(devicetype == 1)
+            type = DeviceProfile.deviceType.IOS;
+        else if(devicetype == 2)
+            type = DeviceProfile.deviceType.LINUX;
+
+        DeviceProfile.MobileStatus mob;
+        if(mobilestatus == 0)
+            mob = DeviceProfile.MobileStatus.STATIONARY;
+        if(mobilestatus == 1)
+            mob = DeviceProfile.MobileStatus.MOBILE;
+        if(mobilestatus == 2)
+            mob = DeviceProfile.MobileStatus.VERYMOBILE;
+
+        
+
+
+        return new DeviceProfile()
+    }
 }
 

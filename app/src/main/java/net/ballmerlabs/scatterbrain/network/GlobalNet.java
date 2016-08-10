@@ -102,4 +102,10 @@ public class GlobalNet {
     }
 
 
+    public boolean sendData(DeviceProfile profile) {
+        return false;
+    }
+
+
+
 }

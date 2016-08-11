@@ -137,6 +137,7 @@ public class ScatterRoutingService extends Service {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             this.uuid = genUUID();
             editor.putString(getString(R.string.scatter_uuid),this.uuid );
+            editor.commit();
         }
         else {
             this.uuid = uuid;
@@ -152,6 +153,7 @@ public class ScatterRoutingService extends Service {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         this.uuid = genUUID();
         editor.putString(getString(R.string.scatter_uuid),this.uuid );
+        editor.commit();
     }
 
     private String genUUID() {

@@ -13,6 +13,9 @@
     <string name="title_section2">Launch Entomological Weapons</string>
     <string name="title_section3">Failsafe Omega</string>
 
+    <string name="scramble_pref">scramblePref</string>
+    <string name="pref_uuid_display">prefuuiddisplay</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

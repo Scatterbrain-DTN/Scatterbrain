@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -97,6 +98,7 @@ public class SearchForSenpai extends AppCompatActivity {
         startService(srs);
         Intent bindIntent = new Intent(this, ScatterRoutingService.class);
         bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
+
 
 
 

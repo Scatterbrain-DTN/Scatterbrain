@@ -65,9 +65,7 @@ public class BlockDataPacket extends WifiPacket {
         for(int x=0;x<sendermacbytes.length;x++) {
             contents[x+1] = sendermacbytes[x];
         }
-        String receivermac = to.getMac().replace(":","");
-        if(receivermac.length() != 12)
-            return null;
+        String receivermac = to.getLUID();
 
         this.receivermac = receivermac;
         byte receivermacbytes[] = receivermac.getBytes();

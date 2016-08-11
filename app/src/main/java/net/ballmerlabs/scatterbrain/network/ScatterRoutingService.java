@@ -34,7 +34,7 @@ public class ScatterRoutingService extends Service {
     public final String TAG = "ScatterRoutingService";
     private  Runnable onDevicesFound;
     public SharedPreferences sharedPreferences;
-    public String uuid;
+    public String luid;
 
     public class ScatterBinder extends Binder {
         public ScatterRoutingService getService() {
@@ -135,12 +135,12 @@ public class ScatterRoutingService extends Service {
         String uuid = sharedPreferences.getString(getString(R.string.scatter_uuid), getString(R.string.uuid_not_present));
         if(uuid.equals(getString(R.string.uuid_not_present))) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            this.uuid = genUUID();
-            editor.putString(getString(R.string.scatter_uuid),this.uuid );
+            this.luid = genLUID();
+            editor.putString(getString(R.string.scatter_uuid),this.luid );
             editor.commit();
         }
         else {
-            this.uuid = uuid;
+            this.luid = uuid;
         }
     }
 
@@ -151,13 +151,13 @@ public class ScatterRoutingService extends Service {
                 Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        this.uuid = genUUID();
-        editor.putString(getString(R.string.scatter_uuid),this.uuid );
+        this.luid = genLUID();
+        editor.putString(getString(R.string.scatter_uuid),this.luid );
         editor.commit();
     }
 
-    private String genUUID() {
-        byte[] rand = new byte[32];
+    private String genLUID() {
+        byte[] rand = new byte[6];
         Random r = new Random();
         r.nextBytes(rand);
         return new String(Base64.encode(rand,Base64.DEFAULT));

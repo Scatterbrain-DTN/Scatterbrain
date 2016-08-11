@@ -13,10 +13,12 @@ public class AdvertisePacket extends WifiPacket {
     public byte protocolversion[];
     public byte congestion;
     public byte hwservices;
+    public byte[] luid;
 
     public AdvertisePacket(DeviceProfile dv) {
         super(7);
         protocolversion = new byte[2];
+        this.luid = new byte[6];
         invalid = false;
         if(init(dv) == null)
             invalid = true;
@@ -25,6 +27,7 @@ public class AdvertisePacket extends WifiPacket {
 
     public AdvertisePacket(byte raw_in[]) {
         super(7);
+        this.luid = new byte[6];
         protocolversion = new byte[2];
         byte[] raw = new byte[7];
         if(raw.length < 7) {
@@ -43,6 +46,9 @@ public class AdvertisePacket extends WifiPacket {
             protocolversion[1] = contents[4];
             congestion = contents[5];
             hwservices = contents[6];
+            for(int i=1;i<=luid.length;i++) {
+                luid[i-1] = contents[6+i];
+            }
         }
     }
 
@@ -75,6 +81,8 @@ public class AdvertisePacket extends WifiPacket {
         }
 
 
+
+
         mobilestatus = contents[2];
 
         contents[3] = dv.getProtocolVersion(); //TODO: change this when operation
@@ -103,6 +111,10 @@ public class AdvertisePacket extends WifiPacket {
             contents[6] |= (1<<4);
 
         hwservices = contents[6];
+
+        for(int i=1;i<=dv.getLUID().getBytes().length;i++) {
+            contents[6+i] = dv.getLUID().getBytes()[i-1];
+        }
         return contents;
     }
 
@@ -138,8 +150,9 @@ public class AdvertisePacket extends WifiPacket {
 
 
 
+
         //todo: Replace mac with universalID
-        return new DeviceProfile(type, mob, serv, "0000000000000000");
+        return new DeviceProfile(type, mob, serv, new String(this.luid));
     }
 }
 

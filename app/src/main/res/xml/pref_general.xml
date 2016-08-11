@@ -4,15 +4,15 @@
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
         android:defaultValue="ID not generated yet"
-        android:key="@string/pref_uuid_display"
+        android:key="@string/pref_luid_display"
         android:maxLines="1"
         android:selectAllOnFocus="false"
         android:singleLine="true"
         android:selectable="false"
         android:persistent="false"
-        android:title="User ID" />
+        android:title="Local User ID" />
 
-    <Preference android:title="Regenerate User ID"
+    <Preference android:title="Regenerate Local User ID"
         android:key="@string/scramble_pref"
         android:summary="Randomize user ID to change identity"/>
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to

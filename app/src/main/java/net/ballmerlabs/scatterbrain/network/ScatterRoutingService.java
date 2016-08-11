@@ -143,6 +143,17 @@ public class ScatterRoutingService extends Service {
         }
     }
 
+
+    public void regenerateUUID() {
+        Context context = this.getApplicationContext();
+        sharedPreferences = context.getSharedPreferences(getString(R.string.scatter_preference_key),
+                Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        this.uuid = genUUID();
+        editor.putString(getString(R.string.scatter_uuid),this.uuid );
+    }
+
     private String genUUID() {
         byte[] rand = new byte[32];
         Random r = new Random();

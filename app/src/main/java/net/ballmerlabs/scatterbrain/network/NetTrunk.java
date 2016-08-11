@@ -27,6 +27,5 @@ public class NetTrunk {
         settings = new SettingsManager();
         globnet.getWifiManager().startWifiDirctLoopThread();
         blman = new ScatterBluetoothManager(this);
-
     }
 }

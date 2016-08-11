@@ -3,7 +3,9 @@
     <string name="notice_text">Senpai noticed you! </string>
     <string name="notice_title">You lucky dog!</string>
     <string name="notice_body">After so long an agonizing wait, senpai has finally noticed you!</string>
-
+    <string name="scatter_preference_key">net.ballmerlabs.scatterbrain.routingServiceSharedPrefs</string>
+    <string name="uuid_not_present">nothing</string>
+    <string name="scatter_uuid">scatterUUID</string>
     <string name="service_ticker">Senpai detector</string>
     <string name="service_title">Senpai Detector</string>
     <string name="service_body">Background detection service is running...</string>

@@ -6,15 +6,20 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Base64;
 import android.util.Log;
 
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
+
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Represents a background service for routing packets
@@ -28,6 +33,8 @@ public class ScatterRoutingService extends Service {
     private boolean bound = false;
     public final String TAG = "ScatterRoutingService";
     private  Runnable onDevicesFound;
+    public SharedPreferences sharedPreferences;
+    public String uuid;
 
     public class ScatterBinder extends Binder {
         public ScatterRoutingService getService() {
@@ -121,6 +128,26 @@ public class ScatterRoutingService extends Service {
     public void onCreate() {
         me = this;
         trunk = new NetTrunk(this);
+        Context context = this.getApplicationContext();
+        sharedPreferences = context.getSharedPreferences(getString(R.string.scatter_preference_key),
+                Context.MODE_PRIVATE);
+
+        String uuid = sharedPreferences.getString(getString(R.string.scatter_uuid), getString(R.string.uuid_not_present));
+        if(uuid.equals(getString(R.string.uuid_not_present))) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            this.uuid = genUUID();
+            editor.putString(getString(R.string.scatter_uuid),this.uuid );
+        }
+        else {
+            this.uuid = uuid;
+        }
+    }
+
+    private String genUUID() {
+        byte[] rand = new byte[32];
+        Random r = new Random();
+        r.nextBytes(rand);
+        return new String(Base64.encode(rand,Base64.DEFAULT));
     }
 
     @Override

@@ -188,6 +188,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 mService.getBluetoothManager().startDiscoverLoopThread(); //TODO: not needed
                 scatterBound = true;
+                Preference strdisplay = findPreference(getString(R.string.pref_uuid_display));
+                if(scatterBound) {
+                    strdisplay.setSummary(mService.uuid);
+                }
             }
 
             @Override
@@ -214,10 +218,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_uuid_display)));
             bindPreferenceSummaryToValue(findPreference("example_list"));
 
-            Preference strdisplay = findPreference(getString(R.string.pref_uuid_display));
-            if(scatterBound) {
-                strdisplay.setSummary(mService.uuid);
-            }
+
 
             Preference button = findPreference(getString(R.string.scramble_pref));
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

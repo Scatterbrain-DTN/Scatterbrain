@@ -136,7 +136,7 @@ public class ScatterBluetoothManager {
     }
 
     public void startDiscoverLoopThread() {
-        Log.v(TAG, "Starting wifi direct scan thread");
+        Log.v(TAG, "Starting bluetooth scan thread");
         runScanThread = true;
         bluetoothHan =looper.getHandler();
         scanr = new Runnable() {

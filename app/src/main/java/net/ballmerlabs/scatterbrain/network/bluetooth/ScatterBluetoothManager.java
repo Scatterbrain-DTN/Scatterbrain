@@ -85,11 +85,17 @@ public class ScatterBluetoothManager {
                     Log.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
                 //TODO: find some parcelable extra to avoid
-                for(Map.Entry<String,LocalPeer > s : connectedList.entrySet()) {
-                    if(!s.getValue().socket.isConnected()) {
-                        connectedList.remove(s);
+                Thread prunePeer = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(Map.Entry<String,LocalPeer > s : connectedList.entrySet()) {
+                            if(!s.getValue().socket.isConnected()) {
+                                connectedList.remove(s);
+                            }
+                        }
                     }
-                }
+                });
+
             }
         }
 

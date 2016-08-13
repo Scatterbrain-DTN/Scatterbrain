@@ -9,18 +9,19 @@ public class BlockDataPacket extends WifiPacket {
 
     public byte body[];
     public boolean text;
-    public String sendermac;
-    public String receivermac;
+    public String senderluid;
+    public String receiverluid;
 
     private DeviceProfile to;
 
 
 
-    public BlockDataPacket(byte body[], boolean text, DeviceProfile to) {
-            super(27+body.length);
+    public BlockDataPacket(byte body[], boolean text, DeviceProfile to, String senderluid) {
+            super(15+body.length);
             this.body = body;
             this.text = text;
             this.to = to;
+        this.senderluid = senderluid;
         invalid = false;
 
         if(init() == null)
@@ -29,27 +30,27 @@ public class BlockDataPacket extends WifiPacket {
 
 
     public BlockDataPacket(byte raw[]) {
-        super(26+raw.length);
+        super(15+raw.length);
         contents = raw;
         byte body[] = new byte[raw.length - 26];
         for(int x=25;x<contents.length;x++) {
             body[x-25] = contents[x];
         }
-        byte recievermac[] = new byte[12];
-        byte sendermac[] = new byte[12];
+        byte recieverluid[] = new byte[6];
+        byte senderluid[] = new byte[6];
 
-        for(int x = 1;x<(1+12);x++) {
-            sendermac[x-1] = contents[x];
+        for(int x = 1;x<(1+6);x++) {
+            senderluid[x-1] = contents[x];
         }
 
-        for(int x=13;x<(13+12);x++) {
-            recievermac[x-13] = contents[x];
+        for(int x=13;x<(13+6);x++) {
+            recieverluid[x-13] = contents[x];
         }
 
-        this.sendermac = new String(sendermac);
-        this.receivermac = new String(recievermac);
+        this.senderluid = new String(senderluid);
+        this.receiverluid = new String(recieverluid);
 
-        if(contents[24] == 1)
+        if(contents[12] == 1)
             text = true;
         else
             text = false;
@@ -57,25 +58,32 @@ public class BlockDataPacket extends WifiPacket {
 
     private byte[] init() {
         contents[0] = 1;
-        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
-        if(sendermac.length() != 12)
+        if(senderluid.length() != 12)
             return null; //TODO: error logging here
-        this.sendermac = sendermac;
-        byte sendermacbytes[] = sendermac.getBytes();
+        byte sendermacbytes[] = senderluid.getBytes();
+        int counter1 = 0;
         for(int x=0;x<sendermacbytes.length;x++) {
             contents[x+1] = sendermacbytes[x];
         }
-        String receivermac = to.getLUID();
+        if(counter1 != 5) {
+            return null;
+        }
+        String receiverluid = to.getLUID();
 
-        this.receivermac = receivermac;
-        byte receivermacbytes[] = receivermac.getBytes();
-        for(int x=0;x<receivermacbytes.length;x++) {
-            contents[x+13] = receivermacbytes[x];
+        this.receiverluid = receiverluid;
+        byte receiverluidbytes[] = receiverluid.getBytes();
+        int counter = 0;
+        for(int x=0;x<receiverluidbytes.length;x++) {
+            contents[x+6] = receiverluidbytes[x];
+            counter++;
+        }
+        if(counter != 5) {
+            return null;
         }
         if(text)
-            contents[26] = 1;
+            contents[13] = 1;
         else
-            contents[26] = 0;
+            contents[13] = 0;
 
         for(int x=27;x<body.length;x++) {
             contents[x] = body[x];

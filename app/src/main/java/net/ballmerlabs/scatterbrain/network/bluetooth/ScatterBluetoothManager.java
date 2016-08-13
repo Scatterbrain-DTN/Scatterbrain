@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -38,7 +40,7 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public ArrayList<BluetoothDevice> tmpList;
-    public ArrayList<LocalPeer> connectedList;
+    public HashMap<String,LocalPeer> connectedList;
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -82,9 +84,9 @@ public class ScatterBluetoothManager {
                 else
                     Log.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
-
-                for(LocalPeer s : connectedList) {
-                    if(!s.socket.isConnected()) {
+                //TODO: find some parcelable extra to avoid
+                for(Map.Entry<String,LocalPeer > s : connectedList.entrySet()) {
+                    if(!s.getValue().socket.isConnected()) {
                         connectedList.remove(s);
                     }
                 }
@@ -109,7 +111,7 @@ public class ScatterBluetoothManager {
         runScanThread =false;
         foundList = new ArrayList<>();
         tmpList = new ArrayList<>();
-        connectedList = new ArrayList<>();
+        connectedList = new HashMap<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -169,7 +171,7 @@ public class ScatterBluetoothManager {
                 }
             }
             if(inpacket != null)
-                connectedList.add(new LocalPeer(inpacket.convertToProfile(), socket));
+                connectedList.put(new String(inpacket.luid),new LocalPeer(inpacket.convertToProfile(), socket));
         }
         catch(IOException c) {
 

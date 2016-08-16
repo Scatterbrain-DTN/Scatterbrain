@@ -16,6 +16,7 @@ import android.widget.TextView;
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
+import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
@@ -165,13 +166,13 @@ public class ScatterBluetoothManager {
             OutputStream o = socket.getOutputStream();
             BluetoothDevice d = socket.getRemoteDevice();
             trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
-            AdvertisePacket outpacket = GlobalNet.encodeAdvertise(trunk.profile);
+            AdvertisePacket outpacket = trunk.globnet.encodeAdvertise(trunk.profile);
             o.write(outpacket.getContents());
             byte[] buffer = new byte[50];
             i.read(buffer);
             AdvertisePacket inpacket= null;
             if(buffer != null) {
-                inpacket = GlobalNet.decodeAdvertise(buffer);
+                inpacket = trunk.globnet.decodeAdvertise(buffer);
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound();
                 }
@@ -187,6 +188,41 @@ public class ScatterBluetoothManager {
     public void stopDiscoverLoopThread() {
         runScanThread = false;
         adapter.cancelDiscovery();
+    }
+
+    public LocalPeer getPeerByLuid(String luid) {
+        return connectedList.get(luid);
+    }
+    public LocalPeer getPeerByLuid(byte[] luid) {
+        return connectedList.get(new String(luid));
+    }
+
+    public void sendMessageToLocalPeer(String luid, final byte[] message, boolean text) {
+       final LocalPeer target = trunk.blman.getPeerByLuid(luid);
+        BlockDataPacket blockDataPacket = new BlockDataPacket(message, text, target.profile,
+                trunk.mainService.luid);
+        Thread messageSendThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int x=0;x<5;x++) {
+                    if (target.socket.isConnected()) {
+                        try {
+                            target.socket.getOutputStream().write(message);
+                            break;
+                        } catch (IOException e) {
+                            Log.e(TAG, "Error on sending block data stanza");
+                        }
+                    }
+                    else{
+                        break; //we moved out of range
+                    }
+                }
+            }
+        });
+
+
+
+
     }
 
 }

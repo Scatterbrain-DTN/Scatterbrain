@@ -4,6 +4,7 @@ package net.ballmerlabs.scatterbrain.network;
 import android.content.IntentFilter;
 
 
+import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
 
@@ -56,8 +57,8 @@ public class GlobalNet {
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
      */
-    public static BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
-        BlockDataPacket bdpacket = new BlockDataPacket(body, text, to);
+    public BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
+        BlockDataPacket bdpacket = new BlockDataPacket(body, text, to, trunk.mainService.luid);
         return bdpacket;
     }
 
@@ -70,7 +71,7 @@ public class GlobalNet {
     /*
      * encodes advertise packet with current device profile as source
      */
-    public static AdvertisePacket encodeAdvertise(DeviceProfile prof) {
+    public AdvertisePacket encodeAdvertise(DeviceProfile prof) {
         byte result[] = new byte[7];
         AdvertisePacket adpack = new AdvertisePacket(prof);
         return adpack;
@@ -93,18 +94,20 @@ public class GlobalNet {
             return null;
     }
 
-    public static AdvertisePacket decodeAdvertise(byte in[]) {
+    public AdvertisePacket decodeAdvertise(byte in[]) {
         return new AdvertisePacket(in);
     }
 
-    public static BlockDataPacket decodeBlockData(byte in[]) {
+    public BlockDataPacket decodeBlockData(byte in[]) {
         return new BlockDataPacket(in);
     }
 
 
-    public boolean sendData(DeviceProfile profile) {
+    public boolean broadcastData() {
         return false;
     }
+
+
 
 
 

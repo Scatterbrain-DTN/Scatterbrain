@@ -11,6 +11,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 public class LocalPeer {
     public DeviceProfile profile;
     public BluetoothSocket socket;
+    public ScatterReceiveThread receiveThread;
 
     public LocalPeer(DeviceProfile profile, BluetoothSocket socket) {
         this.profile = profile;

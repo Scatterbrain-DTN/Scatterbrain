@@ -118,6 +118,7 @@ public class ScatterRoutingService extends Service {
     @Override
     public IBinder onBind(Intent i) {
         bound = true;
+        getBluetoothManager().startDiscoverLoopThread();
         return mBinder;
     }
 

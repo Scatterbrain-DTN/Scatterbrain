@@ -16,7 +16,7 @@ public class AdvertisePacket extends ScatterStanza {
     public byte[] luid;
 
     public AdvertisePacket(DeviceProfile dv) {
-        super(7);
+        super(13);
         protocolversion = new byte[2];
         this.luid = new byte[6];
         invalid = false;

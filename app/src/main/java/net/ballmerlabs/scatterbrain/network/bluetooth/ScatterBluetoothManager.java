@@ -200,6 +200,7 @@ public class ScatterBluetoothManager {
     }
 
     public void stopDiscoverLoopThread() {
+        Log.v(TAG, "Stopping bluetooth discovery thread");
         runScanThread = false;
         adapter.cancelDiscovery();
     }

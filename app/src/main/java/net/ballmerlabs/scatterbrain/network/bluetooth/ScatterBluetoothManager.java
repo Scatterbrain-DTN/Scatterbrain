@@ -14,12 +14,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.MainTrunk;
+import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
+import net.ballmerlabs.scatterbrain.network.ScatterStanza;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 
 import java.io.IOException;
@@ -159,6 +161,18 @@ public class ScatterBluetoothManager {
         bluetoothHan.post(scanr);
     }
 
+    public synchronized void onSuccessfulReceive(byte[] incoming) {
+        if(!NormalActivity.active)
+            trunk.mainService.startMessageActivity();
+        BlockDataPacket bd = new BlockDataPacket(incoming);
+        if(bd.isInvalid())
+            Log.e(TAG, "Received corrupt blockdata packet.");
+        else if(bd.text)
+            trunk.mainService.getMessageAdapter().add(new String(bd.body));
+        else
+            Log.e(TAG, "received a non-text message in a text context");
+    }
+
 
     public synchronized void onSuccessfulConnect(BluetoothSocket socket) {
         try {
@@ -219,10 +233,6 @@ public class ScatterBluetoothManager {
                 }
             }
         });
-
-
-
-
     }
 
 }

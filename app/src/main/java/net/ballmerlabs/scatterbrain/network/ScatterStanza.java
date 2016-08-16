@@ -3,14 +3,14 @@ package net.ballmerlabs.scatterbrain.network;
 /**
  * represents a generic BLE packet. Has byte array for packet contents
  */
-public abstract class WifiPacket {
+public abstract class ScatterStanza {
     public byte contents[];
     public boolean invalid;
 
-    public WifiPacket() {
+    public ScatterStanza() {
         invalid = false;
     }
-    public WifiPacket(int size) {
+    public ScatterStanza(int size) {
         contents = new byte[size];
         invalid = false;
     }

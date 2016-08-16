@@ -31,6 +31,7 @@ public class NormalActivity extends AppCompatActivity {
     private ScatterRoutingService service;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
+    public static boolean active = false;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -53,7 +54,8 @@ public class NormalActivity extends AppCompatActivity {
                 }
             });
 
-            mService.getBluetoothManager().startDiscoverLoopThread(); //TODO: not needed
+            mService.registerMessageArrayAdapter(Messages);
+
             scatterBound = true;
 
 
@@ -101,6 +103,19 @@ public class NormalActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        NormalActivity.active = true;
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        NormalActivity.active = false;
+    }
 
     @Override
     protected void onResume() {

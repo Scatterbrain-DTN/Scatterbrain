@@ -1,11 +1,9 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import android.bluetooth.BluetoothAdapter;
-
 /**
  * Represents a block data packet
  */
-public class BlockDataPacket extends WifiPacket {
+public class BlockDataPacket extends ScatterStanza {
 
     public byte body[];
     public boolean text;

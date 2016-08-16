@@ -16,6 +16,7 @@ public class LocalPeer {
     public LocalPeer(DeviceProfile profile, BluetoothSocket socket) {
         this.profile = profile;
         this.socket = socket;
+        this.receiveThread = new ScatterReceiveThread(socket);
     }
 
 }

@@ -4,7 +4,6 @@ package net.ballmerlabs.scatterbrain.network;
 import android.content.IntentFilter;
 
 
-import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
 
@@ -16,7 +15,7 @@ import java.util.ArrayList;
  * easier
  */
 public class GlobalNet {
-    private ArrayList<WifiPacket> packetqueue;
+    private ArrayList<ScatterStanza> packetqueue;
     private DeviceProfile prof;
     public final String TAG = "GlobNet";
     public WifiManager directmanager;
@@ -38,13 +37,13 @@ public class GlobalNet {
 
 
     /* appends a packet to the queue */
-    public void appendPacket(WifiPacket p) {
+    public void appendPacket(ScatterStanza p) {
         packetqueue.add(p);
     }
 
-    public WifiPacket dequeuePacket() {
+    public ScatterStanza dequeuePacket() {
         if (packetqueue.size() > 0) {
-            WifiPacket result = packetqueue.get(0);
+            ScatterStanza result = packetqueue.get(0);
             packetqueue.remove(0);
             return result;
         } else
@@ -85,7 +84,7 @@ public class GlobalNet {
     /*
      * decodes a packet for casting into packet types
      */
-    private WifiPacket decodePacket(byte in[]) {
+    private ScatterStanza decodePacket(byte in[]) {
         if (in[0] == 0)
             return decodeAdvertise(in);
         else if (in[0] == 1)

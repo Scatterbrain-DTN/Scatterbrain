@@ -5,7 +5,7 @@ import android.util.Log;
 /**
  * Created by gnu3ra on 3/28/16.
  */
-public class AdvertisePacket extends WifiPacket {
+public class AdvertisePacket extends ScatterStanza {
 
     public static String TAG = "AdvertisePacket";
     public byte devicetype;

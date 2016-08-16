@@ -13,12 +13,14 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 import java.util.Random;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 /**
@@ -28,13 +30,15 @@ import java.util.UUID;
 public class ScatterRoutingService extends Service {
 
     private final IBinder mBinder = new ScatterBinder();
-    private NetTrunk trunk;
+    private static NetTrunk trunk;
     private Service me;
     private boolean bound = false;
     public final String TAG = "ScatterRoutingService";
     private  Runnable onDevicesFound;
     public SharedPreferences sharedPreferences;
     public String luid;
+    private ArrayAdapter<String> Messages;
+
 
     public class ScatterBinder extends Binder {
         public ScatterRoutingService getService() {
@@ -163,8 +167,30 @@ public class ScatterRoutingService extends Service {
         return new String(Base64.encode(rand,Base64.DEFAULT));
     }
 
+    public static NetTrunk getNetTrunk() {
+        return trunk;
+    }
+
+    public void startMessageActivity() {
+        Intent startIntent = new Intent(this, NormalActivity.class);
+        startActivity(startIntent);
+    }
+
     @Override
     public void onDestroy() {
         trunk.blman.stopDiscoverLoopThread();
+    }
+
+    public ArrayAdapter<String> getMessageAdapter() {
+        if(bound) {
+            return Messages;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public void registerMessageArrayAdapter(ArrayAdapter<String> messages) {
+        this.Messages = messages;
     }
 }

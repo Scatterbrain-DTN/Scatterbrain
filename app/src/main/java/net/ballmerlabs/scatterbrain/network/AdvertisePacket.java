@@ -26,11 +26,11 @@ public class AdvertisePacket extends ScatterStanza {
 
 
     public AdvertisePacket(byte raw_in[]) {
-        super(7);
+        super(13);
         this.luid = new byte[6];
         protocolversion = new byte[2];
-        byte[] raw = new byte[7];
-        if(raw.length < 7) {
+        byte[] raw = new byte[13];
+        if(raw.length < 13) {
             invalid = true;
             Log.e(TAG, "Packet length wrong");
             return;
@@ -112,7 +112,7 @@ public class AdvertisePacket extends ScatterStanza {
 
         hwservices = contents[6];
 
-        for(int i=1;i<=dv.getLUID().getBytes().length;i++) {
+        for(int i=1;i<=6;i++) {
             contents[6+i] = dv.getLUID().getBytes()[i-1];
         }
         return contents;

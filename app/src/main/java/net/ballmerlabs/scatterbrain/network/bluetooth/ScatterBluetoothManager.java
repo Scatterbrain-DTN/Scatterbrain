@@ -168,7 +168,7 @@ public class ScatterBluetoothManager {
         BlockDataPacket bd = new BlockDataPacket(incoming);
         if(bd.isInvalid())
             Log.e(TAG, "Received corrupt blockdata packet.");
-        else if(bd.text) {
+        else if(true) {
             trunk.mainService.getMessageAdapter().add(new String(bd.body));
             Log.e(TAG, "Appended message to message list");
         }
@@ -256,6 +256,8 @@ public class ScatterBluetoothManager {
                 }
             }
         });
+
+        messageSendThread.start();
     }
 
 }

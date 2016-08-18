@@ -24,6 +24,7 @@ public class ScatterReceiveThread extends Thread{
     @Override
     public void run() {
         while(true) {
+            int errorcount = 0;
             try {
                 byte[] buffer = new byte[50];
                 socket.getInputStream().read(buffer);
@@ -31,6 +32,16 @@ public class ScatterReceiveThread extends Thread{
                 trunk.blman.onSuccessfulReceive(buffer);
             }
             catch (IOException e) {
+                errorcount++;
+                if(errorcount > 10) {
+                    try {
+                        socket.close();
+                    }
+                    catch(IOException f) {
+                        Log.e(trunk.blman.TAG, "Error in receiving thread. Did we disconnect?");
+                    }
+                    break;
+                }
                 Log.e(trunk.blman.TAG, "IOException when receiving stanza");
             }
         }

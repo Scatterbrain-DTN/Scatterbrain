@@ -50,8 +50,10 @@ public class NormalActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
-                            senpai_notice.setVisibility(View.VISIBLE);
-                            senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
+                            if(senpai_notice != null) {
+                                senpai_notice.setVisibility(View.VISIBLE);
+                                senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
+                            }
                         }
                     });
                 }

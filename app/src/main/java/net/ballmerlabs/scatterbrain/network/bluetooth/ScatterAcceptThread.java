@@ -51,12 +51,11 @@ public class ScatterAcceptThread extends Thread {
                 Log.v(trunk.blman.TAG, "Accepted a connection");
                 trunk.blman.onSuccessfulConnect(socket);
             } catch (IOException e) {
-                break;
+
             }
 
 
         }
-        trunk.blman.acceptThreadRunning = false;
     }
 
 

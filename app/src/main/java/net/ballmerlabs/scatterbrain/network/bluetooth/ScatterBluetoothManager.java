@@ -93,6 +93,7 @@ public class ScatterBluetoothManager {
                     public void run() {
                         for(Map.Entry<String,LocalPeer > s : connectedList.entrySet()) {
                             if(!s.getValue().socket.isConnected()) {
+                                Log.v(TAG, "Removing unneeded device " + s.getKey().toString());
                                 connectedList.remove(s);
                             }
                         }
@@ -161,20 +162,22 @@ public class ScatterBluetoothManager {
         bluetoothHan.post(scanr);
     }
 
-    public synchronized void onSuccessfulReceive(byte[] incoming) {
+    public void onSuccessfulReceive(byte[] incoming) {
         if(!NormalActivity.active)
             trunk.mainService.startMessageActivity();
         BlockDataPacket bd = new BlockDataPacket(incoming);
         if(bd.isInvalid())
             Log.e(TAG, "Received corrupt blockdata packet.");
-        else if(bd.text)
+        else if(bd.text) {
             trunk.mainService.getMessageAdapter().add(new String(bd.body));
+            Log.e(TAG, "Appended message to message list");
+        }
         else
             Log.e(TAG, "received a non-text message in a text context");
     }
 
 
-    public synchronized void onSuccessfulConnect(BluetoothSocket socket) {
+    public void onSuccessfulConnect(BluetoothSocket socket) {
         try {
             InputStream i = socket.getInputStream();
             OutputStream o = socket.getOutputStream();
@@ -189,14 +192,23 @@ public class ScatterBluetoothManager {
                 inpacket = trunk.globnet.decodeAdvertise(buffer);
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound();
+                    Log.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
+                    connectedList.put(new String(inpacket.luid), new LocalPeer(inpacket.convertToProfile(), socket));
+                    Log.v(TAG, "List size = " + connectedList.size());
                 }
+                else {
+                    Log.e(TAG, "Received an advertise stanza, but it is invalid");
+                }
+
+
             }
-            if(inpacket != null)
-                connectedList.put(new String(inpacket.luid),new LocalPeer(inpacket.convertToProfile(), socket));
-        }
-        catch(IOException c) {
 
         }
+        catch(IOException c) {
+            Log.e(TAG, "IOException in onSuccessfulConnect");
+
+        }
+        startDiscoverLoopThread();
     }
 
     public void stopDiscoverLoopThread() {
@@ -212,7 +224,15 @@ public class ScatterBluetoothManager {
         return connectedList.get(new String(luid));
     }
 
-    public void sendMessageToLocalPeer(String luid, final byte[] message, boolean text) {
+    public void sendMessageToBroadcast(byte[] message, boolean text) {
+        Log.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
+        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            sendMessageToLocalPeer(ent.getKey(),message, text);
+        }
+    }
+
+    public void sendMessageToLocalPeer(final String luid, final byte[] message,final  boolean text) {
+        Log.v(TAG, "Sending message to peer " + luid);
        final LocalPeer target = trunk.blman.getPeerByLuid(luid);
         BlockDataPacket blockDataPacket = new BlockDataPacket(message, text, target.profile,
                 trunk.mainService.luid);
@@ -222,10 +242,12 @@ public class ScatterBluetoothManager {
                 for(int x=0;x<5;x++) {
                     if (target.socket.isConnected()) {
                         try {
-                            target.socket.getOutputStream().write(message);
+                            target.socket.getOutputStream().write(
+                                    new BlockDataPacket(message,text, target.profile,trunk.mainService.luid).getContents());
+                            Log.v(TAG, "Sent message successfully to " + luid);
                             break;
                         } catch (IOException e) {
-                            Log.e(TAG, "Error on sending block data stanza");
+                            Log.e(TAG, "Error on sending message to " + luid);
                         }
                     }
                     else{

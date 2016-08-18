@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
@@ -32,6 +34,7 @@ public class NormalActivity extends AppCompatActivity {
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
     public static boolean active = false;
+    public final String TAG = "MessagingActivity";
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -56,6 +59,7 @@ public class NormalActivity extends AppCompatActivity {
 
             mService.registerMessageArrayAdapter(Messages);
 
+            Log.v(TAG, "Bound to routing service");
             scatterBound = true;
 
 
@@ -64,6 +68,7 @@ public class NormalActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.e(TAG, "Disconnected from routing service");
             scatterBound = false;
         }
     };
@@ -98,6 +103,12 @@ public class NormalActivity extends AppCompatActivity {
     private void updateList() {
         Messages.add(MsgBox.getText().toString());
        // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
+
+        if(scatterBound) {
+            Log.v(TAG, "Updating list");
+            mService.getBluetoothManager().sendMessageToBroadcast(
+                    MsgBox.getText().toString().getBytes(),true);
+        }
 
         MsgBox.setText("");
 

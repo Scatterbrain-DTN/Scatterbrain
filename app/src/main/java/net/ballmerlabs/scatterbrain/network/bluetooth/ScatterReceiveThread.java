@@ -23,17 +23,19 @@ public class ScatterReceiveThread extends Thread{
 
     @Override
     public void run() {
+        int errorcount = 0;
         while(true) {
-            int errorcount = 0;
             try {
+                errorcount = 0;
                 byte[] buffer = new byte[50];
                 socket.getInputStream().read(buffer);
                 Log.v(trunk.blman.TAG, "Received a stanza!!");
                 trunk.blman.onSuccessfulReceive(buffer);
+
             }
             catch (IOException e) {
                 errorcount++;
-                if(errorcount > 10) {
+                if(errorcount > 50) {
                     try {
                         socket.close();
                     }

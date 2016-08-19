@@ -47,6 +47,9 @@ public class ScatterConnectThread extends Thread {
         Log.v(trunk.blman.TAG,"Attempting to connect");
         try {
             mmSocket.connect();
+            //call this function in the context of the bluetoothManager
+            bleman.startDiscoverLoopThread();
+            Log.v(trunk.blman.TAG, "Connection successful");
         }
         catch(IOException e) {
             Log.e(trunk.blman.TAG, "Failed to connect, IOException");
@@ -59,12 +62,10 @@ public class ScatterConnectThread extends Thread {
 
         }
         finally {
-
-            Log.v(trunk.blman.TAG, "Connection successful");
-            //call this function in the context of the bluetoothManager
             trunk.blman.onSuccessfulConnect(mmSocket);
-            bleman.startDiscoverLoopThread();
         }
+
+
     }
 
 }

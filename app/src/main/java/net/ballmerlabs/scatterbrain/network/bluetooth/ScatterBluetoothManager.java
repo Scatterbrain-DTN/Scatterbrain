@@ -84,7 +84,7 @@ public class ScatterBluetoothManager {
                 });
                 discoveryFinishedThread.start();
                 if (runScanThread)
-                    bluetoothHan.postDelayed(scanr,5000);
+                    bluetoothHan.postDelayed(scanr,50000);
                 else
                     Log.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
@@ -146,8 +146,7 @@ public class ScatterBluetoothManager {
         return adapter;
     }
 
-    public void startDiscoverLoopThread() {
-        stopDiscoverLoopThread();
+    public synchronized void startDiscoverLoopThread() {
         Log.v(TAG, "Starting bluetooth scan thread");
         runScanThread = true;
         bluetoothHan = looper.getHandler();
@@ -221,7 +220,7 @@ public class ScatterBluetoothManager {
         startDiscoverLoopThread();
     }
 
-    public void stopDiscoverLoopThread() {
+    public synchronized void stopDiscoverLoopThread() {
         Log.v(TAG, "Stopping bluetooth discovery thread");
         runScanThread = false;
         adapter.cancelDiscovery();

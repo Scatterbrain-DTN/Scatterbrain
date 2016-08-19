@@ -27,7 +27,7 @@ public class ScatterReceiveThread extends Thread{
         while(true) {
             try {
                 errorcount = 0;
-                byte[] buffer = new byte[50];
+                byte[] buffer = new byte[1000];
                 socket.getInputStream().read(buffer);
                 Log.v(trunk.blman.TAG, "Received a stanza!!");
                 trunk.blman.onSuccessfulReceive(buffer);
@@ -44,6 +44,7 @@ public class ScatterReceiveThread extends Thread{
                     }
                     break;
                 }
+
                 Log.e(trunk.blman.TAG, "IOException when receiving stanza");
             }
         }

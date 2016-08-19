@@ -1,5 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
 
+import java.nio.ByteBuffer;
+
 /**
  * Represents a block data packet
  */
@@ -9,12 +11,13 @@ public class BlockDataPacket extends ScatterStanza {
     public boolean text;
     public String senderluid;
     public String receiverluid;
+    public int datasize;
     public DeviceProfile profile;
 
 
 
     public BlockDataPacket(byte body[], boolean text, DeviceProfile profile, String senderluid) {
-        super(14+body.length);
+        super(18+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
@@ -28,7 +31,7 @@ public class BlockDataPacket extends ScatterStanza {
 
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
-        if(raw.length > 14)
+        if(raw.length > 18)
             contents = raw.clone();
         else
             invalid = true;
@@ -53,9 +56,16 @@ public class BlockDataPacket extends ScatterStanza {
         else
             text = false;
 
-        body = new byte[contents.length - 14];
+        ByteBuffer b  = ByteBuffer.allocate(4);
+        byte[] out = new byte[4];
+        for(int x=0;x<out.length;x++) {
+            out[x] = contents[x+14];
+        }
+        b.put(out);
+        b.get(datasize);
+        body = new byte[datasize];
 
-        for(int x=0;x<contents.length - 14;x++) {
+        for(int x=0;x<datasize;x++) {
             body[x] = contents[x+14];
         }
     }
@@ -89,8 +99,17 @@ public class BlockDataPacket extends ScatterStanza {
         else
             contents[13] = 0;
 
+        ByteBuffer b = ByteBuffer.allocate(4);
+        b.putInt(body.length); //TODO: this assumes small sizes
+
+        byte[] out = b.array();
+
+        for(int i=0;i< out.length;i++) {
+            contents[i+14] = out[i];
+        }
+
         for(int x=0;x<body.length;x++) {
-            contents[x+14] = body[x];
+            contents[x+18] = body[x];
         }
 
         return contents;

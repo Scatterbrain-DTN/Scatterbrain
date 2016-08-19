@@ -252,7 +252,7 @@ public class ScatterBluetoothManager {
                     if (target.socket.isConnected()) {
                         try {
                             target.socket.getOutputStream().write(
-                                    new BlockDataPacket(message,text, target.profile,trunk.mainService.luid).getContents());
+                                    new BlockDataPacket(message,text, target.profile,"555555").getContents());
                             Log.v(TAG, "Sent message successfully to " + luid );
                             break;
                         } catch (IOException e) {

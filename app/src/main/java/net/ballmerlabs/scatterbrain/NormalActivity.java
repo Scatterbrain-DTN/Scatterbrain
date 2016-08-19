@@ -104,7 +104,7 @@ public class NormalActivity extends AppCompatActivity {
     //adds a message to the list and clears the input field
     private void updateList() {
         BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,
-                mService.getTrunk().profile,mService.luid);
+                mService.getTrunk().profile,"555555");
         BlockDataPacket out = new BlockDataPacket(bd.contents);
         Messages.add(new String(out.body));
        // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);

@@ -11,18 +11,16 @@ public class BlockDataPacket extends ScatterStanza {
     public boolean text;
     public String senderluid;
     public String receiverluid;
-    public int datasize;
     public DeviceProfile profile;
 
 
-
     public BlockDataPacket(byte body[], boolean text, DeviceProfile profile, String senderluid) {
-        super(18+body.length);
+        super(14+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
-        this.profile = profile;
         invalid = false;
+        this.profile = profile;
 
         if(init() == null)
             invalid = true;
@@ -31,7 +29,7 @@ public class BlockDataPacket extends ScatterStanza {
 
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
-        if(raw.length > 18)
+        if(raw.length > 14)
             contents = raw.clone();
         else
             invalid = true;
@@ -42,10 +40,12 @@ public class BlockDataPacket extends ScatterStanza {
         int counter3 = 0;
         for(int x = 1;x<7;x++) {
             senderluid[x-1] = contents[x];
+            System.out.println(counter3++);
         }
         counter3 = 0;
         for(int x=7;x<13;x++) {
             recieverluid[x-7] = contents[x];
+            System.out.println(counter3++);
         }
 
         this.senderluid = new String(senderluid);
@@ -56,16 +56,9 @@ public class BlockDataPacket extends ScatterStanza {
         else
             text = false;
 
-        ByteBuffer b  = ByteBuffer.allocate(4);
-        byte[] out = new byte[4];
-        for(int x=0;x<out.length;x++) {
-            out[x] = contents[x+14];
-        }
-        b.put(out);
-        b.get(datasize);
-        body = new byte[datasize];
+        body = new byte[contents.length - 14];
 
-        for(int x=0;x<datasize;x++) {
+        for(int x=0;x<contents.length - 14;x++) {
             body[x] = contents[x+14];
         }
     }
@@ -73,14 +66,16 @@ public class BlockDataPacket extends ScatterStanza {
     private byte[] init() {
         contents[0] = 1;
         if(senderluid.getBytes().length != 6) {
+            System.out.println("GUUUUU");
             return null; //TODO: error logging here
         }
         byte senderluidbytes[] = senderluid.getBytes();
         int counter1 = 0;
         for(int x=1;x<7;x++) {
             contents[x] = senderluidbytes[x-1];
+            System.out.println(counter1++);
         }
-        String receiverluid = "555555";
+        String receiverluid = "555555" ;
 
         this.receiverluid = receiverluid;
         byte receiverluidbytes[] = receiverluid.getBytes();
@@ -92,6 +87,7 @@ public class BlockDataPacket extends ScatterStanza {
         int counter = 0;
         for(int x=0;x<receiverluidbytes.length;x++) {
             contents[x+7] = receiverluidbytes[x];
+            System.out.println(counter++);
         }
 
         if(text)
@@ -99,17 +95,8 @@ public class BlockDataPacket extends ScatterStanza {
         else
             contents[13] = 0;
 
-        ByteBuffer b = ByteBuffer.allocate(4);
-        b.putInt(body.length); //TODO: this assumes small sizes
-
-        byte[] out = b.array();
-
-        for(int i=0;i< out.length;i++) {
-            contents[i+14] = out[i];
-        }
-
         for(int x=0;x<body.length;x++) {
-            contents[x+18] = body[x];
+            contents[x+14] = body[x];
         }
 
         return contents;

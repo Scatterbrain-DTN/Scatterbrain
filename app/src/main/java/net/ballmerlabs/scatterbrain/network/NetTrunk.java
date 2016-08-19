@@ -22,7 +22,7 @@ public class NetTrunk {
     public NetTrunk(ScatterRoutingService mainService) {
         this.mainService = mainService;
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
-                DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
+                DeviceProfile.HardwareServices.BLUETOOTHLE, "000000");
         globnet = new GlobalNet(this);
         settings = new SettingsManager();
         globnet.getWifiManager().startWifiDirctLoopThread();

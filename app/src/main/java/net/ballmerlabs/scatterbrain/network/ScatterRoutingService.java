@@ -36,7 +36,7 @@ public class ScatterRoutingService extends Service {
     public final String TAG = "ScatterRoutingService";
     private  Runnable onDevicesFound;
     public SharedPreferences sharedPreferences;
-    public String luid;
+    public byte[] luid;
     private ArrayAdapter<String> Messages;
 
 
@@ -140,11 +140,11 @@ public class ScatterRoutingService extends Service {
         if(uuid.equals(getString(R.string.uuid_not_present))) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             this.luid = genLUID();
-            editor.putString(getString(R.string.scatter_uuid),this.luid );
+            editor.putString(getString(R.string.scatter_uuid),new String(this.luid ));
             editor.commit();
         }
         else {
-            this.luid = uuid;
+            this.luid = uuid.getBytes();
         }
     }
 
@@ -156,15 +156,15 @@ public class ScatterRoutingService extends Service {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         this.luid = genLUID();
-        editor.putString(getString(R.string.scatter_uuid),this.luid );
+        editor.putString(getString(R.string.scatter_uuid),new String(this.luid) );
         editor.commit();
     }
 
-    private String genLUID() {
+    private byte[] genLUID() {
         byte[] rand = new byte[6];
         Random r = new Random();
         r.nextBytes(rand);
-        return new String(Base64.encode(rand,Base64.DEFAULT));
+        return Base64.encode(rand,Base64.DEFAULT);
     }
 
     public static NetTrunk getNetTrunk() {

@@ -190,7 +190,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 scatterBound = true;
                 Preference strdisplay = findPreference(getString(R.string.pref_luid_display));
                 if(scatterBound) {
-                    strdisplay.setSummary(mService.luid);
+                    strdisplay.setSummary(new String(mService.luid));
                 }
             }
 
@@ -227,7 +227,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if(scatterBound) {
                         mService.regenerateUUID();
                         Preference strdisplay = findPreference(getString(R.string.pref_luid_display));
-                        strdisplay.setSummary(mService.luid);
+                        strdisplay.setSummary(new String(mService.luid));
                     }
                     return true;
                 }

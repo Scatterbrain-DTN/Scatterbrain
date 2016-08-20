@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,6 +28,7 @@ public class SearchForSenpai extends AppCompatActivity {
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
     private String TAG = "SenpaiActivity";
+    final Activity main  = this;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -44,6 +46,10 @@ public class SearchForSenpai extends AppCompatActivity {
                             TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
                             senpai_notice.setVisibility(View.VISIBLE);
                             senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
+                            if(!NormalActivity.active) {
+                                Intent messagingIntent = new Intent(main, NormalActivity.class);
+                                main.startActivity(messagingIntent);
+                            }
                         }
                     });
                 }

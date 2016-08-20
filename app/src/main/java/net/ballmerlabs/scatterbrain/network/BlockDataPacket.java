@@ -9,12 +9,12 @@ public class BlockDataPacket extends ScatterStanza {
 
     public byte body[];
     public boolean text;
-    public String senderluid;
-    public String receiverluid;
+    public byte[] senderluid;
+    public byte[] receiverluid;
     public DeviceProfile profile;
 
 
-    public BlockDataPacket(byte body[], boolean text, DeviceProfile profile, String senderluid) {
+    public BlockDataPacket(byte body[], boolean text, DeviceProfile profile, byte[] senderluid) {
         super(14+body.length);
         this.body = body;
         this.text = text;
@@ -40,16 +40,14 @@ public class BlockDataPacket extends ScatterStanza {
         int counter3 = 0;
         for(int x = 1;x<7;x++) {
             senderluid[x-1] = contents[x];
-            System.out.println(counter3++);
         }
         counter3 = 0;
         for(int x=7;x<13;x++) {
             recieverluid[x-7] = contents[x];
-            System.out.println(counter3++);
         }
 
-        this.senderluid = new String(senderluid);
-        this.receiverluid = new String(recieverluid);
+        this.senderluid = senderluid;
+        this.receiverluid = recieverluid;
 
         if(contents[13] == 1)
             text = true;
@@ -65,21 +63,20 @@ public class BlockDataPacket extends ScatterStanza {
 
     private byte[] init() {
         contents[0] = 1;
-        if(senderluid.getBytes().length != 6) {
-            System.out.println("GUUUUU");
+        if(senderluid.length != 6) {
             return null; //TODO: error logging here
         }
-        byte senderluidbytes[] = senderluid.getBytes();
+        byte senderluidbytes[] = senderluid;
         int counter1 = 0;
         for(int x=1;x<7;x++) {
             contents[x] = senderluidbytes[x-1];
             System.out.println(counter1++);
         }
-        String receiverluid = "555555" ;
+        byte[] receiverluid = {5,5,5,5,5,5} ;
 
         this.receiverluid = receiverluid;
-        byte receiverluidbytes[] = receiverluid.getBytes();
-        if(receiverluid.getBytes().length != 6) {
+        byte receiverluidbytes[] = receiverluid;
+        if(receiverluid.length != 6) {
             invalid = true;
             return null;
         }

@@ -210,11 +210,11 @@ public class ScatterBluetoothManager {
                     Log.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
                     connectedList.put(new String(inpacket.luid), new LocalPeer(inpacket.convertToProfile(), socket));
                     Log.v(TAG, "List size = " + connectedList.size());
+
                 }
                 else {
                     Log.e(TAG, "Received an advertise stanza, but it is invalid");
                 }
-
 
             }
 
@@ -267,8 +267,9 @@ public class ScatterBluetoothManager {
                 for(int x=0;x<5;x++) {
                     if (target.socket.isConnected()) {
                         try {
+                            byte[] tmp = {5,5,5,5,5,5};
                             target.socket.getOutputStream().write(
-                                    new BlockDataPacket(message,text, target.profile,"555555").getContents());
+                                    new BlockDataPacket(message,text, target.profile,tmp).getContents());
                             Log.v(TAG, "Sent message successfully to " + luid );
                             break;
                         } catch (IOException e) {

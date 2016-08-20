@@ -100,9 +100,6 @@ public class SearchForSenpai extends AppCompatActivity {
         bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
 
 
-
-
-
     }
     public void launchBtDialog() {
             Log.v(TAG,"Running bluetooth prompt dialog");
@@ -119,8 +116,10 @@ public class SearchForSenpai extends AppCompatActivity {
                 mService.getBluetoothManager().init();
             }
 
+        mService.getBluetoothManager().startDiscoverLoopThread();
 
-            mService.getBluetoothManager().startDiscoverLoopThread();
+
+
     }
 
 

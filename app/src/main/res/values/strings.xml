@@ -60,22 +60,22 @@
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Network &amp; radio</string>
 
-    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string name="pref_title_sync_frequency">Bluetooth Scan Frequency</string>
     <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
+        <item>3 sec</item>
+        <item>5 sec</item>
+        <item>7 sec</item>
+        <item>10 sec</item>
+        <item>15 sec</item>
+        <item>25 sec</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
         <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
+        <item>25</item>
     </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>

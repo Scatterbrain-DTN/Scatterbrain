@@ -35,7 +35,7 @@ public class ScatterConnectThread extends Thread {
     }
 
     public void run() {
-        bleman.stopDiscoverLoopThread();
+        bleman.pauseDiscoverLoopThread();
         BluetoothSocket tmp = null;
         try {
             tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);
@@ -48,7 +48,7 @@ public class ScatterConnectThread extends Thread {
         try {
             mmSocket.connect();
             //call this function in the context of the bluetoothManager
-            bleman.startDiscoverLoopThread();
+            bleman.unpauseDiscoverLoopThread();
             Log.v(trunk.blman.TAG, "Connection successful");
         }
         catch(IOException e) {

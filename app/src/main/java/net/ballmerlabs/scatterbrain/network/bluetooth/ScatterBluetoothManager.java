@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -55,6 +56,7 @@ public class ScatterBluetoothManager {
     public ScatterConnectThread currentconnection;
     public boolean isAccepting;
     public boolean acceptThreadRunning;
+    public boolean threadPaused;
 
     public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -83,8 +85,10 @@ public class ScatterBluetoothManager {
                     }
                 });
                 discoveryFinishedThread.start();
-                if (runScanThread)
-                    bluetoothHan.postDelayed(scanr,50000);
+                if (runScanThread) {
+                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency","7"));
+                    bluetoothHan.postDelayed(scanr,  scan *1000);
+                }
                 else
                     Log.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
@@ -133,6 +137,7 @@ public class ScatterBluetoothManager {
         }
         isAccepting = false;
         acceptThreadRunning = false;
+        threadPaused = false;
     }
 
     public void init() {
@@ -157,7 +162,8 @@ public class ScatterBluetoothManager {
                 //
                 Log.v(TAG, "Scanning...");
 
-                adapter.startDiscovery();
+                if(!threadPaused)
+                    adapter.startDiscovery();
             }
         };
 
@@ -217,13 +223,23 @@ public class ScatterBluetoothManager {
             Log.e(TAG, "IOException in onSuccessfulConnect");
 
         }
-        startDiscoverLoopThread();
     }
 
     public synchronized void stopDiscoverLoopThread() {
         Log.v(TAG, "Stopping bluetooth discovery thread");
         runScanThread = false;
         adapter.cancelDiscovery();
+    }
+
+    public synchronized void pauseDiscoverLoopThread() {
+        Log.v(TAG, "Pausing bluetooth discovery thread");
+        threadPaused = true;
+        adapter.cancelDiscovery();
+    }
+
+    public void unpauseDiscoverLoopThread() {
+        Log.v(TAG,"Resuming bluetooth discovery thread");
+        threadPaused = false;
     }
 
     public LocalPeer getPeerByLuid(String luid) {

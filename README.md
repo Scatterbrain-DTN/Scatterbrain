@@ -28,8 +28,4 @@ retransmitted to any other peers met in the future. This app can operate over mo
 Check out the protocol at https://github.com/gnu3ra/Scatterbrain-Protocol if you want to help out making services for the network.
 
 ### Wow! Can I use it now?
-Sadly, no. The protocol is still far from complete. The UI in the android app is a placeholder
-right now while the backend is built more. (You can
-discover people near you, send fake messages, but not much else). But you can feel
-free to contribute!
-
+Sort of. Zero hop messaging works (you can text people directly near you, like a generic bluetooth chat), and service discovery works to an extent. It does not scale very well yet, as the datastore and  most of the scatterbrain protocol has yet to be implemented. 

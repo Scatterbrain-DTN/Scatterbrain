@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
@@ -119,10 +120,20 @@ public class SearchForSenpai extends AppCompatActivity {
                 });
             }
             else {
+                Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
+                startActivity(enableAndDiscoverBtIntent);
                 mService.getBluetoothManager().init();
+                Handler handler = new Handler(this.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mService.getBluetoothManager().startDiscoverLoopThread();
+                    }
+                }, 5000);
+
             }
 
-        mService.getBluetoothManager().startDiscoverLoopThread();
 
 
 
@@ -136,6 +147,13 @@ public class SearchForSenpai extends AppCompatActivity {
             enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(enableAndDiscoverBtIntent);
             mService.getBluetoothManager().init();
+            Handler handler = new Handler(this.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mService.getBluetoothManager().startDiscoverLoopThread();
+                }
+            }, 5000);
         }
     }
 

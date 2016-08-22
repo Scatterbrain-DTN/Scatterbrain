@@ -140,11 +140,11 @@ public class ScatterRoutingService extends Service {
         if(uuid.equals(getString(R.string.uuid_not_present))) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             this.luid = genLUID();
-            editor.putString(getString(R.string.scatter_uuid),new String(this.luid ));
+            editor.putString(getString(R.string.scatter_uuid),new String(Base64.encodeToString(this.luid,Base64.DEFAULT) ));
             editor.commit();
         }
         else {
-            this.luid = uuid.getBytes();
+            this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
     }
 

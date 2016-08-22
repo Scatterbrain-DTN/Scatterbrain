@@ -21,6 +21,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -227,7 +228,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if(scatterBound) {
                         mService.regenerateUUID();
                         Preference strdisplay = findPreference(getString(R.string.pref_luid_display));
-                        strdisplay.setSummary(new String(mService.luid));
+                        strdisplay.setSummary(new String(Base64.encodeToString(mService.luid, Base64.DEFAULT)));
                     }
                     return true;
                 }

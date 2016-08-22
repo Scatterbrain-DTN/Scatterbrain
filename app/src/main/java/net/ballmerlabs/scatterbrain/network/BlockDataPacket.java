@@ -70,7 +70,6 @@ public class BlockDataPacket extends ScatterStanza {
         int counter1 = 0;
         for(int x=1;x<7;x++) {
             contents[x] = senderluidbytes[x-1];
-            System.out.println(counter1++);
         }
         byte[] receiverluid = {5,5,5,5,5,5} ;
 
@@ -84,7 +83,6 @@ public class BlockDataPacket extends ScatterStanza {
         int counter = 0;
         for(int x=0;x<receiverluidbytes.length;x++) {
             contents[x+7] = receiverluidbytes[x];
-            System.out.println(counter++);
         }
 
         if(text)

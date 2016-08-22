@@ -114,8 +114,9 @@ public class ScatterBluetoothManager {
     //this should return a handler object later
     public void connectToDevice(BluetoothDevice device) {
         if (!isAccepting) {
+            ScatterConnectThread currentconnection;
             currentconnection = new ScatterConnectThread(device, trunk);
-            currentconnection.run();
+            currentconnection.start();
         }
     }
 
@@ -214,6 +215,7 @@ public class ScatterBluetoothManager {
                 }
                 else {
                     Log.e(TAG, "Received an advertise stanza, but it is invalid");
+                    socket.close();
                 }
 
             }

@@ -11,10 +11,12 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.DispMessage;
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
@@ -183,7 +185,8 @@ public class ScatterBluetoothManager {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    trunk.mainService.getMessageAdapter().add(new String(bd.body));
+                    trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
+                            Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
                     Log.e(TAG, "Appended message to message list");
                 }
             });

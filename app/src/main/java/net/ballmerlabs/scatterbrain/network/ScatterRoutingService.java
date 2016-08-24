@@ -15,6 +15,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
@@ -37,7 +38,7 @@ public class ScatterRoutingService extends Service {
     private  Runnable onDevicesFound;
     public SharedPreferences sharedPreferences;
     public byte[] luid;
-    private ArrayAdapter<String> Messages;
+    private MessageBoxAdapter Messages;
 
 
     public class ScatterBinder extends Binder {
@@ -181,7 +182,7 @@ public class ScatterRoutingService extends Service {
         trunk.blman.stopDiscoverLoopThread();
     }
 
-    public ArrayAdapter<String> getMessageAdapter() {
+    public MessageBoxAdapter getMessageAdapter() {
         if(bound) {
             return Messages;
         }
@@ -190,7 +191,7 @@ public class ScatterRoutingService extends Service {
         }
     }
 
-    public void registerMessageArrayAdapter(ArrayAdapter<String> messages) {
+    public void registerMessageArrayAdapter(MessageBoxAdapter messages) {
         this.Messages = messages;
     }
 }

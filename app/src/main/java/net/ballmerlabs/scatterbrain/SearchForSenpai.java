@@ -221,6 +221,8 @@ public class SearchForSenpai extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();

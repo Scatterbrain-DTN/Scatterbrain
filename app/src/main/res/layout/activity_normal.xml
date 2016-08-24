@@ -42,6 +42,9 @@
         android:id="@+id/PeersView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="163dp"
-        android:layout_alignEnd="@+id/timeline" />
+        android:layout_alignEnd="@+id/timeline"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="163dp"
+        android:layout_alignRight="@+id/timeline"/>
 
 </RelativeLayout>

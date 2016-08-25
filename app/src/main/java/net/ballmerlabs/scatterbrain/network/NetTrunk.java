@@ -25,7 +25,7 @@ public class NetTrunk {
                 DeviceProfile.HardwareServices.BLUETOOTHLE, "000000");
         globnet = new GlobalNet(this);
         settings = new SettingsManager();
-        globnet.getWifiManager().startWifiDirctLoopThread();
+       // globnet.getWifiManager().startWifiDirctLoopThread();
         blman = new ScatterBluetoothManager(this);
     }
 }

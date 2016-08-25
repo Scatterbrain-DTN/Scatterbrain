@@ -55,7 +55,6 @@ public class ScatterBluetoothManager {
     public IntentFilter filter;
     public Runnable scanr;
     public ScatterAcceptThread acceptThread;
-    public ScatterConnectThread currentconnection;
     public boolean isAccepting;
     public boolean acceptThreadRunning;
     public boolean threadPaused;

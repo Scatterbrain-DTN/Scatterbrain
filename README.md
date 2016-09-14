@@ -29,3 +29,7 @@ Check out the protocol at https://github.com/gnu3ra/Scatterbrain-Protocol if you
 
 ### Wow! Can I use it now?
 Sort of. Zero hop messaging works (you can text people directly near you, like a generic bluetooth chat), and service discovery works to an extent. It does not scale very well yet, as the datastore and  most of the scatterbrain protocol has yet to be implemented. 
+
+
+### I wana help take over the world! How?
+Well, we have an IRC now: #scatterbrain on freenode. There is also a telegram group. IRC is for serious dev work, telegram group is for public beta testing and user support. We do not need all these yet. We do need large scale testers, though. Grab some friends and try it out in public places like malls or raves or things.  

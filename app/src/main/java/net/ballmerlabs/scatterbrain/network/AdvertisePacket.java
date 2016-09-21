@@ -30,6 +30,7 @@ public class AdvertisePacket extends ScatterStanza {
         this.luid = new byte[6];
         protocolversion = new byte[2];
         byte[] raw = new byte[13];
+
         if(raw.length < 13) {
             invalid = true;
             Log.e(TAG, "Packet length wrong");
@@ -40,6 +41,11 @@ public class AdvertisePacket extends ScatterStanza {
                 raw[i] = raw_in[i];
             }
             contents = raw;
+
+            if(contents[0] != 0) {
+                invalid = true;
+                return;
+            }
             devicetype = contents[1];
             mobilestatus = contents[2];
             protocolversion[0] = contents[3];

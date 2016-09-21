@@ -34,6 +34,9 @@ public class BlockDataPacket extends ScatterStanza {
         else
             invalid = true;
 
+        if(contents[0] != 1)
+            invalid = true;
+
         byte recieverluid[] = new byte[6];
         byte senderluid[] = new byte[6];
 

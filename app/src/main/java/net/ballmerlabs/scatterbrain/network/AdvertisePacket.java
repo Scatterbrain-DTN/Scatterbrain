@@ -113,7 +113,7 @@ public class AdvertisePacket extends ScatterStanza {
         hwservices = contents[6];
 
         for(int i=1;i<=6;i++) {
-            contents[6+i] = dv.getLUID().getBytes()[i-1];
+            contents[6+i] = dv.getLUID()[i-1];
         }
         return contents;
     }
@@ -152,7 +152,7 @@ public class AdvertisePacket extends ScatterStanza {
 
 
         //todo: Replace mac with universalID
-        return new DeviceProfile(type, mob, serv, new String(this.luid));
+        return new DeviceProfile(type, mob, serv, this.luid);
     }
 }
 

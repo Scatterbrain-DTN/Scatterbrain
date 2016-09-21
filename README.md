@@ -35,4 +35,10 @@ Grab an apk from https://dl.scatterbrain.xyz/senpaiDetector/
 
 
 ### I wana help take over the world! How?
-Well, we have an IRC now: #scatterbrain on freenode. There is also a telegram group at https://telegram.me/joinchat/DGewIz7dadgXHYp05sa3PQ. IRC is for serious dev work, telegram group is for public beta testing and user support. We do not need all these yet. We do need large scale testers, though. Grab some friends and try it out in public places like malls or raves or things.  
+Find us on IRC: #scatterbrain on freenode!
+
+There is also a telegram group at https://telegram.me/joinchat/DGewIz7dadgXHYp05sa3PQ for public beta testing and user support.
+
+We need large scale testers. Grab some friends and try it out in public places like malls or raves or things.
+
+You can donate some bitcoins if you feel like it: 15FdcxEJziSFE8Dt5MpiKmi5824LF7iH9Y . All proceeds go to ad blitzes or snacks for developers. 

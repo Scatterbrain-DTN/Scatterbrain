@@ -28,4 +28,17 @@ retransmitted to any other peers met in the future. This app can operate over mo
 Check out the protocol at https://github.com/gnu3ra/Scatterbrain-Protocol if you want to help out making services for the network.
 
 ### Wow! Can I use it now?
-Sort of. Zero hop messaging works (you can text people directly near you, like a generic bluetooth chat), and service discovery works to an extent. It does not scale very well yet, as the datastore and  most of the scatterbrain protocol has yet to be implemented. 
+Sort of.
+Grab an apk from https://dl.scatterbrain.xyz/senpaiDetector/
+
+ Zero hop messaging works (you can text people directly near you, like a generic bluetooth chat), and service discovery works to an extent. It does not scale very well yet, as the datastore and  most of the scatterbrain protocol has yet to be implemented. 
+
+
+### I wana help take over the world! How?
+Find us on IRC: #scatterbrain on freenode!
+
+There is also a telegram group at https://telegram.me/joinchat/DGewIz7dadgXHYp05sa3PQ for public beta testing and user support.
+
+We need large scale testers. Grab some friends and try it out in public places like malls or raves or things.
+
+You can donate some bitcoins if you feel like it: 15FdcxEJziSFE8Dt5MpiKmi5824LF7iH9Y . All proceeds go to ad blitzes or snacks for developers. 

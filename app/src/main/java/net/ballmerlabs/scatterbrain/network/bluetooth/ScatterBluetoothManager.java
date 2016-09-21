@@ -69,8 +69,9 @@ public class ScatterBluetoothManager {
                     @Override
                     public void run() {
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        tmpList.add(device);
-                        connectToDevice(device);
+
+                        device.fetchUuidsWithSdp();
+                       // connectToDevice(device);
                     }
                 });
                 devCreateThread.start();
@@ -106,6 +107,14 @@ public class ScatterBluetoothManager {
                     }
                 });
 
+            }
+            else if(BluetoothDevice.ACTION_UUID.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                UUID testuuid = intent.getParcelableExtra(BluetoothDevice.EXTRA_UUID);
+                if(testuuid.equals(UID)) {
+                    tmpList.add(device);
+                    connectToDevice(device);
+                }
             }
         }
 

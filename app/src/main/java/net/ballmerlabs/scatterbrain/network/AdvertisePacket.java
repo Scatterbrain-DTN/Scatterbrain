@@ -33,7 +33,6 @@ public class AdvertisePacket extends ScatterStanza {
 
         if(raw.length < 13) {
             invalid = true;
-            Log.e(TAG, "Packet length wrong");
             return;
         }
         else {

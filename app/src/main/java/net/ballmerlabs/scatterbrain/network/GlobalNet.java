@@ -28,12 +28,8 @@ public class GlobalNet {
         prof = trunk.profile;
         this.trunk = trunk;
         directmanager = new WifiManager(trunk);
-        //peerlistener = new ScatterPeerListener(trunk);
         directmanager.stopWifiDirectLoopThread();
-
     }
-
-
 
 
     /* appends a packet to the queue */

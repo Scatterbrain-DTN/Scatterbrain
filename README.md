@@ -2,10 +2,12 @@
 City-spanning multi-protocol 'Lazy mesh' network chat. Hold internet-less long range conversations based on
 the Wind concept (https://github.com/n8fr8/WindFarm).
 
+***
+
 ### What does it do?
-Scatterbrain is a distributed discussion board using bluetooth low energy, smartphones, and
-eventually other consumer devices. It provides a framework for sending text based messages,
-replying to an existing message, and maintaining an identity.
+Scatterbrain is a p2p internet platform using bluetooth, wifi, and various other protocols. Scatterbrain
+works without the internet and without the need to remain connected to a mesh. Messages are stored
+and forwarded to other devices as they pass on the street. 
 
 ### Background
 Mesh networks have been frequently used for communications for many different applications,
@@ -24,14 +26,19 @@ People can leave and enter small networks, and traffic follows them, online and 
 When two people pass on the street, Scatterbrain wirelessly exchanges messages, even ones 
 sent by friends. The end result is a system where a single message can spread to an entire city, 
 even if the mesh does not. When a message is sent, it is stored on the receiving device and
-retransmitted to any other peers met in the future. This app can operate over most protocols (it uses bluetooth now) and is theoretically compatible with iOS.
-Check out the protocol at https://github.com/gnu3ra/Scatterbrain-Protocol if you want to help out making services for the network.
+retransmitted to any other peers met in the future. This app can operate over most protocols 
+(it uses bluetooth now) and is theoretically compatible with iOS.
+Check out the protocol at https://github.com/gnu3ra/Scatterbrain-Protocol if you want to help out 
+making services for the network.
+Scatterbrain will eventually provide an API for developers to make connected apps. 
 
 ### Wow! Can I use it now?
 Sort of.
 Grab an apk from https://dl.scatterbrain.xyz/senpaiDetector/
 
- Zero hop messaging works (you can text people directly near you, like a generic bluetooth chat), and service discovery works to an extent. It does not scale very well yet, as the datastore and  most of the scatterbrain protocol has yet to be implemented. 
+ Zero hop messaging works (you can text people directly near you, like a generic bluetooth chat),
+  and service discovery works to an extent. It does not scale very well yet, as the datastore and  
+  most of the scatterbrain protocol has yet to be implemented. 
 
 
 ### I wana help take over the world! How?

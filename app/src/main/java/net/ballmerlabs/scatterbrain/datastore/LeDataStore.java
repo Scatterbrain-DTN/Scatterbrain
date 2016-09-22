@@ -29,7 +29,8 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_UUID,
             MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT,
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
-            MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS};
+            MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS,
+            MsgDataDb.MessageQueue.COLUMN_NAME_RANK};
 
     public LeDataStore(Activity mainActivity, int trim) {
         dataTrimLimit = trim;
@@ -51,7 +52,7 @@ public class LeDataStore {
      * sticks a message into the datastore at the front?.
      */
     public void enqueueMessage(String subject, String contents, int ttl, String replyto, String uuid,
-                               String recipient, String from, String flags, String sig) {
+                               String recipient, String from, String flags, String sig, int rank) {
         Log.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS, contents);
@@ -63,6 +64,7 @@ public class LeDataStore {
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FROM, from);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RANK, rank);
 
         long newRowId;
         newRowId = db.insert(MsgDataDb.MessageQueue.TABLE_NAME,

@@ -20,6 +20,7 @@ public final class MsgDataDb {
         public static final String COLUMN_NAME_FROM = "from";
         public static final String COLUMN_NAME_SIG = "sig";
         public static final String COLUMN_NAME_FLAGS = "flags";
+        public static final String COLUMN_NAME_RANK = "rank";
 
     }
 
@@ -35,10 +36,11 @@ public final class MsgDataDb {
                     MessageQueue.COLUMN_NAME_TTL + INT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_REPLYTO + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_CONTENTS + TEXT_TYPE + COMMA_SEP +
-                    MessageQueue.COLUMN_NAME_RECIPIENT + COMMA_SEP +
-                    MessageQueue.COLUMN_NAME_FROM + COMMA_SEP +
-                    MessageQueue.COLUMN_NAME_SIG + COMMA_SEP +
-                    MessageQueue.COLUMN_NAME_FLAGS + COMMA_SEP + " )";
+                    MessageQueue.COLUMN_NAME_RECIPIENT + TEXT_TYPE + COMMA_SEP +
+                    MessageQueue.COLUMN_NAME_FROM + TEXT_TYPE + COMMA_SEP +
+                    MessageQueue.COLUMN_NAME_SIG + TEXT_TYPE + COMMA_SEP +
+                    MessageQueue.COLUMN_NAME_FLAGS + TEXT_TYPE + COMMA_SEP +
+                    MessageQueue.COLUMN_NAME_RANK  + INT_TYPE + " )";
 
     public static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + MessageQueue.TABLE_NAME;

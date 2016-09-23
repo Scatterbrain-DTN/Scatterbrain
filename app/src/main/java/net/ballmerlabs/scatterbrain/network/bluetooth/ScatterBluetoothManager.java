@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -68,17 +70,16 @@ public class ScatterBluetoothManager {
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                device.fetchUuidsWithSdp();
+                foundList.add(device);
                 // connectToDevice(device)
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Log.v(TAG, "Device disvovery finished. Scanning services");
                 Thread discoveryFinishedThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        foundList = (ArrayList<BluetoothDevice>) tmpList.clone();
-                        tmpList.clear();
-                        //for(BluetoothDevice d : foundList)  {
-
-                        // }
+                        for(BluetoothDevice d : foundList)  {
+                            d.fetchUuidsWithSdp();
+                        }
                     }
                 });
                 discoveryFinishedThread.start();
@@ -102,21 +103,28 @@ public class ScatterBluetoothManager {
                 });
 
             } else if (BluetoothDevice.ACTION_UUID.equals(action)) {
+                Log.v(TAG, "Received a uuid action");
                 Thread connectToDeviceThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        pauseDiscoverLoopThread();
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        UUID testuuid = intent.getParcelableExtra(BluetoothDevice.EXTRA_UUID);
-                        Log.v(TAG, "Received a uuid action");
-                        if (testuuid.equals(UID)) {
-                            Log.v(TAG, "UUID is scatterbrain!");
-                            tmpList.add(device);
-                            connectToDevice(device);
+                        Parcelable[] uuidlist = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
+                        if(uuidlist != null) {
+                            for (Parcelable parcel : uuidlist) {
+                                if (parcel != null) {
+                                    if (parcel.toString().equals(UID.toString())) {
+                                        Log.v(TAG, "UUID is scatterbrain!");
+                                        tmpList.add(device);
+                                        connectToDevice(device);
+                                    }
+                                }
+                            }
                         }
+                        unpauseDiscoverLoopThread();
                     }
                 });
                 connectToDeviceThread.start();
-
             }
         }
     };
@@ -142,6 +150,7 @@ public class ScatterBluetoothManager {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filter.addAction(BluetoothDevice.ACTION_UUID);
         trunk.mainService.registerReceiver(mReceiver, filter);
         adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {

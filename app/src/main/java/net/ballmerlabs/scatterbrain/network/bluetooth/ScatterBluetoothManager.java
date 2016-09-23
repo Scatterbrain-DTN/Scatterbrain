@@ -65,16 +65,11 @@ public class ScatterBluetoothManager {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 Log.v(TAG, "Found a bluetooth device!");
-                Thread devCreateThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                        device.fetchUuidsWithSdp();
-                       // connectToDevice(device);
-                    }
-                });
-                devCreateThread.start();
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                device.fetchUuidsWithSdp();
+                // connectToDevice(device)
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Thread discoveryFinishedThread = new Thread(new Runnable() {
                     @Override
@@ -88,10 +83,9 @@ public class ScatterBluetoothManager {
                 });
                 discoveryFinishedThread.start();
                 if (runScanThread) {
-                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency","7"));
-                    bluetoothHan.postDelayed(scanr,  scan *1000);
-                }
-                else
+                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
+                    bluetoothHan.postDelayed(scanr, scan * 1000);
+                } else
                     Log.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
                 //TODO: find some parcelable extra to avoid
@@ -107,19 +101,26 @@ public class ScatterBluetoothManager {
                     }
                 });
 
-            }
-            else if(BluetoothDevice.ACTION_UUID.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                UUID testuuid = intent.getParcelableExtra(BluetoothDevice.EXTRA_UUID);
-                if(testuuid.equals(UID)) {
-                    tmpList.add(device);
-                    connectToDevice(device);
-                }
+            } else if (BluetoothDevice.ACTION_UUID.equals(action)) {
+                Thread connectToDeviceThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        UUID testuuid = intent.getParcelableExtra(BluetoothDevice.EXTRA_UUID);
+                        Log.v(TAG, "Received a uuid action");
+                        if (testuuid.equals(UID)) {
+                            Log.v(TAG, "UUID is scatterbrain!");
+                            tmpList.add(device);
+                            connectToDevice(device);
+                        }
+                    }
+                });
+                connectToDeviceThread.start();
+
             }
         }
-
-
     };
+
 
     //this should return a handler object later
     public void connectToDevice(BluetoothDevice device) {

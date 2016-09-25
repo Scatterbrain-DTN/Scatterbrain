@@ -49,22 +49,7 @@ public class ScatterConnectThread extends Thread {
         mmSocket = tmp;
         Log.v(trunk.blman.TAG,"Attempting to connect");
         try {
-            Handler handler = new Handler(trunk.mainService.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if(!success) {
-                            Log.e(trunk.blman.TAG, "Socket timed out durring connect");
-                            bleman.unpauseDiscoverLoopThread();
-                            mmSocket.close();
-                        }
-                    }
-                    catch(IOException e) {
-                        bleman.unpauseDiscoverLoopThread();
-                    }
-                }
-            },600);
+           
             mmSocket.connect();
             success = true;
             //call this function in the context of the bluetoothManager

@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
+import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
@@ -80,6 +81,8 @@ public class ScatterBluetoothManager {
                         for(BluetoothDevice d : foundList)  {
                             d.fetchUuidsWithSdp();
                         }
+
+                        foundList.clear();
                     }
                 });
                 discoveryFinishedThread.start();
@@ -107,21 +110,19 @@ public class ScatterBluetoothManager {
                 Thread connectToDeviceThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        pauseDiscoverLoopThread();
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         Parcelable[] uuidlist = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
-                        if(uuidlist != null) {
-                            for (Parcelable parcel : uuidlist) {
-                                if (parcel != null) {
-                                    if (parcel.toString().equals(UID.toString())) {
+                        if((device != null) && (device.getUuids() != null)) {
+                            for (ParcelUuid u : device.getUuids()) {
+                                if (u != null) {
+                                    Log.v(TAG, "Parcel string: " + u.toString() + " uuid: " + UID.toString());
+                                    if (u.toString().equals(UID.toString())) {
                                         Log.v(TAG, "UUID is scatterbrain!");
-                                        tmpList.add(device);
                                         connectToDevice(device);
                                     }
                                 }
                             }
                         }
-                        unpauseDiscoverLoopThread();
                     }
                 });
                 connectToDeviceThread.start();

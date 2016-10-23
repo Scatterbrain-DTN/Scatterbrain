@@ -8,7 +8,7 @@ import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.io.IOException;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Thread started to wait for messages sent by peers
  */
@@ -29,7 +29,7 @@ public class ScatterReceiveThread extends Thread{
                 errorcount = 0;
                 byte[] buffer = new byte[1000];
                 socket.getInputStream().read(buffer);
-                Log.v(trunk.blman.TAG, "Received a stanza!!");
+                ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
                 trunk.blman.onSuccessfulReceive(buffer);
 
             }
@@ -40,12 +40,12 @@ public class ScatterReceiveThread extends Thread{
                         socket.close();
                     }
                     catch(IOException f) {
-                        Log.e(trunk.blman.TAG, "Error in receiving thread. Did we disconnect?");
+                        ScatterLogManager.e(trunk.blman.TAG, "Error in receiving thread. Did we disconnect?");
                     }
                     break;
                 }
 
-                Log.e(trunk.blman.TAG, "IOException when receiving stanza");
+                ScatterLogManager.e(trunk.blman.TAG, "IOException when receiving stanza");
             }
         }
     }

@@ -64,7 +64,7 @@ public class NormalActivity extends AppCompatActivity {
 
             mService.registerMessageArrayAdapter(Messages);
 
-            Log.v(TAG, "Bound to routing service");
+            ScatterLogManager.v(TAG, "Bound to routing service");
             scatterBound = true;
 
 
@@ -73,7 +73,7 @@ public class NormalActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.e(TAG, "Disconnected from routing service");
+            ScatterLogManager.e(TAG, "Disconnected from routing service");
             scatterBound = false;
         }
     };
@@ -115,7 +115,7 @@ public class NormalActivity extends AppCompatActivity {
        // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
         if(scatterBound) {
-            Log.v(TAG, "Updating list");
+            ScatterLogManager.v(TAG, "Updating list");
             mService.getBluetoothManager().sendMessageToBroadcast(
                     MsgBox.getText().toString().getBytes(),true);
         }

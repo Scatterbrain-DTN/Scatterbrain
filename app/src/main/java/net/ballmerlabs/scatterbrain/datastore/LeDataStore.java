@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class LeDataStore {
      */
     public void enqueueMessage(String subject, String contents, int ttl, String replyto, String uuid,
                                String recipient, String from, String flags, String sig, int rank) {
-        Log.e(TAG, "Enqueued a message to the datastore.");
+        ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS, contents);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT, subject);
@@ -81,7 +82,7 @@ public class LeDataStore {
      * Makes messages 'die out' after a while
      */
     public void trimDatastore(int limit) {
-        Log.e(TAG, "Trimming message queue. Too long.");
+        ScatterLogManager.e(TAG, "Trimming message queue. Too long.");
         String del = "DELETE FROM " + MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE ROWID IN (SELECT ROWID FROM "
                 + MsgDataDb.MessageQueue.TABLE_NAME +

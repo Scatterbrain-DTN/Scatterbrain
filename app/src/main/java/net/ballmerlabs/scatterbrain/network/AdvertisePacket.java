@@ -1,6 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
 
 import android.util.Log;
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
 /**
  * Created by gnu3ra on 3/28/16.
@@ -68,7 +69,7 @@ public class AdvertisePacket extends ScatterStanza {
         else if(type == DeviceProfile.deviceType.LINUX)
             contents[1] = 2;
         else {
-            Log.e(TAG, "Wrong device type");
+            ScatterLogManager.e(TAG, "Wrong device type");
             return null;
         }
         devicetype = contents[1];
@@ -81,7 +82,7 @@ public class AdvertisePacket extends ScatterStanza {
         else if(mob == DeviceProfile.MobileStatus.VERYMOBILE)
             contents[2] = 2;
         else {
-            Log.e(TAG, "Wrong mobile status");
+            ScatterLogManager.e(TAG, "Wrong mobile status");
             return null;
         }
 

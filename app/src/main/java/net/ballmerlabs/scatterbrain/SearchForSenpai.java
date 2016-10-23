@@ -100,7 +100,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
         service = new ScatterRoutingService();
 
-        Log.v(TAG, "Initial Initialization");
+        ScatterLogManager.v(TAG, "Initial Initialization");
         Intent srs = new Intent(this,ScatterRoutingService.class);
         startService(srs);
         Intent bindIntent = new Intent(this, ScatterRoutingService.class);
@@ -109,7 +109,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     }
     public void launchBtDialog() {
-            Log.v(TAG,"Running bluetooth prompt dialog");
+            ScatterLogManager.v(TAG,"Running bluetooth prompt dialog");
             if(!mService.getBluetoothManager().getAdapter().isEnabled()) {
                 runOnUiThread(new Runnable() {
                     @Override

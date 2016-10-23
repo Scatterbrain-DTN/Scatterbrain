@@ -20,7 +20,7 @@ import net.ballmerlabs.scatterbrain.datastore.Message;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.ScatterStanza;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Created by gnu3ra on 10/31/15.
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
@@ -120,8 +120,8 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
                     }
 
                     subMessage = subMessage.substring(5,6+len);
-                    Log.e("Address", newDevice.getAddress());
-                    Log.e("Data", BleUtil.asHex(newScanRecord));
+                    ScatterLogManager.e("Address", newDevice.getAddress());
+                    ScatterLogManager.e("Data", BleUtil.asHex(newScanRecord));
 
 
                     //gui element manimulating ommitted
@@ -131,7 +131,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
                     ui = ui == 2 ? -1 : ui;
                     ui ++;
-                    Log.e("String (submessage)", subMessage);
+                    ScatterLogManager.e("String (submessage)", subMessage);
                 }
                 break;
             }
@@ -241,7 +241,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             CONNECTED = true;
             if(settingsInEffect == null) {
-                Log.d(TAG,"onStartSuccess, settingInEffect is null");
+                ScatterLogManager.d(TAG,"onStartSuccess, settingInEffect is null");
             }
             super.onStartSuccess(settingsInEffect);
         }

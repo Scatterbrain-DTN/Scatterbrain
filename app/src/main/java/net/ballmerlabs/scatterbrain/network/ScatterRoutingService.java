@@ -23,7 +23,7 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Represents a background service for routing packets
  * for the scatterbrain protocol.
@@ -61,7 +61,7 @@ public class ScatterRoutingService extends Service {
         startForeground(1, notification);
 
         trunk.blman.startDiscoverLoopThread();
-        return 0;
+        return Service.START_STICKY_COMPATIBILITY;
 
     }
 
@@ -70,7 +70,7 @@ public class ScatterRoutingService extends Service {
             onDevicesFound = run;
         }
         else {
-            Log.v(TAG,"Attempted to register UI callback when not bound for some odd reason");
+            ScatterLogManager.v(TAG,"Attempted to register UI callback when not bound for some odd reason");
         }
     }
 

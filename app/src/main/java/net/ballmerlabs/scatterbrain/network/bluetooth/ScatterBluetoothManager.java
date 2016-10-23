@@ -93,7 +93,7 @@ public class ScatterBluetoothManager {
                     Log.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
                 //TODO: find some parcelable extra to avoid
-                Thread prunePeer = new Thread(new Runnable() {
+                final Thread prunePeer = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         for (Map.Entry<String, LocalPeer> s : connectedList.entrySet()) {
@@ -104,6 +104,7 @@ public class ScatterBluetoothManager {
                         }
                     }
                 });
+                prunePeer.start();
 
             } else if (BluetoothDevice.ACTION_UUID.equals(action)) {
                 Log.v(TAG, "Received a uuid action");

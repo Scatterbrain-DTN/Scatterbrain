@@ -173,6 +173,11 @@ public class SearchForSenpai extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void startLogViewer(MenuItem item) {
+        Intent intent = new Intent(this, LoggingActivity.class);
+        startActivity(intent);
+    }
+
     public void toggleService(MenuItem item) {
         if(scatterBound) {
             Intent stop = new Intent(this, ScatterRoutingService.class);

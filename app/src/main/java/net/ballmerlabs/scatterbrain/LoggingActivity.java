@@ -92,6 +92,8 @@ public class LoggingActivity extends AppCompatActivity {
         listViewArrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_expandable_list_item_1);
 
+        mService.registerLoggingArrayAdapter(listViewArrayAdapter);
+
         listView.setAdapter(listViewArrayAdapter);
 
         ScatterLogManager.adapter = listViewArrayAdapter;

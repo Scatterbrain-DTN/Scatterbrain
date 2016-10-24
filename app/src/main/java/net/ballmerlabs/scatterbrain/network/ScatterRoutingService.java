@@ -20,6 +20,7 @@ import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -39,6 +40,8 @@ public class ScatterRoutingService extends Service {
     public SharedPreferences sharedPreferences;
     public byte[] luid;
     private MessageBoxAdapter Messages;
+    public ArrayAdapter<String> logbuffer;
+
 
 
     public class ScatterBinder extends Binder {
@@ -147,6 +150,10 @@ public class ScatterRoutingService extends Service {
         else {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
+    }
+
+    public void registerLoggingArrayAdapter(ArrayAdapter<String> ad) {
+        this.logbuffer = ad;
     }
 
 

@@ -50,7 +50,7 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public ArrayList<BluetoothDevice> tmpList;
-    public HashMap<String, LocalPeer> connectedList;
+    public HashMap<byte[], LocalPeer> connectedList;
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -96,7 +96,7 @@ public class ScatterBluetoothManager {
                 final Thread prunePeer = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (Map.Entry<String, LocalPeer> s : connectedList.entrySet()) {
+                        for (Map.Entry<byte[], LocalPeer> s : connectedList.entrySet()) {
                             if (!s.getValue().socket.isConnected()) {
                                 ScatterLogManager.v(TAG, "Removing unneeded device " + s.getKey().toString());
                                 connectedList.remove(s);
@@ -233,7 +233,7 @@ public class ScatterBluetoothManager {
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound();
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
-                    connectedList.put(new String(inpacket.luid), new LocalPeer(inpacket.convertToProfile(), socket));
+                    connectedList.put(inpacket.luid, new LocalPeer(inpacket.convertToProfile(), socket));
                     ScatterLogManager.v(TAG, "List size = " + connectedList.size());
 
                 }
@@ -268,21 +268,18 @@ public class ScatterBluetoothManager {
         threadPaused = false;
     }
 
-    public LocalPeer getPeerByLuid(String luid) {
-        return connectedList.get(luid);
-    }
     public LocalPeer getPeerByLuid(byte[] luid) {
         return connectedList.get(new String(luid));
     }
 
     public void sendMessageToBroadcast(byte[] message, boolean text) {
         ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
-        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+        for(Map.Entry<byte[], LocalPeer> ent : connectedList.entrySet()) {
             sendMessageToLocalPeer(ent.getKey(),message, text);
         }
     }
 
-    public void sendMessageToLocalPeer(final String luid, final byte[] message,final  boolean text) {
+    public void sendMessageToLocalPeer(final byte[] luid, final byte[] message,final  boolean text) {
         ScatterLogManager.v(TAG, "Sending message to peer " + luid);
        final LocalPeer target = trunk.blman.getPeerByLuid(luid);
         BlockDataPacket blockDataPacket = new BlockDataPacket(message, text, target.profile,

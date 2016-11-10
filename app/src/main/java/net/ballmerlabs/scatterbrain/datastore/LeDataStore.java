@@ -27,7 +27,7 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
             MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
             MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,
-            MsgDataDb.MessageQueue.COLUMN_NAME_UUID,
+            MsgDataDb.MessageQueue.COLUMN_NAME_LUID,
             MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT,
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS,
@@ -52,7 +52,7 @@ public class LeDataStore {
     /*
      * sticks a message into the datastore at the front?.
      */
-    public void enqueueMessage(String subject, String contents, int ttl, String replyto, String uuid,
+    public void enqueueMessage(String subject, String contents, int ttl, String replyto, String luid,
                                String recipient, String from, String flags, String sig, int rank) {
         ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
@@ -60,7 +60,7 @@ public class LeDataStore {
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT, subject);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO, replyto);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_UUID, uuid);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_LUID, luid);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT, recipient);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FROM, from);
@@ -104,7 +104,7 @@ public class LeDataStore {
                         MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS +
                         MsgDataDb.MessageQueue.COLUMN_NAME_TTL +
                         MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_UUID +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_LUID +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FROM +
                         MsgDataDb.MessageQueue.COLUMN_NAME_SIG +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
@@ -118,14 +118,14 @@ public class LeDataStore {
             String contents = cu.getString(1);
             int ttl = cu.getInt(2);
             String replyto = cu.getString(3);
-            String uuid = cu.getString(4);
+            String luid = cu.getString(4);
             String recipient = cu.getString(5);
             String from = cu.getString(6);
             String flags = cu.getString(7);
             String sig = cu.getString(8);
 
 
-            finalresult.add(new Message(subject, contents, ttl, replyto, uuid,
+            finalresult.add(new Message(subject, contents, ttl, replyto, luid,
                    recipient,from,flags,  sig));
         }
 

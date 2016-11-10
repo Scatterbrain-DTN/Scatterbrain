@@ -36,7 +36,6 @@ public final class MsgDataDb {
                     MessageQueue.COLUMN_NAME_TTL + INT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_REPLYTO + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_CONTENTS + TEXT_TYPE + COMMA_SEP +
-                    MessageQueue.COLUMN_NAME_RECIPIENT + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_FROM + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_SIG + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_FLAGS + TEXT_TYPE + COMMA_SEP +

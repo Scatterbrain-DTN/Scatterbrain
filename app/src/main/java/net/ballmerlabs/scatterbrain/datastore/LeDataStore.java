@@ -105,7 +105,6 @@ public class LeDataStore {
                         MsgDataDb.MessageQueue.COLUMN_NAME_TTL +
                         MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO +
                         MsgDataDb.MessageQueue.COLUMN_NAME_UUID +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FROM +
                         MsgDataDb.MessageQueue.COLUMN_NAME_SIG +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +

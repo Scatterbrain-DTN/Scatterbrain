@@ -12,7 +12,6 @@ public class Message {
     public int ttl;
     public String replyto;
     public String uuid;
-    public String recipient;
     public String from;
     public String flags;
     public String sig;
@@ -24,7 +23,6 @@ public class Message {
         this.ttl = ttl;
         this.replyto = replyto;
         this.uuid = uuid;
-        this.recipient = recipient;
         this.from = from;
         this.flags = flags;
         this.sig = sig;

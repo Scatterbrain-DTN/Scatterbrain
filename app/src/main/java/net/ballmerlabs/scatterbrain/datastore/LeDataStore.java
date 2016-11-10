@@ -28,7 +28,6 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
             MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,
             MsgDataDb.MessageQueue.COLUMN_NAME_LUID,
-            MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT,
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS,
             MsgDataDb.MessageQueue.COLUMN_NAME_RANK};
@@ -61,7 +60,6 @@ public class LeDataStore {
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO, replyto);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_LUID, luid);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECIPIENT, recipient);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FROM, from);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);

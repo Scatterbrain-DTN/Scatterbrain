@@ -16,7 +16,6 @@ public final class MsgDataDb {
         public static final String COLUMN_NAME_TTL = "ttl";
         public static final String COLUMN_NAME_REPLYTO = "replyto";
         public static final String COLUMN_NAME_LUID = "luid";
-        public static final String COLUMN_NAME_RECIPIENT = "recip";
         public static final String COLUMN_NAME_FROM = "from";
         public static final String COLUMN_NAME_SIG = "sig";
         public static final String COLUMN_NAME_FLAGS = "flags";

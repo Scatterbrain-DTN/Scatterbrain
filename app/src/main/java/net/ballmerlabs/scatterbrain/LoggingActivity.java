@@ -79,6 +79,12 @@ public class LoggingActivity extends AppCompatActivity {
     };
 
     @Override
+    public void onResume() {
+        if(listViewArrayAdapter != null)
+            ScatterLogManager.init(listViewArrayAdapter);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging);

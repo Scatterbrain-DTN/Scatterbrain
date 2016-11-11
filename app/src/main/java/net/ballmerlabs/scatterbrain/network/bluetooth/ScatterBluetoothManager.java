@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Exchanger;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Abstraction for android bluetooth stack for Scatterbrain.
@@ -233,6 +235,9 @@ public class ScatterBluetoothManager {
         catch(IOException c) {
             ScatterLogManager.e(TAG, "IOException in onSuccessfulConnect");
 
+        }
+        catch(Exception e) {
+            ScatterLogManager.e(TAG, "Generic error in onSucessfulConnect");
         }
     }
 

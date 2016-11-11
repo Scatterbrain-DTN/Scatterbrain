@@ -80,6 +80,7 @@ public class LoggingActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
+        super.onResume();
         if(listViewArrayAdapter != null)
             ScatterLogManager.init(listViewArrayAdapter);
     }

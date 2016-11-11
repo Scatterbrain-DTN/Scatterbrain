@@ -1,5 +1,7 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -9,29 +11,58 @@ import android.widget.ArrayAdapter;
  */
 
 public  class ScatterLogManager {
-    public static ArrayAdapter<String> adapter;
+    private static ArrayAdapter<String> adapter;
+    public static void init(ArrayAdapter<String> madapter) {
+        adapter = madapter;
 
-    public static void v(String tag, String msg) {
+    }
+
+    public static void v(final String tag, final String msg) {
         Log.v(tag,msg);
-        if(adapter != null)
-                adapter.add("[" + tag + "]: " + msg);
+        if(adapter != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.add("[" + tag + "]: " + msg);
+                }
+            });
+        }
     }
 
-    public static void e(String tag, String msg) {
+    public static void e(final String tag, final String msg) {
         Log.e(tag,msg);
-        if(adapter != null)
-            adapter.add("[" + tag + "]: " + msg);
+        if(adapter != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.add("[" + tag + "]: " + msg);
+                }
+            });
+        }
+
     }
 
-    public static void d(String tag, String msg) {
+    public static void d(final String tag, final String msg) {
         Log.d(tag,msg);
-        if(adapter != null)
-            adapter.add("[" + tag + "]: " + msg);
+        if(adapter != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.add("[" + tag + "]: " + msg);
+                }
+            });
+        }
     }
 
-    public static void i(String tag, String msg) {
+    public static void i(final String tag,final String msg) {
         Log.i(tag,msg);
-        if(adapter != null)
-            adapter.add("[" + tag + "]: " + msg);
+        if(adapter != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.add("["+tag+"]: "+msg);
+                }
+            });
+        }
     }
 }

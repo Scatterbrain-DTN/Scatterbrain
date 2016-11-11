@@ -97,8 +97,7 @@ public class LoggingActivity extends AppCompatActivity {
 
         listView.setAdapter(listViewArrayAdapter);
 
-        ScatterLogManager.adapter = listViewArrayAdapter;
-
+        ScatterLogManager.init(listViewArrayAdapter);
         Intent bindIntent = new Intent(this, ScatterRoutingService.class);
         bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
     }

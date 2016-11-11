@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.DispMessage;
+import net.ballmerlabs.scatterbrain.LoggingActivity;
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
@@ -87,8 +88,7 @@ public class ScatterBluetoothManager {
                 });
                 discoveryFinishedThread.start();
                 if (runScanThread) {
-                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
-                    bluetoothHan.postDelayed(scanr, scan * 1000);
+
                 } else
                     ScatterLogManager.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
@@ -145,7 +145,6 @@ public class ScatterBluetoothManager {
         this.trunk = trunk;
         looper = new BluetoothLooper(trunk.globnet);
         bluetoothHan = new Handler();
-        runScanThread = false;
         foundList = new ArrayList<>();
         tmpList = new ArrayList<>();
         connectedList = new HashMap<>();
@@ -187,6 +186,11 @@ public class ScatterBluetoothManager {
 
                 if(!threadPaused)
                     adapter.startDiscovery();
+                else if(runScanThread){
+                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
+                    ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
+                    bluetoothHan.postDelayed(scanr, scan * 1000);
+                }
             }
         };
 

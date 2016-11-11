@@ -75,12 +75,12 @@ public class ScatterBluetoothManager {
                 foundList.add(device);
                 // connectToDevice(device)
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                ScatterLogManager.v(TAG, "Device disvovery finished. Scanning services");
+                ScatterLogManager.v(TAG, "Device disvovery finished. Attempting to connect to peers");
                 Thread discoveryFinishedThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         for(BluetoothDevice d : foundList)  {
-                            d.fetchUuidsWithSdp();
+                            connectToDevice(d);
                         }
 
                         foundList.clear();
@@ -88,7 +88,9 @@ public class ScatterBluetoothManager {
                 });
                 discoveryFinishedThread.start();
                 if (runScanThread) {
-
+                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
+                    ScatterLogManager.v(TAG,"Posting new scanning runnable (running)");
+                    bluetoothHan.postDelayed(scanr, scan * 1000);
                 } else
                     ScatterLogManager.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
@@ -106,27 +108,6 @@ public class ScatterBluetoothManager {
                 });
                 prunePeer.start();
 
-            } else if (BluetoothDevice.ACTION_UUID.equals(action)) {
-                ScatterLogManager.v(TAG, "Received a uuid action");
-                Thread connectToDeviceThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        Parcelable[] uuidlist = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
-                        if((device != null) && (device.getUuids() != null)) {
-                            for (ParcelUuid u : device.getUuids()) {
-                                if (u != null) {
-                                    ScatterLogManager.v(TAG, "Parcel string: " + u.toString() + " uuid: " + UID.toString());
-                                    if (u.toString().equals(UID.toString())) {
-                                        ScatterLogManager.v(TAG, "UUID is scatterbrain!");
-                                        connectToDevice(device);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-                connectToDeviceThread.start();
             }
         }
     };
@@ -262,14 +243,18 @@ public class ScatterBluetoothManager {
     }
 
     public synchronized void pauseDiscoverLoopThread() {
-        ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
-        threadPaused = true;
-        adapter.cancelDiscovery();
+        if(!threadPaused) {
+            ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
+            threadPaused = true;
+            adapter.cancelDiscovery();
+        }
     }
 
     public void unpauseDiscoverLoopThread() {
-        ScatterLogManager.v(TAG,"Resuming bluetooth discovery thread");
-        threadPaused = false;
+        if(threadPaused) {
+            ScatterLogManager.v(TAG, "Resuming bluetooth discovery thread");
+            threadPaused = false;
+        }
     }
 
     public LocalPeer getPeerByLuid(byte[] luid) {

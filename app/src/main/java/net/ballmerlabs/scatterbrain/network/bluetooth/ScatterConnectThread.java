@@ -62,12 +62,14 @@ public class ScatterConnectThread extends Thread {
             try {
                 mmSocket.close();
             } catch (IOException c) {
-
+                bleman.unpauseDiscoverLoopThread();
             }
+            bleman.unpauseDiscoverLoopThread();
 
         }
         finally {
             trunk.blman.onSuccessfulConnect(mmSocket);
+            bleman.unpauseDiscoverLoopThread();
 
         }
 

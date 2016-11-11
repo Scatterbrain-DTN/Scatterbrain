@@ -13,6 +13,7 @@ import android.util.LogPrinter;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,7 +33,7 @@ public class LoggingActivity extends AppCompatActivity {
     private final String TAG = "LoggingActivity";
     private Spinner sp;
     private ListViewAutoScrollHelper autoScroll;
-    private ExpandableListView listView;
+    private ListView listView;
     private ArrayAdapter<String> spinnerArrayAdapter;
     private ArrayAdapter<String> listViewArrayAdapter;
     private LogPrinter logPrinter;
@@ -56,6 +57,7 @@ public class LoggingActivity extends AppCompatActivity {
                                 senpai_notice.setVisibility(View.VISIBLE);
                                 senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
                             }
+                            mService.registerLoggingArrayAdapter(listViewArrayAdapter);
                         }
                     });
                 }
@@ -88,11 +90,10 @@ public class LoggingActivity extends AppCompatActivity {
 
         sp.setAdapter(spinnerArrayAdapter);
 
-        listView = (ExpandableListView) this.findViewById(R.id.loggerlist);
+        listView = (ListView) this.findViewById(R.id.loggerlist);
         listViewArrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_expandable_list_item_1);
 
-        mService.registerLoggingArrayAdapter(listViewArrayAdapter);
 
         listView.setAdapter(listViewArrayAdapter);
 

@@ -5,6 +5,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import java.util.ArrayList;
+
 /**
  * Centralized logging framework for redirecting android logcat
  * for "field use"
@@ -12,9 +14,12 @@ import android.widget.ArrayAdapter;
 
 public  class ScatterLogManager {
     private static ArrayAdapter<String> adapter;
+    public static ArrayList<String> buffer = new ArrayList<>();
     public static void init(ArrayAdapter<String> madapter) {
         adapter = madapter;
-
+        for(String line : buffer) {
+            adapter.add(line);
+        }
     }
 
     public static void v(final String tag, final String msg) {
@@ -27,6 +32,9 @@ public  class ScatterLogManager {
                 }
             });
         }
+        else {
+            buffer.add("[" + tag + "]: " + msg);
+        }
     }
 
     public static void e(final String tag, final String msg) {
@@ -38,6 +46,9 @@ public  class ScatterLogManager {
                     adapter.add("[" + tag + "]: " + msg);
                 }
             });
+        }
+        else {
+            buffer.add("[" + tag + "]: " + msg);
         }
 
     }
@@ -52,6 +63,9 @@ public  class ScatterLogManager {
                 }
             });
         }
+        else {
+            buffer.add("[" + tag + "]: " + msg);
+        }
     }
 
     public static void i(final String tag,final String msg) {
@@ -63,6 +77,9 @@ public  class ScatterLogManager {
                     adapter.add("["+tag+"]: "+msg);
                 }
             });
+        }
+        else {
+            buffer.add("[" + tag + "]: " + msg);
         }
     }
 }

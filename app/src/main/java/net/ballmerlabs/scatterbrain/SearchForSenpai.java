@@ -100,7 +100,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
         service = new ScatterRoutingService();
 
-        Log.v(TAG, "Initial Initialization");
+        ScatterLogManager.v(TAG, "Initial Initialization");
         Intent srs = new Intent(this,ScatterRoutingService.class);
         startService(srs);
         Intent bindIntent = new Intent(this, ScatterRoutingService.class);
@@ -109,7 +109,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     }
     public void launchBtDialog() {
-            Log.v(TAG,"Running bluetooth prompt dialog");
+            ScatterLogManager.v(TAG,"Running bluetooth prompt dialog");
             if(!mService.getBluetoothManager().getAdapter().isEnabled()) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -173,6 +173,11 @@ public class SearchForSenpai extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void startLogViewer(MenuItem item) {
+        Intent intent = new Intent(this, LoggingActivity.class);
+        startActivity(intent);
+    }
+
     public void toggleService(MenuItem item) {
         if(scatterBound) {
             Intent stop = new Intent(this, ScatterRoutingService.class);
@@ -220,6 +225,8 @@ public class SearchForSenpai extends AppCompatActivity {
             mService.getBluetoothManager().startDiscoverLoopThread();
         }
     }
+
+
 
     @Override
     protected void onPause() {

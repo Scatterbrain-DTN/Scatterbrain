@@ -45,7 +45,7 @@
     <string name="pref_default_display_name">...</string>
 
     <string name="pref_title_add_friends_to_messages">Placeholder radio button</string>
-    <string name="backgroundservice" >Background Service</string>
+    <string name="backgroundservice">Background Service</string>
     <string-array name="pref_example_list_titles">
         <item>Yes</item>
         <item>No</item>

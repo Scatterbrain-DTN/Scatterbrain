@@ -11,5 +11,8 @@
     <item android:id="@+id/stopService" android:title="Stop Service"
         android:orderInCategory="100" app:showAsAction="never"
         android:onClick="toggleService"/>
+    <item android:id="@+id/startLoggingActivity" android:title="View Logs"
+        android:orderInCategory="100" app:showAsAction="never"
+        android:onClick="startLogViewer"/>
 
 </menu>

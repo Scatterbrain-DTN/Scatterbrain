@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Class to send text/sms messages over scatterbrain wifi p2p
  */
@@ -43,7 +43,7 @@ public class ServerAsyncTask extends WifiAsyncTask {
 
         }
         catch(IOException e) {
-            Log.e(TAG, "IOException when transfering a message");
+            ScatterLogManager.e(TAG, "IOException when transfering a message");
             return null;
         }
 

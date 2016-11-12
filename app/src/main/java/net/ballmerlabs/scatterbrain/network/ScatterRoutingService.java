@@ -15,14 +15,16 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Represents a background service for routing packets
  * for the scatterbrain protocol.
@@ -37,7 +39,9 @@ public class ScatterRoutingService extends Service {
     private  Runnable onDevicesFound;
     public SharedPreferences sharedPreferences;
     public byte[] luid;
-    private ArrayAdapter<String> Messages;
+    private MessageBoxAdapter Messages;
+    public ArrayAdapter<String> logbuffer;
+
 
 
     public class ScatterBinder extends Binder {
@@ -60,7 +64,7 @@ public class ScatterRoutingService extends Service {
         startForeground(1, notification);
 
         trunk.blman.startDiscoverLoopThread();
-        return 0;
+        return Service.START_STICKY_COMPATIBILITY;
 
     }
 
@@ -69,7 +73,7 @@ public class ScatterRoutingService extends Service {
             onDevicesFound = run;
         }
         else {
-            Log.v(TAG,"Attempted to register UI callback when not bound for some odd reason");
+            ScatterLogManager.v(TAG,"Attempted to register UI callback when not bound for some odd reason");
         }
     }
 
@@ -148,6 +152,10 @@ public class ScatterRoutingService extends Service {
         }
     }
 
+    public void registerLoggingArrayAdapter(ArrayAdapter<String> ad) {
+        this.logbuffer = ad;
+    }
+
 
     public void regenerateUUID() {
         Context context = this.getApplicationContext();
@@ -181,7 +189,7 @@ public class ScatterRoutingService extends Service {
         trunk.blman.stopDiscoverLoopThread();
     }
 
-    public ArrayAdapter<String> getMessageAdapter() {
+    public MessageBoxAdapter getMessageAdapter() {
         if(bound) {
             return Messages;
         }
@@ -190,7 +198,7 @@ public class ScatterRoutingService extends Service {
         }
     }
 
-    public void registerMessageArrayAdapter(ArrayAdapter<String> messages) {
+    public void registerMessageArrayAdapter(MessageBoxAdapter messages) {
         this.Messages = messages;
     }
 }

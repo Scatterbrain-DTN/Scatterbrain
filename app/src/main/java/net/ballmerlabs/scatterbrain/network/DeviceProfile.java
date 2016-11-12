@@ -6,7 +6,7 @@ package net.ballmerlabs.scatterbrain.network;
  */
 public class DeviceProfile {
 
-    protected String luid;
+    protected byte[] luid;
 
     public static enum deviceType {
         ANDROID, IOS, LINUX
@@ -28,7 +28,7 @@ public class DeviceProfile {
 
     public final byte protocolVersion = 2;
     protected byte congestion;
-    public DeviceProfile (deviceType type, MobileStatus status, HardwareServices services, String id) {
+    public DeviceProfile (deviceType type, MobileStatus status, HardwareServices services, byte[] id) {
         this.type = type;
         this.services = services;
         this.status = status;
@@ -61,7 +61,7 @@ public class DeviceProfile {
     public byte getCongestion() { return congestion; }
 
     public void setCongestion(byte congestion) { this.congestion = congestion; }
-    public String getLUID(){ return this.luid;}
+    public byte[] getLUID(){ return this.luid;}
 
-    public void setLUID(String id){this.luid = id;}
+    public void setLUID(byte[] id){this.luid = id;}
 }

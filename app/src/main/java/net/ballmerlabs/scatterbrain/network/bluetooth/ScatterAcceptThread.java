@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Listens for incoming bluetooth connections
  * without paring/security
@@ -35,7 +35,7 @@ public class ScatterAcceptThread extends Thread {
             tmp = adapter.listenUsingInsecureRfcommWithServiceRecord(
                     trunk.blman.NAME, trunk.blman.UID);
         } catch (IOException e) {
-            Log.e(trunk.blman.TAG, "IOException when starting bluetooth listener");
+            ScatterLogManager.e(trunk.blman.TAG, "IOException when starting bluetooth listener");
         }
 
         mmServerSocket = tmp;
@@ -43,12 +43,12 @@ public class ScatterAcceptThread extends Thread {
 
     @Override
     public void run() {
-        Log.v(trunk.blman.TAG,"Started accept thread" );
+        ScatterLogManager.v(trunk.blman.TAG,"Started accept thread" );
         BluetoothSocket socket = null;
         while (true) {
             try {
                 socket = mmServerSocket.accept();
-                Log.v(trunk.blman.TAG, "Accepted a connection");
+                ScatterLogManager.v(trunk.blman.TAG, "Accepted a connection");
                 trunk.blman.onSuccessfulConnect(socket);
             } catch (IOException e) {
 

@@ -12,7 +12,7 @@ import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +39,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peers) {
-        Log.v(TAG, "Found peers!");
+        ScatterLogManager.v(TAG, "Found peers!");
         haspeers = true;
         peerstack.add(peers);
         peersView.setText(dumpStack());

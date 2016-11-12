@@ -10,11 +10,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.ParcelUuid;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.DispMessage;
+import net.ballmerlabs.scatterbrain.LoggingActivity;
 import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
@@ -33,7 +39,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Exchanger;
 
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Abstraction for android bluetooth stack for Scatterbrain.
  */
@@ -45,7 +53,7 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public ArrayList<BluetoothDevice> tmpList;
-    public HashMap<String, LocalPeer> connectedList;
+    public HashMap<byte[], LocalPeer> connectedList;
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -53,7 +61,6 @@ public class ScatterBluetoothManager {
     public IntentFilter filter;
     public Runnable scanr;
     public ScatterAcceptThread acceptThread;
-    public ScatterConnectThread currentconnection;
     public boolean isAccepting;
     public boolean acceptThreadRunning;
     public boolean threadPaused;
@@ -63,53 +70,50 @@ public class ScatterBluetoothManager {
         public void onReceive(Context context, final Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                Log.v(TAG, "Found a bluetooth device!");
-                Thread devCreateThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        tmpList.add(device);
-                        connectToDevice(device);
-                    }
-                });
-                devCreateThread.start();
+                ScatterLogManager.v(TAG, "Found a bluetooth device!");
+
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                foundList.add(device);
+                // connectToDevice(device)
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                ScatterLogManager.v(TAG, "Device disvovery finished. Attempting to connect to peers");
                 Thread discoveryFinishedThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        foundList = (ArrayList<BluetoothDevice>) tmpList.clone();
-                        tmpList.clear();
-                        //for(BluetoothDevice d : foundList)  {
+                        for(BluetoothDevice d : foundList)  {
+                            connectToDevice(d);
+                        }
 
-                        // }
+                        foundList.clear();
                     }
                 });
                 discoveryFinishedThread.start();
                 if (runScanThread) {
-                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency","7"));
-                    bluetoothHan.postDelayed(scanr,  scan *1000);
-                }
-                else
-                    Log.v(TAG, "Stopping wifi direct scan thread");
+                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
+                    ScatterLogManager.v(TAG,"Posting new scanning runnable (running)");
+                    bluetoothHan.postDelayed(scanr, scan * 1000);
+                } else
+                    ScatterLogManager.v(TAG, "Stopping wifi direct scan thread");
             } else if (BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
                 //TODO: find some parcelable extra to avoid
-                Thread prunePeer = new Thread(new Runnable() {
+                final Thread prunePeer = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (Map.Entry<String, LocalPeer> s : connectedList.entrySet()) {
+                        for (Map.Entry<byte[], LocalPeer> s : connectedList.entrySet()) {
                             if (!s.getValue().socket.isConnected()) {
-                                Log.v(TAG, "Removing unneeded device " + s.getKey().toString());
+                                ScatterLogManager.v(TAG, "Removing unneeded device " + s.getKey().toString());
                                 connectedList.remove(s);
                             }
                         }
                     }
                 });
+                prunePeer.start();
 
             }
         }
-
-
     };
+
 
     //this should return a handler object later
     public void connectToDevice(BluetoothDevice device) {
@@ -124,17 +128,17 @@ public class ScatterBluetoothManager {
         this.trunk = trunk;
         looper = new BluetoothLooper(trunk.globnet);
         bluetoothHan = new Handler();
-        runScanThread = false;
         foundList = new ArrayList<>();
         tmpList = new ArrayList<>();
         connectedList = new HashMap<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filter.addAction(BluetoothDevice.ACTION_UUID);
         trunk.mainService.registerReceiver(mReceiver, filter);
         adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {
-            Log.e(TAG, "ERROR, bluetooth not supported");
+            ScatterLogManager.e(TAG, "ERROR, bluetooth not supported");
         }
         isAccepting = false;
         acceptThreadRunning = false;
@@ -153,7 +157,7 @@ public class ScatterBluetoothManager {
     }
 
     public synchronized void startDiscoverLoopThread() {
-        Log.v(TAG, "Starting bluetooth scan thread");
+        ScatterLogManager.v(TAG, "Starting bluetooth scan thread");
         runScanThread = true;
         bluetoothHan = looper.getHandler();
         scanr = new Runnable() {
@@ -161,10 +165,15 @@ public class ScatterBluetoothManager {
             public void run() {
                 //directmanager.scan();
                 //
-                Log.v(TAG, "Scanning...");
+                ScatterLogManager.v(TAG, "Scanning...");
 
                 if(!threadPaused)
                     adapter.startDiscovery();
+                else if(runScanThread){
+                    int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
+                    ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
+                    bluetoothHan.postDelayed(scanr, scan * 1000);
+                }
             }
         };
 
@@ -177,19 +186,21 @@ public class ScatterBluetoothManager {
             trunk.mainService.startMessageActivity();
         final BlockDataPacket bd = new BlockDataPacket(incoming);
         if(bd.isInvalid())
-            Log.e(TAG, "Received corrupt blockdata packet.");
+            ScatterLogManager.e(TAG, "Received corrupt blockdata packet.");
         else if(true) {
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    trunk.mainService.getMessageAdapter().add(new String(bd.body));
-                    Log.e(TAG, "Appended message to message list");
+                    trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
+                            Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
+                    trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                    ScatterLogManager.e(TAG, "Appended message to message list");
                 }
             });
         }
         else
-            Log.e(TAG, "received a non-text message in a text context");
+            ScatterLogManager.e(TAG, "received a non-text message in a text context");
     }
 
 
@@ -208,13 +219,13 @@ public class ScatterBluetoothManager {
                 inpacket = trunk.globnet.decodeAdvertise(buffer);
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound();
-                    Log.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
-                    connectedList.put(new String(inpacket.luid), new LocalPeer(inpacket.convertToProfile(), socket));
-                    Log.v(TAG, "List size = " + connectedList.size());
+                    ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
+                    connectedList.put(inpacket.luid, new LocalPeer(inpacket.convertToProfile(), socket));
+                    ScatterLogManager.v(TAG, "List size = " + connectedList.size());
 
                 }
                 else {
-                    Log.e(TAG, "Received an advertise stanza, but it is invalid");
+                    ScatterLogManager.e(TAG, "Received an advertise stanza, but it is invalid");
                     socket.close();
                 }
 
@@ -222,44 +233,48 @@ public class ScatterBluetoothManager {
 
         }
         catch(IOException c) {
-            Log.e(TAG, "IOException in onSuccessfulConnect");
+            ScatterLogManager.e(TAG, "IOException in onSuccessfulConnect");
 
+        }
+        catch(Exception e) {
+            ScatterLogManager.e(TAG, "Generic error in onSucessfulConnect");
         }
     }
 
     public synchronized void stopDiscoverLoopThread() {
-        Log.v(TAG, "Stopping bluetooth discovery thread");
+        ScatterLogManager.v(TAG, "Stopping bluetooth discovery thread");
         runScanThread = false;
         adapter.cancelDiscovery();
     }
 
     public synchronized void pauseDiscoverLoopThread() {
-        Log.v(TAG, "Pausing bluetooth discovery thread");
-        threadPaused = true;
-        adapter.cancelDiscovery();
+        if(!threadPaused) {
+            ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
+            threadPaused = true;
+            adapter.cancelDiscovery();
+        }
     }
 
     public void unpauseDiscoverLoopThread() {
-        Log.v(TAG,"Resuming bluetooth discovery thread");
-        threadPaused = false;
+        if(threadPaused) {
+            ScatterLogManager.v(TAG, "Resuming bluetooth discovery thread");
+            threadPaused = false;
+        }
     }
 
-    public LocalPeer getPeerByLuid(String luid) {
-        return connectedList.get(luid);
-    }
     public LocalPeer getPeerByLuid(byte[] luid) {
         return connectedList.get(new String(luid));
     }
 
     public void sendMessageToBroadcast(byte[] message, boolean text) {
-        Log.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
-        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+        ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
+        for(Map.Entry<byte[], LocalPeer> ent : connectedList.entrySet()) {
             sendMessageToLocalPeer(ent.getKey(),message, text);
         }
     }
 
-    public void sendMessageToLocalPeer(final String luid, final byte[] message,final  boolean text) {
-        Log.v(TAG, "Sending message to peer " + luid);
+    public void sendMessageToLocalPeer(final byte[] luid, final byte[] message,final  boolean text) {
+        ScatterLogManager.v(TAG, "Sending message to peer " + luid);
        final LocalPeer target = trunk.blman.getPeerByLuid(luid);
         BlockDataPacket blockDataPacket = new BlockDataPacket(message, text, target.profile,
                 trunk.mainService.luid);
@@ -272,10 +287,10 @@ public class ScatterBluetoothManager {
                             byte[] tmp = {5,5,5,5,5,5};
                             target.socket.getOutputStream().write(
                                     new BlockDataPacket(message,text, target.profile,tmp).getContents());
-                            Log.v(TAG, "Sent message successfully to " + luid );
+                            ScatterLogManager.v(TAG, "Sent message successfully to " + luid );
                             break;
                         } catch (IOException e) {
-                            Log.e(TAG, "Error on sending message to " + luid);
+                            ScatterLogManager.e(TAG, "Error on sending message to " + luid);
                         }
                     }
                     else{

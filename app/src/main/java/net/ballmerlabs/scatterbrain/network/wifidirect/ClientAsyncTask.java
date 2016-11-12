@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * AsyncTask for creating a connection to the server started by the
  * ServerAsyncTask. This is simple and does not break up large messages
@@ -41,7 +41,7 @@ public class ClientAsyncTask extends WifiAsyncTask{
             outputStream.close();
         }
         catch(IOException e) {
-            Log.e(TAG,"IOException when creating socket");
+            ScatterLogManager.e(TAG,"IOException when creating socket");
         }
         finally {
             if(socket != null) {

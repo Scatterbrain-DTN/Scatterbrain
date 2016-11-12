@@ -19,8 +19,9 @@ public class MainTrunk {
     public Activity mainActivity;
 
     public MainTrunk(Activity main) {
+        byte tmp[] = {0,0,0,0,0};
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
-                DeviceProfile.HardwareServices.BLUETOOTHLE, "000000000000");
+                DeviceProfile.HardwareServices.BLUETOOTHLE,tmp );
         settings = new SettingsManager();
         mainActivity = main;
         //globnet.registerService(profile);

@@ -39,7 +39,8 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".LoggingActivity"></activity>
+        <activity android:name=".LoggingActivity" />
+        <activity android:name=".DatastoreCommandActivity"></activity>
     </application>
 
 </manifest>

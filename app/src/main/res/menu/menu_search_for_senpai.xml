@@ -14,5 +14,8 @@
     <item android:id="@+id/startLoggingActivity" android:title="View Logs"
         android:orderInCategory="100" app:showAsAction="never"
         android:onClick="startLogViewer"/>
+    <item android:id="@+id/startDatastorCommand" android:title="Open Datastore Debug"
+        android:orderInCategory="100" app:showAsAction="never"
+        android:onClick="startDatastoreCommand"/>
 
 </menu>

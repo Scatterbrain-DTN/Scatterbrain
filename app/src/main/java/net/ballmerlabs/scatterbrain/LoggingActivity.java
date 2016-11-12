@@ -102,6 +102,8 @@ public class LoggingActivity extends AppCompatActivity {
                 android.R.layout.simple_expandable_list_item_1);
 
 
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        listView.setStackFromBottom(true);
         listView.setAdapter(listViewArrayAdapter);
 
         ScatterLogManager.init(listViewArrayAdapter);

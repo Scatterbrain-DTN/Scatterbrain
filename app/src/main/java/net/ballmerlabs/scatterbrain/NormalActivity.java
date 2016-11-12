@@ -87,6 +87,9 @@ public class NormalActivity extends AppCompatActivity {
 
         MsgBox = (EditText) this.findViewById(R.id.editText);
         Messages = new MessageBoxAdapter(this);
+
+        messageTimeline.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        messageTimeline.setStackFromBottom(true);
         messageTimeline.setAdapter(Messages);
 
         //messagebox handeling

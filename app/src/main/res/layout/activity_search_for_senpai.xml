@@ -39,5 +39,14 @@
         android:layout_marginTop="73dp"
         android:visibility="invisible" />
 
+    <Button
+        android:text="@string/buttonlaunch_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/castbutton"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>
 

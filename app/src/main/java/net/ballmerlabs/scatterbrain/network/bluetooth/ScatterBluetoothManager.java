@@ -263,7 +263,7 @@ public class ScatterBluetoothManager {
     }
 
     public LocalPeer getPeerByLuid(byte[] luid) {
-        return connectedList.get(new String(luid));
+        return connectedList.get(luid);
     }
 
     public void sendMessageToBroadcast(byte[] message, boolean text) {

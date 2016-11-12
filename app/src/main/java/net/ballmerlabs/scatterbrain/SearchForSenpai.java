@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -28,6 +29,7 @@ public class SearchForSenpai extends AppCompatActivity {
     private ScatterRoutingService service;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
+    private Button castButton;
     private String TAG = "SenpaiActivity";
     final Activity main  = this;
 
@@ -92,6 +94,21 @@ public class SearchForSenpai extends AppCompatActivity {
         setContentView(R.layout.activity_search_for_senpai);
         progress = (ProgressBar) findViewById(R.id.progressBar);
         progress.setProgress(0);
+
+        castButton = (Button) findViewById(R.id.castbutton);
+        final Intent launchMessagingIntent = new Intent(this,NormalActivity.class);
+
+        castButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(launchMessagingIntent);
+                    }
+                });
+            }
+        });
 
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
@@ -178,6 +195,10 @@ public class SearchForSenpai extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void startDatastoreCommand(MenuItem item) {
+        Intent intent = new Intent(this,DatastoreCommandActivity.class);
+        startActivity(intent);
+    }
     public void toggleService(MenuItem item) {
         if(scatterBound) {
             Intent stop = new Intent(this, ScatterRoutingService.class);

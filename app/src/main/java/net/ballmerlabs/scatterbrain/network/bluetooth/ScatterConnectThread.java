@@ -52,6 +52,7 @@ public class ScatterConnectThread extends Thread {
            
             mmSocket.connect();
             success = true;
+
             //call this function in the context of the bluetoothManager
             bleman.unpauseDiscoverLoopThread();
             ScatterLogManager.v(trunk.blman.TAG, "Connection successful");

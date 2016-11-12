@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 public class DatastoreCommandActivity extends AppCompatActivity {
@@ -19,7 +21,9 @@ public class DatastoreCommandActivity extends AppCompatActivity {
     private Button connectButton;
     private Button disconnectButton;
     private TextView dbDisplay;
+    private LeDataStore ds;
     private boolean scatterBound;
+    private boolean dbConnected;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -48,8 +52,36 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         connectButton = (Button) findViewById(R.id.dbconnect);
         disconnectButton = (Button) findViewById(R.id.dbdisconnect);
         dbDisplay = (TextView) findViewById(R.id.dboverviewtext);
-        dbDisplay.setText("DISCONNECTED");
-        dbDisplay.setTextColor(Color.RED);
+        if(!dbConnected) {
+            dbDisplay.setText("DISCONNECTED");
+            dbDisplay.setTextColor(Color.RED);
+        }
+
+        final Activity main = this;
+        connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!dbConnected) {
+                    ds = new LeDataStore(main, 100);
+                    ds.connect();
+                    dbDisplay.setText("CONNECTED");
+                    dbDisplay.setTextColor(Color.GREEN);
+                    dbConnected = true;
+                }
+            }
+        });
+
+        disconnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(dbConnected) {
+                    ds.disconnect();
+                    dbDisplay.setText("DISCONNECTED");
+                    dbDisplay.setTextColor(Color.RED);
+                    dbConnected = false;
+                }
+            }
+        });
 
     }
 }

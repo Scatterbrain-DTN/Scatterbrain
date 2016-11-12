@@ -16,7 +16,6 @@ public final class MsgDataDb {
         public static final String COLUMN_NAME_TTL = "ttl";
         public static final String COLUMN_NAME_REPLYTO = "replyto";
         public static final String COLUMN_NAME_LUID = "luid";
-        public static final String COLUMN_NAME_FROM = "from";
         public static final String COLUMN_NAME_SIG = "sig";
         public static final String COLUMN_NAME_FLAGS = "flags";
         public static final String COLUMN_NAME_RANK = "rank";
@@ -24,9 +23,9 @@ public final class MsgDataDb {
     }
 
     public static final String TEXT_TYPE = " TEXT";
-    public static final String INT_TYPE = "INTEGER";
-    public static final String BOOL_TYPE = "BOOLEAN";
-    public static final String COMMA_SEP = ",";
+    public static final String INT_TYPE = " INTEGER";
+    public static final String BOOL_TYPE = " BOOLEAN";
+    public static final String COMMA_SEP = ", ";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE "  + MessageQueue.TABLE_NAME + " (" +
                     MessageQueue._ID + "INTEGER PRIMARY KEY," +
@@ -35,7 +34,6 @@ public final class MsgDataDb {
                     MessageQueue.COLUMN_NAME_TTL + INT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_REPLYTO + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_CONTENTS + TEXT_TYPE + COMMA_SEP +
-                    MessageQueue.COLUMN_NAME_FROM + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_SIG + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_FLAGS + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_RANK  + INT_TYPE + " )";

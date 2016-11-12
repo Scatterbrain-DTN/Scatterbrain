@@ -22,6 +22,7 @@ public class LeDataStore {
     private MsgDbHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";
+    private Activity mainActivity;
     private Cursor c;
     public final String[] names = {MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS,
             MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
@@ -34,8 +35,17 @@ public class LeDataStore {
 
     public LeDataStore(Activity mainActivity, int trim) {
         dataTrimLimit = trim;
+        this.mainActivity = mainActivity;
+
+    }
+
+
+    public void connect() {
         helper = new MsgDbHelper(mainActivity.getApplicationContext());
         db = helper.getWritableDatabase();
+    }
+    public void disconnect() {
+        db.close();
     }
 
 
@@ -61,7 +71,6 @@ public class LeDataStore {
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO, replyto);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_LUID, luid);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FROM, from);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RANK, rank);
 
@@ -103,7 +112,6 @@ public class LeDataStore {
                         MsgDataDb.MessageQueue.COLUMN_NAME_TTL +
                         MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO +
                         MsgDataDb.MessageQueue.COLUMN_NAME_LUID +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_FROM +
                         MsgDataDb.MessageQueue.COLUMN_NAME_SIG +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
                 " FROM " + MsgDataDb.MessageQueue.TABLE_NAME, null);

@@ -56,4 +56,13 @@
         android:id="@+id/db_textview2"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true" />
+
+    <Button
+        android:text="@string/db_clear_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/clear_button"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/dboverviewtext"
+        android:layout_above="@+id/db_textview2" />
 </RelativeLayout>

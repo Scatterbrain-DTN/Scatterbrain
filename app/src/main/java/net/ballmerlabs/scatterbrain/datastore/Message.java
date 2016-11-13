@@ -16,7 +16,7 @@ public class Message {
     public String sig;
 
     public Message(String subject, String contents, int ttl, String replyto, String luid,
-                   String recipient, String from, String flags,  String sig) {
+             String flags,  String sig) {
         this.subject = subject;
         this.contents = contents;
         this.ttl = ttl;

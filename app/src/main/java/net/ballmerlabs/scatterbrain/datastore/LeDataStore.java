@@ -40,6 +40,9 @@ public class LeDataStore {
 
     }
 
+    public void flushDb() {
+        db.execSQL("DELETE FROM " + MsgDataDb.MessageQueue.TABLE_NAME);
+    }
 
     public void connect() {
         helper = new MsgDbHelper(mainActivity.getApplicationContext());
@@ -127,14 +130,12 @@ public class LeDataStore {
             int ttl = cu.getInt(2);
             String replyto = cu.getString(3);
             String luid = cu.getString(4);
-            String recipient = cu.getString(5);
-            String from = cu.getString(6);
-            String flags = cu.getString(7);
-            String sig = cu.getString(8);
+            String flags = cu.getString(5);
+            String sig = cu.getString(6);
 
-
+            cu.moveToNext();
             finalresult.add(new Message(subject, contents, ttl, replyto, luid,
-                   recipient,from,flags,  sig));
+                   flags,  sig));
         }
 
         return finalresult;

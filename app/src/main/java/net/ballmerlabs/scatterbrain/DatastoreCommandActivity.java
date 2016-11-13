@@ -24,6 +24,8 @@ public class DatastoreCommandActivity extends AppCompatActivity {
     private LeDataStore ds;
     private boolean scatterBound;
     private boolean dbConnected;
+    private Button refresh_button;
+    private TextView dbTextView;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -82,6 +84,22 @@ public class DatastoreCommandActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        refresh_button = (Button) findViewById(R.id.refreshdb_button);
+        dbTextView = (TextView) findViewById(R.id.db_textview2);
+        refresh_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dbConnected) {
+                    dbTextView.setText(ds.getMessages().toString());
+                }
+                else {
+                    dbTextView.setText("No connection to datastore. Please try again.");
+                }
+            }
+        });
+        dbTextView.setText("");
 
     }
 }

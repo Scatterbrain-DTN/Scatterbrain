@@ -24,7 +24,8 @@ public class LeDataStore {
     private final String TAG = "DataStore";
     private Activity mainActivity;
     private Cursor c;
-    public final String[] names = {MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS,
+    public final String[] names = {
+            MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS,
             MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
             MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
             MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,
@@ -106,13 +107,14 @@ public class LeDataStore {
 
     public ArrayList<Message> getMessages() {
 
+        final String SEP = ", ";
         Cursor cu = db.rawQuery("SELECT "+
-                        MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_TTL +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_LUID +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_SIG +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_LUID + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
                 " FROM " + MsgDataDb.MessageQueue.TABLE_NAME, null);
 

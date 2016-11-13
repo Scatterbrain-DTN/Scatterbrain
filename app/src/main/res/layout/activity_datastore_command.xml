@@ -37,4 +37,23 @@
         android:layout_alignParentEnd="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="24sp" />
+
+    <Button
+        android:text="@string/db_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/refreshdb_button"
+        android:layout_below="@+id/dbconnect"
+        android:layout_toStartOf="@+id/dbdisconnect"
+        android:layout_alignEnd="@+id/dbdisconnect" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/refreshdb_button"
+        android:layout_alignParentStart="true"
+        android:id="@+id/db_textview2"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

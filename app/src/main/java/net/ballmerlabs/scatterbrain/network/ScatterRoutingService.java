@@ -72,11 +72,23 @@ public class ScatterRoutingService extends Service {
     }
 
 
-    public void savePacket(BlockDataPacket bd) {
-         dataStore.enqueueMessage("senpai", Base64.encodeToString(bd.body, Base64.DEFAULT),-1, "NONE",
-                 Base64.encodeToString(bd.senderluid,Base64.DEFAULT), "NONE", "NONE", -1);
+    public int savePacket(BlockDataPacket bd) {
+        if(dataStore.connected) {
+            if (bd.isInvalid()) {
+                ScatterLogManager.e(TAG, "Tried to store an invalid packet");
+                return -1;
+            }
+            dataStore.enqueueMessage("senpai", Base64.encodeToString(bd.body, Base64.DEFAULT), -1, "NONE",
+                    Base64.encodeToString(bd.senderluid, Base64.DEFAULT), "NONE", "NONE", -1);
+        }
+        else {
+            ScatterLogManager.e(TAG, "Tried to save a packet with datastore disconnected.");
+            return -2;
+        }
+        return 0;
     }
 
+   
     public void registerOnDeviceConnectedCallback(Runnable run) {
         if(bound) {
             onDevicesFound = run;

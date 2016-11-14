@@ -99,7 +99,7 @@ public class LeDataStore {
      * Makes messages 'die out' after a while
      */
     public void trimDatastore(int limit) {
-        ScatterLogManager.e(TAG, "Trimming message queue. Too long.");
+        ScatterLogManager.v(TAG, "Trimming message queue. Too long.");
         String del = "DELETE FROM " + MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE ROWID IN (SELECT ROWID FROM "
                 + MsgDataDb.MessageQueue.TABLE_NAME +
@@ -115,6 +115,8 @@ public class LeDataStore {
      */
 
     public ArrayList<Message> getMessages() {
+
+        ScatterLogManager.v(TAG, "Mass dumping all messages from datastore");
 
         final String SEP = ", ";
         Cursor cu = db.rawQuery("SELECT "+
@@ -158,6 +160,7 @@ public class LeDataStore {
                 + "ORDER BY RANDOM() LIMIT" + count + "1", null);
 
 
+        ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");
         ArrayList<BlockDataPacket> result = new ArrayList<>(count);
         cu.moveToFirst();
         //check here for overrun problems

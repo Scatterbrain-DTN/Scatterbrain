@@ -70,7 +70,7 @@ public class LeDataStore {
      * sticks a message into the datastore at the front?.
      */
     public void enqueueMessage(String subject, String contents, int ttl, String replyto, String luid,
-                               String recipient, String from, String flags, String sig, int rank) {
+                                 String flags, String sig, int rank) {
         ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS, contents);

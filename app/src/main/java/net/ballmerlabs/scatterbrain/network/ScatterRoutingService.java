@@ -71,6 +71,12 @@ public class ScatterRoutingService extends Service {
 
     }
 
+
+    public void savePacket(BlockDataPacket bd) {
+         dataStore.enqueueMessage("senpai", Base64.encodeToString(bd.body, Base64.DEFAULT),-1, "NONE",
+                 Base64.encodeToString(bd.senderluid,Base64.DEFAULT), "NONE", "NONE", -1);
+    }
+
     public void registerOnDeviceConnectedCallback(Runnable run) {
         if(bound) {
             onDevicesFound = run;

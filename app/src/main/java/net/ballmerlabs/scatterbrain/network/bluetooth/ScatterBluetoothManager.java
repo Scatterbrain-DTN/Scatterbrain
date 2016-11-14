@@ -188,6 +188,8 @@ public class ScatterBluetoothManager {
         if(bd.isInvalid())
             ScatterLogManager.e(TAG, "Received corrupt blockdata packet.");
         else if(true) {
+
+
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override

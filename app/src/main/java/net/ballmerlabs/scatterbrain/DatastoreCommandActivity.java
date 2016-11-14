@@ -27,6 +27,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
     private Button refresh_button;
     private TextView dbTextView;
     private Button clearButton;
+    private Button trimButton;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -90,6 +91,8 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         refresh_button = (Button) findViewById(R.id.refreshdb_button);
         dbTextView = (TextView) findViewById(R.id.db_textview2);
         clearButton = (Button) findViewById(R.id.clear_button);
+        trimButton = (Button) findViewById(R.id.button_trim);
+
 
         refresh_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +115,16 @@ public class DatastoreCommandActivity extends AppCompatActivity {
                 }
             }
         });
+
+        trimButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dbConnected) {
+                    ds.trimDatastore(100);
+                }
+            }
+        });
+
         dbTextView.setText("");
 
     }

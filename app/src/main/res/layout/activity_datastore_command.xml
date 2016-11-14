@@ -51,11 +51,11 @@
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/refreshdb_button"
         android:layout_alignParentStart="true"
         android:id="@+id/db_textview2"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/button_trim" />
 
     <Button
         android:text="@string/db_clear_str"
@@ -63,6 +63,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/clear_button"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/dboverviewtext"
-        android:layout_above="@+id/db_textview2" />
+        android:layout_alignBottom="@+id/refreshdb_button" />
+
+    <Button
+        android:text="@string/dbtrim_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/refreshdb_button"
+        android:layout_alignParentStart="true"
+        android:id="@+id/button_trim" />
 </RelativeLayout>

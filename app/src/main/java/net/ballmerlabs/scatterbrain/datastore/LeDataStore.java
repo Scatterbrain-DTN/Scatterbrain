@@ -5,8 +5,10 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Base64;
 import android.util.Log;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -151,25 +153,31 @@ public class LeDataStore {
      * Gets n rows from the datastore in a random order. For use when there is no time to transmit
      * the entire datastore.
      */
-    public ArrayList<HashMap> getTopRandomMessages(int count) {
+    public ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
         Cursor cu = db.rawQuery("SELECT * FROM" + MsgDataDb.MessageQueue.TABLE_NAME
                 + "ORDER BY RANDOM() LIMIT" + count + "1", null);
 
 
-        ArrayList<HashMap> finalresult = new ArrayList<HashMap>();
-        HashMap<String, String> result;
+        ArrayList<BlockDataPacket> result = new ArrayList<>(count);
         cu.moveToFirst();
         //check here for overrun problems
         while (!cu.isAfterLast()) {
-            result = new HashMap<String, String>();
-            result.clear();
-            for (int i = 0; i < cu.getColumnCount(); i++) {
-                result.put(names[i], cu.getString(i));
-            }
-            finalresult.add(result);
+            String subject = cu.getString(0);
+            String contents = cu.getString(1);
+            int ttl = cu.getInt(2);
+            String replyto = cu.getString(3);
+            String luid = cu.getString(4);
+            String flags = cu.getString(5);
+            String sig = cu.getString(6);
+            BlockDataPacket resultbdpacket = new BlockDataPacket(Base64.decode(contents,Base64.DEFAULT), false, null,
+                    Base64.decode(luid,Base64.DEFAULT));
+            if(resultbdpacket.isInvalid())
+                ScatterLogManager.e(TAG, "Decoded an invalid blockdata packet in random. Continuing anway. Godspeed.");
+            result.add(resultbdpacket);
+            cu.moveToNext();
         }
 
-        return finalresult;
+        return result;
 
     }
 

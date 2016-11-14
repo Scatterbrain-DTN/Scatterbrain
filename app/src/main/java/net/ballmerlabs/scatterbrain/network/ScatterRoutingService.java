@@ -88,7 +88,7 @@ public class ScatterRoutingService extends Service {
         return 0;
     }
 
-   
+
     public void registerOnDeviceConnectedCallback(Runnable run) {
         if(bound) {
             onDevicesFound = run;

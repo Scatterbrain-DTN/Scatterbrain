@@ -18,8 +18,6 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 public class DatastoreCommandActivity extends AppCompatActivity {
     private ScatterRoutingService mService;
     private String TAG = "DatastoreCommand";
-    private Button connectButton;
-    private Button disconnectButton;
     private TextView dbDisplay;
     private LeDataStore ds;
     private boolean scatterBound;
@@ -39,6 +37,21 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             //mService.getBluetoothManager().startDiscoverLoopThread();
             scatterBound = true;
 
+            ds = mService.dataStore;
+
+            dbConnected = mService.dataStore.connected;
+            if (dbConnected) {
+                dbDisplay.setText("CONNECTED");
+                dbDisplay.setTextColor(Color.GREEN);
+                dbConnected = true;
+            }
+            else {
+                dbDisplay.setText("DISCONNECTED");
+                dbDisplay.setTextColor(Color.RED);
+                dbConnected = false;
+            }
+
+
 
         }
 
@@ -53,8 +66,6 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_datastore_command);
 
-        connectButton = (Button) findViewById(R.id.dbconnect);
-        disconnectButton = (Button) findViewById(R.id.dbdisconnect);
         dbDisplay = (TextView) findViewById(R.id.dboverviewtext);
         if(!dbConnected) {
             dbDisplay.setText("DISCONNECTED");
@@ -62,30 +73,8 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         }
 
         final Activity main = this;
-        connectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!dbConnected) {
-                    ds = new LeDataStore(main, 100);
-                    ds.connect();
-                    dbDisplay.setText("CONNECTED");
-                    dbDisplay.setTextColor(Color.GREEN);
-                    dbConnected = true;
-                }
-            }
-        });
 
-        disconnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(dbConnected) {
-                    ds.disconnect();
-                    dbDisplay.setText("DISCONNECTED");
-                    dbDisplay.setTextColor(Color.RED);
-                    dbConnected = false;
-                }
-            }
-        });
+
 
 
         refresh_button = (Button) findViewById(R.id.refreshdb_button);

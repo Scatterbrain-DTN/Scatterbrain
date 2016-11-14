@@ -1,6 +1,7 @@
 package net.ballmerlabs.scatterbrain.datastore;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,8 +23,9 @@ public class LeDataStore {
     private MsgDbHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";
-    private Activity mainActivity;
+    private Service mainService;
     private Cursor c;
+    public boolean connected;
     public final String[] names = {
             MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS,
             MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
@@ -34,9 +36,9 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS,
             MsgDataDb.MessageQueue.COLUMN_NAME_RANK};
 
-    public LeDataStore(Activity mainActivity, int trim) {
+    public LeDataStore(Service mainService, int trim) {
         dataTrimLimit = trim;
-        this.mainActivity = mainActivity;
+        this.mainService = mainService;
 
     }
 
@@ -45,11 +47,13 @@ public class LeDataStore {
     }
 
     public void connect() {
-        helper = new MsgDbHelper(mainActivity.getApplicationContext());
+        helper = new MsgDbHelper(mainService.getApplicationContext());
         db = helper.getWritableDatabase();
+        connected = true;
     }
     public void disconnect() {
         db.close();
+        connected = false;
     }
 
 

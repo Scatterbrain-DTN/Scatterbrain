@@ -14,7 +14,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
+import net.ballmerlabs.scatterbrain.datastore.Message;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
+
+import java.util.ArrayList;
 
 public class DatastoreCommandActivity extends AppCompatActivity {
     private ScatterRoutingService mService;
@@ -106,7 +109,12 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(dbConnected) {
                     ds.enqueueMessage("Testfefefefeef", "contentsfefef", 5, "sexy data" , "quantum fruit",  "flagsfrgrgrrfref", "sigfefefefefefefefef", 3);
-                    dbTextView.setText(ds.getMessages().toString());
+                    ArrayList<Message> res = ds.getMessages();
+                    String result = "";
+                    for(Message m : res) {
+                        result = result.concat(m.contents + "\n");
+                    }
+                    dbTextView.setText(result);
                 }
                 else {
                     dbTextView.setText("No connection to datastore. Please try again.");

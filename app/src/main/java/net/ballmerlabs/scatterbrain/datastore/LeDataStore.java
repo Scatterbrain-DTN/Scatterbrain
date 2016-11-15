@@ -49,11 +49,13 @@ public class LeDataStore {
     }
 
     public void connect() {
+        ScatterLogManager.v(TAG, "Connected to datastore");
         helper = new MsgDbHelper(mainService.getApplicationContext());
         db = helper.getWritableDatabase();
         connected = true;
     }
     public void disconnect() {
+        ScatterLogManager.v(TAG, "Disconnected from datastore");
         db.close();
         connected = false;
     }

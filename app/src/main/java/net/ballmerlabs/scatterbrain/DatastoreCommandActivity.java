@@ -2,6 +2,7 @@ package net.ballmerlabs.scatterbrain;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
@@ -41,14 +42,14 @@ public class DatastoreCommandActivity extends AppCompatActivity {
 
             dbConnected = mService.dataStore.connected;
             if (dbConnected) {
+                ScatterLogManager.v(TAG, "DatastoreCommandActivity connected");
                 dbDisplay.setText("CONNECTED");
                 dbDisplay.setTextColor(Color.GREEN);
-                dbConnected = true;
             }
             else {
+                ScatterLogManager.e(TAG, "Tried to initialize DatastoreCommandActivity with no connection");
                 dbDisplay.setText("DISCONNECTED");
                 dbDisplay.setTextColor(Color.RED);
-                dbConnected = false;
             }
 
 
@@ -61,21 +62,37 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         }
     };
 
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(scatterBound) {
+            dbConnected = mService.dataStore.connected;
+            if (dbConnected) {
+                dbDisplay.setText("CONNECTED");
+                dbDisplay.setTextColor(Color.GREEN);
+            } else {
+                dbDisplay.setText("DISCONNECTED");
+                dbDisplay.setTextColor(Color.RED);
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_datastore_command);
+        Intent bindIntent = new Intent(this, ScatterRoutingService.class);
+        bindService(bindIntent, mConnection, Context.BIND_AUTO_CREATE);
 
         dbDisplay = (TextView) findViewById(R.id.dboverviewtext);
-        if(!dbConnected) {
-            dbDisplay.setText("DISCONNECTED");
-            dbDisplay.setTextColor(Color.RED);
-        }
 
         final Activity main = this;
 
 
-
+        dbDisplay.setText("DISCONNECTED");
+        dbDisplay.setTextColor(Color.RED);
 
         refresh_button = (Button) findViewById(R.id.refreshdb_button);
         dbTextView = (TextView) findViewById(R.id.db_textview2);
@@ -83,11 +100,12 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         trimButton = (Button) findViewById(R.id.button_trim);
 
 
+
         refresh_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(dbConnected) {
-                    ds.enqueueMessage("Testfefefefeef", "contentsfefef", 5, "goobyfefefefef", "sexy data" , "quantum fruit", "ternary gender", "flagsfrgrgrrfref", "sigfefefefefefefefef", 3);
+                    ds.enqueueMessage("Testfefefefeef", "contentsfefef", 5, "sexy data" , "quantum fruit",  "flagsfrgrgrrfref", "sigfefefefefefefefef", 3);
                     dbTextView.setText(ds.getMessages().toString());
                 }
                 else {

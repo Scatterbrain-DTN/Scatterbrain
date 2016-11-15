@@ -109,7 +109,7 @@ public class ScatterRoutingService extends Service {
 
     public void noticeNotify(String title, String text) {
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
+                new  NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle(title)
                 .setContentText(text);

@@ -121,6 +121,8 @@ public class NormalActivity extends AppCompatActivity {
             ScatterLogManager.v(TAG, "Updating list");
             mService.getBluetoothManager().sendMessageToBroadcast(
                     MsgBox.getText().toString().getBytes(),true);
+            mService.dataStore.enqueueMessage("SenpaiDetector", MsgBox.getText().toString(), -1, "none",
+                    "none","none", "none",  -1);
         }
 
         MsgBox.setText("");

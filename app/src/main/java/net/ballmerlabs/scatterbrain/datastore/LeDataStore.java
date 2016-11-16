@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,6 +94,20 @@ public class LeDataStore {
 
         trimDatastore(dataTrimLimit);
 
+    }
+
+
+    /* Very temporary method for writing a blockdata stanza to datastore */
+    public void enqueueMessage(BlockDataPacket bd) {
+        enqueueMessage("SenpaiDetector",
+                Base64.encodeToString(bd.body,Base64.DEFAULT),
+                -1, "none", Base64.encodeToString(bd.senderluid, Base64.DEFAULT), "none", "none",-1);
+    }
+
+    public BlockDataPacket messageToBlockData(Message m) {
+        BlockDataPacket result = new BlockDataPacket(Base64.decode(m.contents, Base64.DEFAULT),true,
+                null,Base64.decode(m.luid,Base64.DEFAULT));
+        return result;
     }
 
 

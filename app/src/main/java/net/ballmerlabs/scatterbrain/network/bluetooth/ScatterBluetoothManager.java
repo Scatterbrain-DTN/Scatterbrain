@@ -197,7 +197,7 @@ public class ScatterBluetoothManager {
                     trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
                             Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
                     trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                    //trunk.mainService.dataStore.appendMessage
+                    trunk.mainService.dataStore.enqueueMessage(bd);
                     ScatterLogManager.e(TAG, "Appended message to message list");
                 }
             });

@@ -173,8 +173,8 @@ public class LeDataStore {
      * the entire datastore.
      */
     public ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
-        Cursor cu = db.rawQuery("SELECT * FROM" + MsgDataDb.MessageQueue.TABLE_NAME
-                + "ORDER BY RANDOM() LIMIT" + count + "1", null);
+        Cursor cu = db.rawQuery("SELECT * FROM " + MsgDataDb.MessageQueue.TABLE_NAME
+                + " ORDER BY RANDOM() LIMIT " + count, null);
 
 
         ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");

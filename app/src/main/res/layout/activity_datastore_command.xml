@@ -51,4 +51,12 @@
         android:id="@+id/clear_button"
         android:layout_below="@+id/refreshdb_button"
         android:layout_toEndOf="@+id/button_trim" />
+
+    <Button
+        android:text="@string/db_rand_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/clear_button"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/db_rand_button" />
 </RelativeLayout>

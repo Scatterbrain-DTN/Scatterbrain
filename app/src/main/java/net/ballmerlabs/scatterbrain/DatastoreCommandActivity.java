@@ -9,12 +9,14 @@ import android.graphics.Color;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.datastore.Message;
+import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
     private TextView dbTextView;
     private Button clearButton;
     private Button trimButton;
+    private Button randButton;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -101,8 +104,24 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         dbTextView = (TextView) findViewById(R.id.db_textview2);
         clearButton = (Button) findViewById(R.id.clear_button);
         trimButton = (Button) findViewById(R.id.button_trim);
+        randButton = (Button) findViewById(R.id.db_rand_button);
 
 
+
+        randButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dbConnected) {
+                    ArrayList<BlockDataPacket> ran = ds.getTopRandomMessages(5);
+                    String print = "";
+                    for(BlockDataPacket p : ran) {
+                        print = print + Base64.encodeToString(p.senderluid,Base64.DEFAULT) +
+                        new String(p.body)+ "\n";
+                    }
+                    dbTextView.setText(print);
+                }
+            }
+        });
 
         refresh_button.setOnClickListener(new View.OnClickListener() {
             @Override

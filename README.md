@@ -2,6 +2,8 @@
 City-spanning multi-protocol 'Lazy mesh' network chat. Hold internet-less long range conversations based on
 the Wind concept (https://github.com/n8fr8/WindFarm).
 
+More info at the [development blog](https://scatterbrain.xyz)
+
 ***
 
 ### What does it do?

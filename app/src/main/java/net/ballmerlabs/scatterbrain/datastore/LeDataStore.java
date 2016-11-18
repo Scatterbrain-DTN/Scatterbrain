@@ -185,6 +185,54 @@ public class LeDataStore {
     }
 
 
+    public ArrayList<Message> getMessageByHash(String compare_hash) {
+
+        ScatterLogManager.v(TAG, "Retreiving message from hash");
+
+        final String SEP = ", ";
+        Cursor cu = db.rawQuery("SELECT "+
+                MsgDataDb.MessageQueue.COLUMN_NAME_HASH + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
+                " FROM " + MsgDataDb.MessageQueue.TABLE_NAME +
+                " WHERE " + MsgDataDb.MessageQueue.COLUMN_NAME_HASH + " = " +
+                compare_hash, null);
+
+        ArrayList<Message> finalresult = new ArrayList<Message>();
+        cu.moveToFirst();
+        //check here for overrun problems
+        while (!cu.isAfterLast()) {
+            String  hash = cu.getString(0);
+            int extbody = cu.getInt(1);
+            String body = cu.getString(2);
+            String application = cu.getString(3);
+            int text = cu.getInt(4);
+            int ttl = cu.getInt(5);
+            String replylink = cu.getString(6);
+            String senderluid = cu.getString(7);
+            String receiverluid = cu.getString(8);
+            String sig = cu.getString(9);
+            String flags = cu.getString(10);
+
+            cu.moveToNext();
+            finalresult.add(new Message(hash, extbody, body, application,
+                    text, ttl, replylink, senderluid, receiverluid, sig, flags));
+        }
+
+
+        return finalresult;
+
+    }
+
+
     /*
      * Gets n rows from the datastore in a random order. For use when there is no time to transmit
      * the entire datastore.

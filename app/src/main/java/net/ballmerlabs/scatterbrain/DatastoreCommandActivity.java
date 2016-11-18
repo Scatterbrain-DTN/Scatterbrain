@@ -127,11 +127,13 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(dbConnected) {
-                    ds.enqueueMessage("Testfefefefeef", "contentsfefef", 5, "sexy data" , "quantum fruit",  "flagsfrgrgrrfref", "sigfefefefefefefefef", 3);
+                    ds.enqueueMessage("NOHASH",0,  "contentsfefef",  "sexy data" ,0,-1,
+                            "quantum fruit",  "flagsfrgrgrrfref", "sigfefefefefefefefef", "sig" ,
+                            "flags");
                     ArrayList<Message> res = ds.getMessages();
                     String result = "";
                     for(Message m : res) {
-                        result = result.concat(m.contents + "\n");
+                        result = result.concat(m.body + "\n");
                     }
                     dbTextView.setText(result);
                 }

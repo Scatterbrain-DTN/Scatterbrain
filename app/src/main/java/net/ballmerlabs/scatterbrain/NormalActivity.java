@@ -110,8 +110,7 @@ public class NormalActivity extends AppCompatActivity {
     //adds a message to the list and clears the input field
     private void updateList() {
         byte[] tmp = {5,5,5,5,5,5};
-        BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,
-                mService.getTrunk().profile,tmp);
+        BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,tmp);
         BlockDataPacket out = new BlockDataPacket(bd.contents);
         Messages.data.add(  new DispMessage(new String(out.body),
                 new  String(Base64.encodeToString(out.senderluid,Base64.DEFAULT))));

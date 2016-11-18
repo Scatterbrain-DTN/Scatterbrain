@@ -293,7 +293,7 @@ public class ScatterBluetoothManager {
     public void sendMessageToLocalPeer(final byte[] luid, final byte[] message,final  boolean text) {
         ScatterLogManager.v(TAG, "Sending message to peer " + luid);
        final LocalPeer target = trunk.blman.getPeerByLuid(luid);
-        final BlockDataPacket blockDataPacket = new BlockDataPacket(message, text, target.profile,
+        final BlockDataPacket blockDataPacket = new BlockDataPacket(message, text,
                 trunk.mainService.luid);
         Thread messageSendThread = new Thread(new Runnable() {
             @Override
@@ -304,7 +304,7 @@ public class ScatterBluetoothManager {
                         try {
                             byte[] tmp = {5,5,5,5,5,5};
                             target.socket.getOutputStream().write(
-                                    new BlockDataPacket(message,text, target.profile,tmp).getContents());
+                                    new BlockDataPacket(message,text,tmp).getContents());
                             ScatterLogManager.v(TAG, "Sent message successfully to " + luid );
                             break;
                         } catch (IOException e) {

@@ -11,6 +11,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,14 +31,17 @@ public class LeDataStore {
     private Cursor c;
     public boolean connected;
     public final String[] names = {
-            MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS,
-            MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT,
+            MsgDataDb.MessageQueue.COLUMN_NAME_HASH,
+            MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY,
+            MsgDataDb.MessageQueue.COLUMN_NAME_BODY,
+            MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION,
+            MsgDataDb.MessageQueue.COLUMN_NAME_TEXT,
             MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
-            MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO,
-            MsgDataDb.MessageQueue.COLUMN_NAME_LUID,
+            MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK,
+            MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID,
+            MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID,
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
-            MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS,
-            MsgDataDb.MessageQueue.COLUMN_NAME_RANK};
+            MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS};
 
     public LeDataStore(Service mainService, int trim) {
         dataTrimLimit = trim;
@@ -74,18 +78,23 @@ public class LeDataStore {
     /*
      * sticks a message into the datastore at the front?.
      */
-    public void enqueueMessage(String subject, String contents, int ttl, String replyto, String luid,
-                                 String flags, String sig, int rank) {
+    public void enqueueMessage(String uuid, int extbody,   String body, String application, int text,  int ttl,
+                               String replyto, String luid, String receiverLuid,
+                               String sig, String flags) {
+
         ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS, contents);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT, subject);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_HASH, uuid);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY, extbody);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_BODY, body);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION, application);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TEXT, text);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO, replyto);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_LUID, luid);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK, replyto);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID, luid);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID, receiverLuid);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RANK, rank);
 
         long newRowId;
         newRowId = db.insert(MsgDataDb.MessageQueue.TABLE_NAME,
@@ -96,17 +105,17 @@ public class LeDataStore {
 
     }
 
-
     /* Very temporary method for writing a blockdata stanza to datastore */
     public void enqueueMessage(BlockDataPacket bd) {
-        enqueueMessage("SenpaiDetector",
-                Base64.encodeToString(bd.body,Base64.DEFAULT),
-                -1, "none", Base64.encodeToString(bd.senderluid, Base64.DEFAULT), "none", "none",-1);
+        enqueueMessage(bd.getHash("SenpaiDetector"), 0,
+                Base64.encodeToString(bd.body,Base64.DEFAULT),"SenpaiDetector", 1,
+                -1, "none", Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                Base64.encodeToString(bd.receiverluid, Base64.DEFAULT), "none","none");
     }
 
     public BlockDataPacket messageToBlockData(Message m) {
-        BlockDataPacket result = new BlockDataPacket(Base64.decode(m.contents, Base64.DEFAULT),true,
-                null,Base64.decode(m.luid,Base64.DEFAULT));
+        BlockDataPacket result = new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
+                Base64.decode(m.senderluid,Base64.DEFAULT));
         return result;
     }
 
@@ -137,11 +146,15 @@ public class LeDataStore {
 
         final String SEP = ", ";
         Cursor cu = db.rawQuery("SELECT "+
-                        MsgDataDb.MessageQueue.COLUMN_NAME_SUBJECT + SEP +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_CONTENTS + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_HASH + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_REPLYTO + SEP +
-                        MsgDataDb.MessageQueue.COLUMN_NAME_LUID + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
                 " FROM " + MsgDataDb.MessageQueue.TABLE_NAME, null);
@@ -150,17 +163,21 @@ public class LeDataStore {
         cu.moveToFirst();
         //check here for overrun problems
         while (!cu.isAfterLast()) {
-            String subject = cu.getString(0);
-            String contents = cu.getString(1);
-            int ttl = cu.getInt(2);
-            String replyto = cu.getString(3);
-            String luid = cu.getString(4);
-            String flags = cu.getString(5);
-            String sig = cu.getString(6);
+            String  hash = cu.getString(0);
+            int extbody = cu.getInt(1);
+            String body = cu.getString(2);
+            String application = cu.getString(3);
+            int text = cu.getInt(4);
+            int ttl = cu.getInt(5);
+            String replylink = cu.getString(6);
+            String senderluid = cu.getString(7);
+            String receiverluid = cu.getString(8);
+            String sig = cu.getString(9);
+            String flags = cu.getString(10);
 
             cu.moveToNext();
-            finalresult.add(new Message(subject, contents, ttl, replyto, luid,
-                   flags,  sig));
+            finalresult.add(new Message(hash, extbody, body, application,
+                    text, ttl, replylink, senderluid, receiverluid, sig, flags));
         }
 
         return finalresult;
@@ -189,7 +206,7 @@ public class LeDataStore {
             String luid = cu.getString(4);
             String flags = cu.getString(5);
             String sig = cu.getString(6);
-            BlockDataPacket resultbdpacket = new BlockDataPacket(Base64.decode(contents,Base64.DEFAULT), false, null,
+            BlockDataPacket resultbdpacket = new BlockDataPacket(Base64.decode(contents,Base64.DEFAULT), false,
                     Base64.decode(luid,Base64.DEFAULT));
             if(resultbdpacket.isInvalid())
                 ScatterLogManager.e(TAG, "Decoded an invalid blockdata packet in random. Continuing anway. Godspeed.");

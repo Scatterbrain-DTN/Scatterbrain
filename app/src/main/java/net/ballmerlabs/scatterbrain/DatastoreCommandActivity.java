@@ -45,7 +45,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             scatterBound = true;
 
             ds = mService.dataStore;
-            
+
             dbConnected = mService.dataStore.connected;
             if (dbConnected) {
                 ScatterLogManager.v(TAG, "DatastoreCommandActivity connected");

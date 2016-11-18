@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Exchanger;
@@ -81,9 +82,8 @@ public class ScatterBluetoothManager {
                 Thread discoveryFinishedThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for(BluetoothDevice d : foundList)  {
-                            connectToDevice(d);
-                        }
+
+                            connectToDevice(foundList);
 
                         foundList.clear();
                     }
@@ -116,11 +116,14 @@ public class ScatterBluetoothManager {
 
 
     //this should return a handler object later
-    public void connectToDevice(BluetoothDevice device) {
+    public void connectToDevice(List<BluetoothDevice> device) {
         if (!isAccepting) {
             ScatterConnectThread currentconnection;
             currentconnection = new ScatterConnectThread(device, trunk);
             currentconnection.start();
+        }
+        else {
+            ScatterLogManager.e(TAG, "Tried to connect, but accept thread is dead for some reason");
         }
     }
 

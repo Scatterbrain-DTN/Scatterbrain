@@ -244,6 +244,20 @@ public class ScatterBluetoothManager {
         }
     }
 
+    public void offloadRandomPackets(int count) {
+        final ArrayList<BlockDataPacket> ran = trunk.mainService.dataStore.getTopRandomMessages(count);
+        pauseDiscoverLoopThread();
+        Thread offloadThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(BlockDataPacket p : ran) {
+                    sendMessageToBroadcast(p.contents,true);
+                }
+            }
+        });
+        offloadThread.start();
+    }
+
     public synchronized void stopDiscoverLoopThread() {
         ScatterLogManager.v(TAG, "Stopping bluetooth discovery thread");
         runScanThread = false;
@@ -279,12 +293,13 @@ public class ScatterBluetoothManager {
     public void sendMessageToLocalPeer(final byte[] luid, final byte[] message,final  boolean text) {
         ScatterLogManager.v(TAG, "Sending message to peer " + luid);
        final LocalPeer target = trunk.blman.getPeerByLuid(luid);
-        BlockDataPacket blockDataPacket = new BlockDataPacket(message, text, target.profile,
+        final BlockDataPacket blockDataPacket = new BlockDataPacket(message, text, target.profile,
                 trunk.mainService.luid);
         Thread messageSendThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 for(int x=0;x<5;x++) {
+                    trunk.dataStore.enqueueMessage(blockDataPacket);
                     if (target.socket.isConnected()) {
                         try {
                             byte[] tmp = {5,5,5,5,5,5};

@@ -121,7 +121,6 @@ public class NormalActivity extends AppCompatActivity {
             ScatterLogManager.v(TAG, "Updating list");
             mService.getBluetoothManager().sendMessageToBroadcast(
                     MsgBox.getText().toString().getBytes(),true);
-            mService.dataStore.enqueueMessage(bd);
         }
 
         MsgBox.setText("");

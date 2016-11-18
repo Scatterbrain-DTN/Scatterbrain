@@ -30,7 +30,8 @@ public final class MsgDataDb {
     public static final String COMMA_SEP = ", ";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE "  + MessageQueue.TABLE_NAME + " (" +
-                    MessageQueue.COLUMN_NAME_HASH + "INTEGER PRIMARY KEY," +
+                    MessageQueue._ID + "INTEGER PRIMARY KEY," +
+                    MessageQueue.COLUMN_NAME_HASH + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_EXTBODY + INT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_BODY + TEXT_TYPE + COMMA_SEP +
                     MessageQueue.COLUMN_NAME_APPLICATION + TEXT_TYPE + COMMA_SEP +

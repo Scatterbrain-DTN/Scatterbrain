@@ -105,6 +105,10 @@ public class LeDataStore {
 
     }
 
+    public int enqueueMessageNoDuplicate(BlockDataPacket bd) {
+        return -1; //todo: fix this
+    }
+
     /* Very temporary method for writing a blockdata stanza to datastore */
     public int enqueueMessage(BlockDataPacket bd) {
         if(connected) {
@@ -215,7 +219,7 @@ public class LeDataStore {
                 MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
                 " FROM " + MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE " + MsgDataDb.MessageQueue.COLUMN_NAME_HASH + " = " +
-                compare_hash, null);
+                 "?", new String[] {compare_hash});
 
         ArrayList<Message> finalresult = new ArrayList<Message>();
         cu.moveToFirst();

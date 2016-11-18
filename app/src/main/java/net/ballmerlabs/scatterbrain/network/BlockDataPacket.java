@@ -1,6 +1,11 @@
 package net.ballmerlabs.scatterbrain.network;
 
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
+
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Represents a block data packet
@@ -11,19 +16,53 @@ public class BlockDataPacket extends ScatterStanza {
     public boolean text;
     public byte[] senderluid;
     public byte[] receiverluid;
-    public DeviceProfile profile;
 
 
-    public BlockDataPacket(byte body[], boolean text, DeviceProfile profile, byte[] senderluid) {
+    public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
         super(14+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
         invalid = false;
-        this.profile = profile;
 
         if(init() == null)
             invalid = true;
+    }
+
+
+    public String getHash(String applicationSalt) {
+        String working = applicationSalt + body + senderluid;
+        String hash = null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            byte[] workingByteArray = working.getBytes("UTF-8");
+            digest.update(workingByteArray, 0, workingByteArray.length);
+            workingByteArray = digest.digest();
+            hash = bytesToHex(workingByteArray);
+
+
+        }
+        catch(UnsupportedEncodingException use) {
+            ScatterLogManager.e("BlockDataPacket", "UTF-8 is not supported in BlockData hashing digest!~");
+        }
+        catch(NoSuchAlgorithmException nsa) {
+            ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");
+        }
+        return hash;
+    }
+
+    // http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex( byte[] bytes )
+    {
+        char[] hexChars = new char[ bytes.length * 2 ];
+        for( int j = 0; j < bytes.length; j++ )
+        {
+            int v = bytes[ j ] & 0xFF;
+            hexChars[ j * 2 ] = hexArray[ v >>> 4 ];
+            hexChars[ j * 2 + 1 ] = hexArray[ v & 0x0F ];
+        }
+        return new String( hexChars );
     }
 
 

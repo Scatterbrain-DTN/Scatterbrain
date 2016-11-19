@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -217,6 +218,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(getString(R.string.scramble_pref)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_luid_display)));
             bindPreferenceSummaryToValue(findPreference("example_list"));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.queue_pref)));
 
 
 
@@ -228,6 +230,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         mService.regenerateUUID();
                         Preference strdisplay = findPreference(getString(R.string.pref_luid_display));
                         strdisplay.setSummary(Base64.encodeToString(mService.luid, Base64.DEFAULT));
+                    }
+                    return true;
+                }
+            });
+
+            Preference qpref = findPreference(getString(R.string.queue_pref));
+
+
+            //todo: look up if this is right. On plane with no internet
+            qpref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    try {
+                        int result = Integer.parseInt((String)newValue);
+                    }
+                    catch(Exception e) {
+                        return false;
                     }
                     return true;
                 }

@@ -191,7 +191,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 scatterBound = true;
                 Preference strdisplay = findPreference(getString(R.string.pref_luid_display));
                 if(scatterBound) {
-                    strdisplay.setSummary(new String(mService.luid));
+                    strdisplay.setSummary(Base64.encodeToString(mService.luid, Base64.DEFAULT));
                 }
             }
 
@@ -228,7 +228,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if(scatterBound) {
                         mService.regenerateUUID();
                         Preference strdisplay = findPreference(getString(R.string.pref_luid_display));
-                        strdisplay.setSummary(new String(Base64.encodeToString(mService.luid, Base64.DEFAULT)));
+                        strdisplay.setSummary(Base64.encodeToString(mService.luid, Base64.DEFAULT));
                     }
                     return true;
                 }

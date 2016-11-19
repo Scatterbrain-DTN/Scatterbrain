@@ -106,7 +106,7 @@ public class BlockDataPacket extends ScatterStanza {
     private byte[] init() {
         contents[0] = 1;
         if(senderluid.length != 6) {
-            return null; //TODO: error logging here
+            return null;
         }
         byte senderluidbytes[] = senderluid;
         int counter1 = 0;

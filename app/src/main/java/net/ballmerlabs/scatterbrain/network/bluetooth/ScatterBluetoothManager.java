@@ -35,7 +35,10 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  */
 public class ScatterBluetoothManager {
     public final String TAG = "BluetoothManager";
+
+    //UUID for scatterbrain bluetooh. If you want to make a 3rd party app, plz copy this.
     public final java.util.UUID UID = UUID.fromString("cc1f06c5-ce01-4538-bc15-2a1d129c8b28");
+
     public final String NAME = "Scatterbrain";
     public BluetoothAdapter adapter;
     public final static int REQUEST_ENABLE_BT = 1;
@@ -289,7 +292,7 @@ public class ScatterBluetoothManager {
         return connectedList.get(luid);
     }
 
-    
+
     //sends a BlockDataPacket to all connected peers
     public void sendMessageToBroadcast(byte[] message, boolean text) {
         ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");

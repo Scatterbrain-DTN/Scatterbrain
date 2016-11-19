@@ -187,7 +187,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         (ScatterRoutingService.ScatterBinder) service;
                 mService = binder.getService();
 
-                mService.getBluetoothManager().startDiscoverLoopThread(); //TODO: not needed
                 scatterBound = true;
                 Preference strdisplay = findPreference(getString(R.string.pref_luid_display));
                 if(scatterBound) {

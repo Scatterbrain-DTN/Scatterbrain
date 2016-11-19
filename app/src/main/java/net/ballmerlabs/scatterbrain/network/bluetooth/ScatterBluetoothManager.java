@@ -1,6 +1,5 @@
 package net.ballmerlabs.scatterbrain.network.bluetooth;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -10,27 +9,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Parcel;
-import android.os.ParcelUuid;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+
 
 import net.ballmerlabs.scatterbrain.DispMessage;
-import net.ballmerlabs.scatterbrain.LoggingActivity;
-import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.NormalActivity;
-import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
-import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
-import net.ballmerlabs.scatterbrain.network.ScatterStanza;
-import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Exchanger;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**

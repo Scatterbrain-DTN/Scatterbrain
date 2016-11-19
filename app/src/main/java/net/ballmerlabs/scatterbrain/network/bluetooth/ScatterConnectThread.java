@@ -42,32 +42,41 @@ public class ScatterConnectThread extends Thread {
     public void run() {
         bleman.pauseDiscoverLoopThread();
         for(BluetoothDevice mmDevice : devicelist) {
-            BluetoothSocket tmp = null;
-            try {
-                tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);
-            } catch (IOException e) {
-
-            }
-            mmSocket = tmp;
-            ScatterLogManager.v(trunk.blman.TAG, "Attempting to connect");
-            try {
-
-                mmSocket.connect();
-                success = true;
-
-                //call this function in the context of the bluetoothManager
-                ScatterLogManager.v(trunk.blman.TAG, "Connection successful");
-            } catch (IOException e) {
-                ScatterLogManager.e(trunk.blman.TAG, "Failed to connect, IOException");
-                // e.printStackTrace();
+            if(!trunk.blman.blackList.contains(mmDevice.getAddress())) {
+                success = false;
+                BluetoothSocket tmp = null;
                 try {
-                    mmSocket.close();
-                } catch (IOException c) {
+                    tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);
+                } catch (IOException e) {
+
                 }
+                mmSocket = tmp;
+                ScatterLogManager.v(trunk.blman.TAG, "Attempting to connect");
+                try {
 
-            } finally {
-                trunk.blman.onSuccessfulConnect(mmSocket);
+                    mmSocket.connect();
+                    if (mmSocket.isConnected()) {
+                        success = true;
 
+                        //call this function in the context of the bluetoothManager
+                        ScatterLogManager.v(trunk.blman.TAG, "Connection successful");
+                    } else {
+                        ScatterLogManager.e(trunk.blman.TAG, "Connection raised no exception, but failed");
+                    }
+                } catch (IOException e) {
+                    ScatterLogManager.e(trunk.blman.TAG, "Failed to connect, IOException");
+                    // e.printStackTrace();
+                    try {
+                        mmSocket.close();
+                    } catch (IOException c) {
+                    }
+
+                } finally {
+                    trunk.blman.onSuccessfulConnect(mmSocket);
+                }
+                if (!success) {
+                    trunk.blman.blackList.add(mmDevice.getAddress());
+                }
             }
         }
         bleman.unpauseDiscoverLoopThread();

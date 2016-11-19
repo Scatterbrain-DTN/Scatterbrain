@@ -4,6 +4,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -16,17 +17,20 @@ public class BlockDataPacket extends ScatterStanza {
     public boolean text;
     public byte[] senderluid;
     public byte[] receiverluid;
+    public Integer size;
 
 
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
-        super(14+body.length);
+        super(18+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
+        this.size = body.length;
         invalid = false;
 
         if(init() == null)
             invalid = true;
+
     }
 
 
@@ -96,10 +100,18 @@ public class BlockDataPacket extends ScatterStanza {
         else
             text = false;
 
-        body = new byte[contents.length - 14];
+        byte[] sizearr = new byte[4];
 
-        for(int x=0;x<contents.length - 14;x++) {
-            body[x] = contents[x+14];
+        for(int i=0;i<4;i++) {
+            sizearr[i] = contents[i+14];
+        }
+
+        this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+        body = new byte[contents.length - 18];
+
+        for(int x=0;x<contents.length - 18;x++) {
+            body[x] = contents[x+18];
         }
     }
 
@@ -132,8 +144,14 @@ public class BlockDataPacket extends ScatterStanza {
         else
             contents[13] = 0;
 
+        byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(body.length).array();
+
+        for(int i=0;i<4;i++) {
+            contents[i+14] = sizebytes[i];
+        }
+
         for(int x=0;x<body.length;x++) {
-            contents[x+14] = body[x];
+            contents[x+18] = body[x];
         }
 
         return contents;

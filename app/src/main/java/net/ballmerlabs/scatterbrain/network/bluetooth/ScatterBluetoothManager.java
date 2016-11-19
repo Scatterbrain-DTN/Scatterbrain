@@ -53,7 +53,6 @@ public class ScatterBluetoothManager {
     public BluetoothAdapter adapter;
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
-    public ArrayList<BluetoothDevice> tmpList;
     public HashMap<byte[], LocalPeer> connectedList;
     public NetTrunk trunk;
     public boolean runScanThread;
@@ -132,7 +131,6 @@ public class ScatterBluetoothManager {
         looper = new BluetoothLooper(trunk.globnet);
         bluetoothHan = new Handler();
         foundList = new ArrayList<>();
-        tmpList = new ArrayList<>();
         connectedList = new HashMap<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;

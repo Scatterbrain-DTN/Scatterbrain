@@ -250,15 +250,24 @@ public class ScatterBluetoothManager {
         }
     }
 
+
     //attempt to intelligently transmit a number of packets from datastore to peer nearby
-    public void offloadRandomPackets(int count) {
+    public void offloadRandomPacketsToBroadcast(int count) {
+        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            offloadRandomPackets(count, ent.getKey());
+        }
+
+    }
+
+    //sends a random set of packets from the datastore to a nearby device
+    public void offloadRandomPackets(int count, final String device) {
         final ArrayList<BlockDataPacket> ran = trunk.mainService.dataStore.getTopRandomMessages(count);
         pauseDiscoverLoopThread();
         Thread offloadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 for(BlockDataPacket p : ran) {
-                    sendMessageToBroadcast(p.contents,true);
+                    sendMessageToLocalPeer(device, p.contents,true);
                 }
             }
         });

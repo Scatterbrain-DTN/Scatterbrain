@@ -106,7 +106,21 @@ public class LeDataStore {
     }
 
     public int enqueueMessageNoDuplicate(BlockDataPacket bd) {
-        return -1; //todo: fix this
+        Cursor cu = db.rawQuery("SELECT * FROM " +
+                MsgDataDb.MessageQueue.TABLE_NAME +
+                " WHERE " +
+                MsgDataDb.MessageQueue.COLUMN_NAME_HASH +
+                " = " + "?",
+                new String[] {bd.getHash("SenpaiDetector")});
+
+        if(cu.getCount() == 0){
+            ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting ");
+            return enqueueMessage(bd);
+        }
+        else {
+            ScatterLogManager.e(TAG, "Attempted to insert duplicate data to datastore");
+            return 1;
+        }
     }
 
     /* Very temporary method for writing a blockdata stanza to datastore */

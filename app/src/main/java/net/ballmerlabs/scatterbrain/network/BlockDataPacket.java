@@ -27,7 +27,6 @@ public class BlockDataPacket extends ScatterStanza {
         this.senderluid = senderluid;
         this.size = body.length;
         invalid = false;
-
         if(init() == null)
             invalid = true;
 
@@ -125,7 +124,7 @@ public class BlockDataPacket extends ScatterStanza {
         for(int x=1;x<7;x++) {
             contents[x] = senderluidbytes[x-1];
         }
-        byte[] receiverluid = {5,5,5,5,5,5} ;
+        byte[] receiverluid = {0,0,0,0,0,0}; //not implemented yet
 
         this.receiverluid = receiverluid;
         byte receiverluidbytes[] = receiverluid;

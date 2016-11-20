@@ -316,8 +316,8 @@ public class ScatterBluetoothManager {
                     trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
                     if (target.socket.isConnected()) {
                         try {
-                            byte[] tmp = {5,5,5,5,5,5};
-                            BlockDataPacket s = new BlockDataPacket(message,text,tmp);
+                            //byte[] tmp = {5,5,5,5,5,5};
+                            BlockDataPacket s = new BlockDataPacket(message,text,trunk.mainService.luid);
                             if(s.invalid) {
                                 ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
                             }

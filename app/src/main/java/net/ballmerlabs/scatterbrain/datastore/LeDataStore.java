@@ -113,10 +113,8 @@ public class LeDataStore {
                 " = " + "?",
                 new String[] {bd.getHash("SenpaiDetector")});
 
-        cu.moveToLast();
-
-        if(cu.getPosition() == 0){
-            ScatterLogManager.v(TAG, "No duplicate found ("+cu.getPosition() + ") Inserting ");
+        if(cu.getCount() == 0){
+            ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting ");
             return enqueueMessage(bd);
         }
         else {

@@ -127,7 +127,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(dbConnected) {
-                    ds.enqueueMessageNoDuplicate(new BlockDataPacket(new byte[] {6,6,6}, false,
+                    ds.enqueueMessageNoDuplicate(new BlockDataPacket(new byte[] {6,6,6,6,6,6}, false,
                             new byte[] {0,0,0,0,0,0}));
                     ArrayList<Message> res = ds.getMessages();
                     String result = "";

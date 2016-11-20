@@ -176,7 +176,7 @@ public class ScatterRoutingService extends Service {
         byte[] rand = new byte[6];
         Random r = new Random();
         r.nextBytes(rand);
-        return Base64.encode(rand,Base64.DEFAULT);
+        return rand;
     }
 
     public static NetTrunk getNetTrunk() {

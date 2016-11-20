@@ -60,13 +60,13 @@ public class BlockDataPacket extends BLEPacket{
         contents[0] = 1;
         String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
         if(sendermac.length() != 12)
-            return null; //TODO: error logging here
+            return null;
         this.sendermac = sendermac;
         byte sendermacbytes[] = sendermac.getBytes();
         for(int x=0;x<sendermacbytes.length;x++) {
             contents[x+1] = sendermacbytes[x];
         }
-        String receivermac = new String(to.getLUID()).replace(":",""); //TODO: THIS WILL BREAK! FIX!
+        String receivermac = new String(to.getLUID()).replace(":","");
         if(receivermac.length() != 12)
             return null;
 

@@ -10,31 +10,53 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="net.ballmerlabs.scatterbrain.DatastoreCommandActivity">
 
-    <Button
-        android:text="@string/connect_text"
+    <TextView
+        android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/dbconnect" />
+        android:layout_marginBottom="11dp"
+        android:id="@+id/dboverviewtext"
+        android:layout_alignParentEnd="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="24sp" />
 
     <Button
-        android:text="@string/disconnect_text"
+        android:text="@string/db_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/dbdisconnect"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/dbconnect" />
+        android:id="@+id/refreshdb_button" />
 
     <TextView
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/dbdisconnect"
-        android:layout_marginBottom="11dp"
-        android:id="@+id/dboverviewtext"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/db_textview2"
         android:layout_alignParentEnd="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="24sp" />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/button_trim" />
+
+    <Button
+        android:text="@string/dbtrim_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/refreshdb_button"
+        android:layout_alignParentStart="true"
+        android:id="@+id/button_trim" />
+
+    <Button
+        android:text="@string/db_clear_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/clear_button"
+        android:layout_below="@+id/refreshdb_button"
+        android:layout_toEndOf="@+id/button_trim" />
+
+    <Button
+        android:text="@string/db_rand_str"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/clear_button"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/db_rand_button" />
 </RelativeLayout>

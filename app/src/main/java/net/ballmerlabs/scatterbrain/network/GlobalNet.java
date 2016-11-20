@@ -53,7 +53,7 @@ public class GlobalNet {
      * a string for transmit over Scatterbrain protocol
      */
     public BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
-        BlockDataPacket bdpacket = new BlockDataPacket(body, text, to, trunk.mainService.luid);
+        BlockDataPacket bdpacket = new BlockDataPacket(body, text, trunk.mainService.luid);
         return bdpacket;
     }
 

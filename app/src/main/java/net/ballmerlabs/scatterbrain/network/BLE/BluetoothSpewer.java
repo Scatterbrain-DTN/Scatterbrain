@@ -87,7 +87,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     /*
      * Recieve a message.
      * large parts of this are copied from the BLEMingle example.
-     * TODO: find out what is really needed in onLeScan()
+     *
      *
      */
     @Override

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Service;
 
 import net.ballmerlabs.scatterbrain.SettingsManager;
+import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /**
@@ -17,6 +18,7 @@ public class NetTrunk {
     public DeviceProfile profile;
     public SettingsManager settings;
     public ScatterRoutingService mainService;
+    public LeDataStore dataStore;
 
 
     public NetTrunk(ScatterRoutingService mainService) {
@@ -24,6 +26,7 @@ public class NetTrunk {
         byte tmp[] = {0,0,0,0,0,0};
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTHLE, tmp);
+        this.dataStore = new LeDataStore(mainService, 100);
         globnet = new GlobalNet(this);
         settings = new SettingsManager();
        // globnet.getWifiManager().startWifiDirctLoopThread();

@@ -18,6 +18,14 @@
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+
+    <EditTextPreference
+        android:defaultValue="100"
+        android:key="@string/queue_pref"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:title="Message Queue Length" />
+
     <ListPreference
         android:defaultValue="-1"
         android:entries="@array/pref_example_list_titles"

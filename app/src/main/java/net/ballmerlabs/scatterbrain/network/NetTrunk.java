@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Service;
 
 import net.ballmerlabs.scatterbrain.SettingsManager;
+import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /**

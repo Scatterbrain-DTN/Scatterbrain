@@ -7,23 +7,32 @@ public class Message {
 
 
 
-    public String subject;
-    public String contents;
+    public String application;
+    public String body;
     public int ttl;
-    public String replyto;
-    public String luid;
+    public String replylink;
+    public String senderluid;
     public String flags;
     public String sig;
+    public String uuid;
+    public String receiverluid;
+    public int extbody;
+    public int text;
 
-    public Message(String subject, String contents, int ttl, String replyto, String luid,
-                   String recipient, String from, String flags,  String sig) {
-        this.subject = subject;
-        this.contents = contents;
+    public Message(String uuid, int extbody,   String body, String application, int text,  int ttl,
+                   String replyto, String luid, String receiverLuid,
+                   String sig, String flags){
+        this.application = application;
+        this.body = body;
         this.ttl = ttl;
-        this.replyto = replyto;
-        this.luid = luid;
+        this.replylink = replyto;
+        this.senderluid = luid;
         this.flags = flags;
         this.sig = sig;
+        this.uuid = uuid;
+        this.receiverluid = receiverLuid;
+        this.extbody = extbody;
+        this.text = text;
     }
 
 

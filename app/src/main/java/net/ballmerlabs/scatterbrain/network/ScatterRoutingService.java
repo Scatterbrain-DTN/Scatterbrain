@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class ScatterRoutingService extends Service {
     public byte[] luid;
     private MessageBoxAdapter Messages;
     public ArrayAdapter<String> logbuffer;
+    public LeDataStore dataStore;
 
 
 
@@ -88,7 +90,7 @@ public class ScatterRoutingService extends Service {
 
     public void noticeNotify(String title, String text) {
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
+                new  NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle(title)
                 .setContentText(text);
@@ -150,6 +152,8 @@ public class ScatterRoutingService extends Service {
         else {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
+        this.dataStore = new LeDataStore(this, 100);
+        dataStore.connect();
     }
 
     public void registerLoggingArrayAdapter(ArrayAdapter<String> ad) {
@@ -172,7 +176,7 @@ public class ScatterRoutingService extends Service {
         byte[] rand = new byte[6];
         Random r = new Random();
         r.nextBytes(rand);
-        return Base64.encode(rand,Base64.DEFAULT);
+        return rand;
     }
 
     public static NetTrunk getNetTrunk() {

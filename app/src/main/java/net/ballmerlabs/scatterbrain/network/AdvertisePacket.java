@@ -91,12 +91,12 @@ public class AdvertisePacket extends ScatterStanza {
 
         mobilestatus = contents[2];
 
-        contents[3] = dv.getProtocolVersion(); //TODO: change this when operation
+        contents[3] = dv.getProtocolVersion();
         contents[4] = 0; //this is just dumb
         protocolversion[0] = contents[3];
         protocolversion[1] = contents[4];
 
-        contents[5] = dv.getCongestion(); //TODO: implimnet congestion checking.
+        contents[5] = dv.getCongestion();
 
         congestion = contents[5];
 

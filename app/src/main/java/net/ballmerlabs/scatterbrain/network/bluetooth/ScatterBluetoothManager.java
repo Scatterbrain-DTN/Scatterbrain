@@ -313,7 +313,7 @@ public class ScatterBluetoothManager {
             @Override
             public void run() {
                 for(int x=0;x<5;x++) {
-                    trunk.dataStore.enqueueMessage(blockDataPacket);
+                    trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
                     if (target.socket.isConnected()) {
                         try {
                             byte[] tmp = {5,5,5,5,5,5};

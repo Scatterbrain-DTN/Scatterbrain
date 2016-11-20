@@ -65,7 +65,6 @@ public class ScatterRoutingService extends Service {
                 getText(R.string.service_body), pendingIntent);
         startForeground(1, notification);
 
-        dataStore.connect();
         trunk.blman.startDiscoverLoopThread();
         return Service.START_STICKY_COMPATIBILITY;
 
@@ -154,6 +153,7 @@ public class ScatterRoutingService extends Service {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
         this.dataStore = new LeDataStore(this, 100);
+        dataStore.connect();
     }
 
     public void registerLoggingArrayAdapter(ArrayAdapter<String> ad) {

@@ -40,11 +40,14 @@ public class ScatterReceiveThread extends Thread{
                     continue;
                 }
 
+
                 BlockDataPacket intermediate_header = new BlockDataPacket(header);
                 if(intermediate_header.isInvalid()) {
                     ScatterLogManager.e(trunk.blman.TAG, "Received a corrupt blockdata header");
                     continue;
                 }
+                ScatterLogManager.v("Receive", "Got header with size " + intermediate_header.size);
+
 
                 byte[] buffer = new byte[intermediate_header.size+18];
 
@@ -59,6 +62,8 @@ public class ScatterReceiveThread extends Thread{
                         buffer[counter] = block[x];
                         counter++;
                     }
+                    if(counter >= buffer.length)
+                        break;
                 }
                 ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
 

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.widget.ArrayAdapter;
 
 
 import net.ballmerlabs.scatterbrain.DispMessage;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.BlockingDeque;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
@@ -44,7 +46,8 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public ArrayList<String> blackList; //todo: clear blacklist after some time
-    public HashMap<byte[], LocalPeer> connectedList;
+    public HashMap<String, LocalPeer> connectedList;
+    public HashMap<byte[], String> luidAddressMap;
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -74,11 +77,12 @@ public class ScatterBluetoothManager {
             //when we are done scanning, attempt to connect to devices we found
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 ScatterLogManager.v(TAG, "Device disvovery finished. Attempting to connect to peers");
+                final ArrayList<BluetoothDevice> nlist = (ArrayList<BluetoothDevice>)foundList.clone();
+                foundList.clear();
                 Thread discoveryFinishedThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        connectToDevice(foundList);
-                        foundList.clear();
+                        connectToDevice(nlist);
                     }
                 });
                 discoveryFinishedThread.start();
@@ -87,7 +91,7 @@ public class ScatterBluetoothManager {
                 final Thread prunePeer = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (Map.Entry<byte[], LocalPeer> s : connectedList.entrySet()) {
+                        for (Map.Entry<String, LocalPeer> s : connectedList.entrySet()) {
                             if (!s.getValue().socket.isConnected()) {
                                 ScatterLogManager.v(TAG, "Removing unneeded device " + s.getKey().toString());
                                 connectedList.remove(s);
@@ -128,6 +132,7 @@ public class ScatterBluetoothManager {
         bluetoothHan = new Handler();
         foundList = new ArrayList<>();
         connectedList = new HashMap<>();
+        luidAddressMap = new HashMap<>();
         blackList = new ArrayList<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
@@ -185,28 +190,24 @@ public class ScatterBluetoothManager {
 
     //function called when a packet is received from a connected device
     public void onSuccessfulReceive(byte[] incoming) {
-        if(!NormalActivity.active)
+        ScatterLogManager.v(TAG, "Called onSuccessfulReceive for incoming message");
+        if (!NormalActivity.active)
             trunk.mainService.startMessageActivity();
         final BlockDataPacket bd = new BlockDataPacket(incoming);
-        if(bd.isInvalid())
+        if (bd.isInvalid())
             ScatterLogManager.e(TAG, "Received corrupt blockdata packet.");
-        else if(true) {
 
-
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
-                            Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
-                    trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                    trunk.mainService.dataStore.enqueueMessage(bd);
-                    ScatterLogManager.e(TAG, "Appended message to message list");
-                }
-            });
-        }
-        else
-            ScatterLogManager.e(TAG, "received a non-text message in a text context");
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
+                        Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
+                trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                trunk.mainService.dataStore.enqueueMessage(bd);
+                ScatterLogManager.e(TAG, "Appended message to message list");
+            }
+        });
     }
 
 
@@ -227,7 +228,8 @@ public class ScatterBluetoothManager {
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound();
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
-                    connectedList.put(inpacket.luid, new LocalPeer(inpacket.convertToProfile(), socket));
+                    connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
+                    luidAddressMap.put(inpacket.luid, socket.getRemoteDevice().getAddress());
                     ScatterLogManager.v(TAG, "List size = " + connectedList.size());
 
                 }
@@ -289,22 +291,22 @@ public class ScatterBluetoothManager {
 
     //grabs a nearby connected device by local user ID
     public LocalPeer getPeerByLuid(byte[] luid) {
-        return connectedList.get(luid);
+        return connectedList.get(luidAddressMap.get(luid));
     }
 
 
     //sends a BlockDataPacket to all connected peers
     public void sendMessageToBroadcast(byte[] message, boolean text) {
         ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
-        for(Map.Entry<byte[], LocalPeer> ent : connectedList.entrySet()) {
+        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
             sendMessageToLocalPeer(ent.getKey(),message, text);
         }
     }
 
     //send a direct private message to a nearby peer in a BlockDataPacket
-    public void sendMessageToLocalPeer(final byte[] luid, final byte[] message,final  boolean text) {
-        ScatterLogManager.v(TAG, "Sending message to peer " + luid);
-       final LocalPeer target = trunk.blman.getPeerByLuid(luid);
+    public void sendMessageToLocalPeer(final String mactarget, final byte[] message,final  boolean text) {
+        ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
+       final LocalPeer target = connectedList.get(mactarget);
         final BlockDataPacket blockDataPacket = new BlockDataPacket(message, text,
                 trunk.mainService.luid);
         Thread messageSendThread = new Thread(new Runnable() {
@@ -315,12 +317,16 @@ public class ScatterBluetoothManager {
                     if (target.socket.isConnected()) {
                         try {
                             byte[] tmp = {5,5,5,5,5,5};
-                            target.socket.getOutputStream().write(
-                                    new BlockDataPacket(message,text,tmp).getContents());
-                            ScatterLogManager.v(TAG, "Sent message successfully to " + luid );
+                            BlockDataPacket s = new BlockDataPacket(message,text,tmp);
+                            if(s.invalid) {
+                                ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                            }
+                            target.socket.getOutputStream().write(s
+                                    .getContents());
+                            ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
                             break;
                         } catch (IOException e) {
-                            ScatterLogManager.e(TAG, "Error on sending message to " + luid);
+                            ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
                         }
                     }
                     else{

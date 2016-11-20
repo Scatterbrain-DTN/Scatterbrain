@@ -30,7 +30,7 @@ public class ScatterConnectThread extends Thread {
     private ScatterBluetoothManager bleman;
     private NetTrunk trunk;
     public boolean success = false;
-    public ScatterConnectThread(List<BluetoothDevice> devicelist, NetTrunk trunk) {
+    public ScatterConnectThread(final List<BluetoothDevice> devicelist, NetTrunk trunk) {
 
         this.trunk = trunk;
         this.devicelist = devicelist;
@@ -41,8 +41,9 @@ public class ScatterConnectThread extends Thread {
 
     public void run() {
         bleman.pauseDiscoverLoopThread();
+        ScatterLogManager.v(trunk.blman.TAG, "Attempting to connect to " +devicelist.size() + " devices");
         for(BluetoothDevice mmDevice : devicelist) {
-            if(!trunk.blman.blackList.contains(mmDevice.getAddress())) {
+            if(!trunk.blman.blackList.contains(mmDevice.getAddress()) && !trunk.blman.connectedList.containsKey(mmDevice.getAddress())) {
                 success = false;
                 BluetoothSocket tmp = null;
                 try {
@@ -51,7 +52,6 @@ public class ScatterConnectThread extends Thread {
 
                 }
                 mmSocket = tmp;
-                ScatterLogManager.v(trunk.blman.TAG, "Attempting to connect");
                 try {
 
                     mmSocket.connect();
@@ -75,10 +75,11 @@ public class ScatterConnectThread extends Thread {
                     trunk.blman.onSuccessfulConnect(mmSocket);
                 }
                 if (!success) {
-                    trunk.blman.blackList.add(mmDevice.getAddress());
+                 //   trunk.blman.blackList.add(mmDevice.getAddress());
                 }
             }
         }
+        devicelist.clear();
         bleman.unpauseDiscoverLoopThread();
 
 

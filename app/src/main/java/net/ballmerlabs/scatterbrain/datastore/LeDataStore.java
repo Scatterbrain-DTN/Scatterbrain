@@ -106,14 +106,17 @@ public class LeDataStore {
     }
 
     public int enqueueMessageNoDuplicate(BlockDataPacket bd) {
-        Cursor cu = db.rawQuery("SELECT EXISTS (SELECT 1 FROM " +
+        Cursor cu = db.rawQuery("SELECT * FROM " +
                 MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE " +
                 MsgDataDb.MessageQueue.COLUMN_NAME_HASH +
-                " = " + "?" + " LIMIT 1)",
+                " = " + "?",
                 new String[] {bd.getHash("SenpaiDetector")});
 
-        if(cu.isAfterLast()) {
+        cu.moveToLast();
+
+        if(cu.getPosition() == 0){
+            ScatterLogManager.v(TAG, "No duplicate found ("+cu.getPosition() + ") Inserting ");
             return enqueueMessage(bd);
         }
         else {

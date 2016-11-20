@@ -49,10 +49,12 @@ public class SearchForSenpai extends AppCompatActivity {
                             TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
                             senpai_notice.setVisibility(View.VISIBLE);
                             senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
+                            /*
                             if(!NormalActivity.active) {
                                 Intent messagingIntent = new Intent(main, NormalActivity.class);
                                 main.startActivity(messagingIntent);
                             }
+                            */
                         }
                     });
                 }

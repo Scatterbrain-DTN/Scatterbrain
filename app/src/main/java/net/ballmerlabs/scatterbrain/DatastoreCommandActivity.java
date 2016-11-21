@@ -116,7 +116,8 @@ public class DatastoreCommandActivity extends AppCompatActivity {
                     String print = "";
                     for(BlockDataPacket p : ran) {
                         print = print +" ["  +p.getHash("SenpaiDetector") + "] luid:"
-                                + Base64.encodeToString(p.senderluid,Base64.DEFAULT) + "\n";
+                                + Base64.encodeToString(p.senderluid,Base64.DEFAULT) + " >> " +
+                                new String(p.body) + "\n";
                     }
                     dbTextView.setText(print);
                 }
@@ -127,12 +128,14 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(dbConnected) {
-                    ds.enqueueMessageNoDuplicate(new BlockDataPacket(new byte[] {6,6,6,6,6,6}, false,
-                            new byte[] {0,0,0,0,0,0}));
+                    //ds.enqueueMessageNoDuplicate(new BlockDataPacket(new byte[] {6,6,6,6,6,6}, false,
+                    //        new byte[] {0,0,0,0,0,0}));
                     ArrayList<Message> res = ds.getMessages();
                     String result = "";
                     for(Message m : res) {
-                        result = result.concat(m.body + "\n");
+                        result = result.concat(m.application +" luid: " +
+                                new String(m.senderluid) + " >> "  +
+                                new String(Base64.decode(m.body,Base64.DEFAULT)) + "\n");
                     }
                     dbTextView.setText(result);
                 }

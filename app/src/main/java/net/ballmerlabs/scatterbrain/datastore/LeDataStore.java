@@ -132,7 +132,7 @@ public class LeDataStore {
             }
             enqueueMessage(bd.getHash("SenpaiDetector"), 0, Base64.encodeToString(bd.body, Base64.DEFAULT),
                     "SenpaiDetector", 1, -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
-                    "none", Base64.encodeToString(bd.senderluid,Base64.DEFAULT),
+                   Base64.encodeToString(bd.senderluid,Base64.DEFAULT), "none" ,
                     Base64.encodeToString(bd.receiverluid, Base64.DEFAULT), "none, none");
         }
         else {
@@ -204,6 +204,7 @@ public class LeDataStore {
             String sig = cu.getString(9);
             String flags = cu.getString(10);
 
+
             cu.moveToNext();
             finalresult.add(new Message(hash, extbody, body, application,
                     text, ttl, replylink, senderluid, receiverluid, sig, flags));
@@ -267,31 +268,55 @@ public class LeDataStore {
      * the entire datastore.
      */
     public ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
-        Cursor cu = db.rawQuery("SELECT * FROM " + MsgDataDb.MessageQueue.TABLE_NAME
+        final String SEP = ", ";
+        Cursor cu = db.rawQuery("SELECT " +
+                MsgDataDb.MessageQueue.COLUMN_NAME_HASH + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS  +" FROM " + MsgDataDb.MessageQueue.TABLE_NAME
                 + " ORDER BY RANDOM() LIMIT " + count, null);
 
 
         ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");
-        ArrayList<BlockDataPacket> result = new ArrayList<>(count);
+        //check here for overrun problems
+        ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         cu.moveToFirst();
         //check here for overrun problems
         while (!cu.isAfterLast()) {
-            String subject = cu.getString(0);
-            String contents = cu.getString(1);
-            int ttl = cu.getInt(2);
-            String replyto = cu.getString(3);
-            String luid = cu.getString(4);
-            String flags = cu.getString(5);
-            String sig = cu.getString(6);
-            BlockDataPacket resultbdpacket = new BlockDataPacket(Base64.decode(contents,Base64.DEFAULT), false,
-                    Base64.decode(luid,Base64.DEFAULT));
-            if(resultbdpacket.isInvalid())
-                ScatterLogManager.e(TAG, "Decoded an invalid blockdata packet in random. Continuing anway. Godspeed.");
-            result.add(resultbdpacket);
+            String  hash = cu.getString(0);
+            int extbody = cu.getInt(1);
+            String body = cu.getString(2);
+            String application = cu.getString(3);
+            int text = cu.getInt(4);
+            int ttl = cu.getInt(5);
+            String replylink = cu.getString(6);
+            String senderluid = cu.getString(7);
+            String receiverluid = cu.getString(8);
+            String sig = cu.getString(9);
+            String flags = cu.getString(10);
+
             cu.moveToNext();
+            boolean t;
+            if(text == 0) {
+                t = false;
+            }
+            else {
+                t = true;
+            }
+            //ScatterLogManager.e(TAG, body);
+            if(body.length() > 0) {
+                finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
+            }
         }
 
-        return result;
+        return finalresult;
 
     }
 

@@ -267,6 +267,9 @@ public class ScatterBluetoothManager {
             @Override
             public void run() {
                 for(BlockDataPacket p : ran) {
+                    if(p.isInvalid()) {
+                        ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
+                    }
                     sendMessageToLocalPeer(device, p.contents,true);
                 }
             }

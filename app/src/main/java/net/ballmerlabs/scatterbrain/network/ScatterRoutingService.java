@@ -184,8 +184,8 @@ public class ScatterRoutingService extends Service {
     }
 
     public void startMessageActivity() {
-        Intent startIntent = new Intent(this, NormalActivity.class);
-        startActivity(startIntent);
+     //   Intent startIntent = new Intent(this, NormalActivity.class);
+       // startActivity(startIntent);
     }
 
     @Override

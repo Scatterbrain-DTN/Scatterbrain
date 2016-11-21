@@ -80,6 +80,8 @@ public class ScatterConnectThread extends Thread {
             }
         }
         devicelist.clear();
+
+        trunk.blman.offloadRandomPacketsToBroadcast(500);
         bleman.unpauseDiscoverLoopThread();
 
 

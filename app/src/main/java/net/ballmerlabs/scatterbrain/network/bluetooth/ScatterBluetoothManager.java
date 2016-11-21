@@ -201,11 +201,13 @@ public class ScatterBluetoothManager {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
-                        Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
-                trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                trunk.mainService.dataStore.enqueueMessage(bd);
-                ScatterLogManager.e(TAG, "Appended message to message list");
+                if(NormalActivity.active) {
+                    trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
+                            Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
+                    trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                    trunk.mainService.dataStore.enqueueMessage(bd);
+                    ScatterLogManager.e(TAG, "Appended message to message list");
+                }
             }
         });
     }
@@ -270,7 +272,7 @@ public class ScatterBluetoothManager {
                     if(p.isInvalid()) {
                         ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
                     }
-                    sendMessageToLocalPeer(device, p.contents,true);
+                    sendMessageToLocalPeer(device, p.body,true);
                 }
             }
         });

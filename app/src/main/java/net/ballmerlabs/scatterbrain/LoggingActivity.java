@@ -46,24 +46,6 @@ public class LoggingActivity extends AppCompatActivity {
                     (ScatterRoutingService.ScatterBinder) service;
             mService = binder.getService();
 
-            mService.registerOnDeviceConnectedCallback(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
-                            if(senpai_notice != null) {
-                                senpai_notice.setVisibility(View.VISIBLE);
-                                senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
-                            }
-                            mService.registerLoggingArrayAdapter(listViewArrayAdapter);
-                        }
-                    });
-                }
-            });
-
-
             ScatterLogManager.v(TAG, "Bound to routing service");
             scatterBound = true;
 

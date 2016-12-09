@@ -23,11 +23,15 @@ import java.net.URL;
 import java.io.BufferedReader;
 import android.content.pm.PackageInfo;
 import java.io.InputStreamReader;
+import java.util.Map;
+
 import android.app.AlertDialog;
 
 
-
+import net.ballmerlabs.scatterbrain.network.PeersChangedCallback;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
+import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
+
 /*
  * Main 'Home screen' activity for the scatterbrain testing phase.
  */
@@ -38,9 +42,9 @@ public class SearchForSenpai extends AppCompatActivity {
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
     private Button castButton;
+    private TextView peerDisplay;
     private String TAG = "SenpaiActivity";
     final Activity main  = this;
-
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -48,28 +52,28 @@ public class SearchForSenpai extends AppCompatActivity {
                     (ScatterRoutingService.ScatterBinder) service;
             mService = binder.getService();
 
-            mService.registerOnDeviceConnectedCallback(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
-                            senpai_notice.setVisibility(View.VISIBLE);
-                            senpai_notice.setText("Senpai NOTICED YOU! \n and the packet was not corrupt");
-                            /*
-                            if(!NormalActivity.active) {
-                                Intent messagingIntent = new Intent(main, NormalActivity.class);
-                                main.startActivity(messagingIntent);
-                            }
-                            */
-                        }
-                    });
-                }
-            });
+            mService.registerPeersChangedCallback(new PeersChangedCallback() {
+                                                      @Override
+                                                      public void run(final Map<String, LocalPeer> connectedList) {
+                                                          runOnUiThread(new Runnable() {
+                                                              @Override
+                                                              public void run() {
 
-            //mService.getBluetoothManager().startDiscoverLoopThread();
-            launchBtDialog();
+                                                                  String peers = "Connected peers:\n";
+                                                                  for(Map.Entry d : connectedList.entrySet()) {
+                                                                      peers = peers + d.getKey() + "\n";
+                                                                  }
+
+                                                                  TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
+                                                                  senpai_notice.setVisibility(View.VISIBLE);
+                                                                  senpai_notice.setText(peers);
+                                                              }
+                                                          });
+                                                      }
+                                                  });
+
+                    //mService.getBluetoothManager().startDiscoverLoopThread();
+                    launchBtDialog();
             scatterBound = true;
 
 
@@ -177,6 +181,8 @@ public class SearchForSenpai extends AppCompatActivity {
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
 
+        peerDisplay = (TextView) findViewById(R.id.peerdisplay);
+        peerDisplay.setText("");
 
 
         service = new ScatterRoutingService();

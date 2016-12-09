@@ -19,9 +19,11 @@ import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
+import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -37,7 +39,7 @@ public class ScatterRoutingService extends Service {
     private Service me;
     private boolean bound = false;
     public final String TAG = "ScatterRoutingService";
-    private  Runnable onDevicesFound;
+    private  PeersChangedCallback onDevicesFound;
     public SharedPreferences sharedPreferences;
     public byte[] luid;
     private MessageBoxAdapter Messages;
@@ -71,7 +73,7 @@ public class ScatterRoutingService extends Service {
 
     }
 
-    public void registerOnDeviceConnectedCallback(Runnable run) {
+    public void registerPeersChangedCallback(PeersChangedCallback run) {
         if(bound) {
             onDevicesFound = run;
         }
@@ -80,9 +82,9 @@ public class ScatterRoutingService extends Service {
         }
     }
 
-    public boolean updateUiOnDevicesFound() {
+    public boolean updateUiOnDevicesFound(Map<String, LocalPeer> connectedList) {
         if((onDevicesFound != null) && bound) {
-            onDevicesFound.run();
+            onDevicesFound.run(connectedList);
             return true;
         }
         else

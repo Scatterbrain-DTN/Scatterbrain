@@ -97,6 +97,7 @@ public class ScatterBluetoothManager {
                                 connectedList.remove(s);
                             }
                         }
+                        trunk.mainService.updateUiOnDevicesFound(connectedList);  
                     }
                 });
                 prunePeer.start();
@@ -229,7 +230,7 @@ public class ScatterBluetoothManager {
             if(buffer != null) {
                 inpacket = trunk.globnet.decodeAdvertise(buffer);
                 if(!inpacket.isInvalid()) {
-                    trunk.mainService.updateUiOnDevicesFound();
+                    trunk.mainService.updateUiOnDevicesFound(connectedList);
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
                     connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
                     luidAddressMap.put(inpacket.luid, socket.getRemoteDevice().getAddress());

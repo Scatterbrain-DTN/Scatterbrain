@@ -46,6 +46,7 @@ public class ScatterRoutingService extends Service {
 
 
 
+
     public class ScatterBinder extends Binder {
         public ScatterRoutingService getService() {
             return ScatterRoutingService.this;
@@ -113,6 +114,11 @@ public class ScatterRoutingService extends Service {
         //2 is an id that should be updated to modify unique notifications
         mNotificationManager.notify(2,mBuilder.build());
     }
+
+    void checkForUpdates() {
+
+    }
+
 
     public ScatterBluetoothManager getBluetoothManager() {
         return trunk.blman;

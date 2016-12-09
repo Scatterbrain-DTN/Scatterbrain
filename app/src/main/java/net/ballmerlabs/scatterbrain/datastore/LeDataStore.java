@@ -168,7 +168,6 @@ public class LeDataStore {
      * (Hopefully) returns an array list of Message objects with all the data
      * in the datastore in it.
      */
-
     public ArrayList<Message> getMessages() {
 
         ScatterLogManager.v(TAG, "Mass dumping all messages from datastore");
@@ -203,7 +202,6 @@ public class LeDataStore {
             String receiverluid = cu.getString(8);
             String sig = cu.getString(9);
             String flags = cu.getString(10);
-
 
             cu.moveToNext();
             finalresult.add(new Message(hash, extbody, body, application,

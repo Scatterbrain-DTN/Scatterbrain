@@ -4,20 +4,28 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.Preference;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import java.net.URL;
+import java.io.BufferedReader;
+import android.content.pm.PackageInfo;
+import java.io.InputStreamReader;
+import android.app.AlertDialog;
+
+
 
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 /*
@@ -71,6 +79,60 @@ public class SearchForSenpai extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             scatterBound = false;
+        }
+    };
+
+
+    /* This Thread checks for Updates in the Background */
+    private Thread checkUpdate = new Thread() {
+        public void run() {
+            try {
+                URL updateURL = new URL("https://scatterbrain.xyz/Update.txt"); //place update text link here
+                BufferedReader in = new BufferedReader(new InputStreamReader(updateURL.openStream()));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    // str is one line of text; readLine() strips the newline character(s)
+                /* Get current Version Number */
+                    PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                    int curVersion = packageInfo.versionCode;
+                    int newVersion = Integer.valueOf(str);
+
+                /* Is a higher version than the current already out? */
+                    if (newVersion > curVersion) {
+                    /* Post a Handler for the UI to pick up and open the Dialog */
+                        Handler h = new Handler(Looper.getMainLooper());
+                        h.post(showUpdate);
+
+                    }
+
+                }
+                in.close();
+            } catch (Exception e) {
+            }
+        }
+
+    };
+
+    /* This Runnable creates a Dialog and asks the user to open the Market */
+    private Runnable showUpdate = new Runnable() {
+        public void run() {
+            new AlertDialog.Builder(main)
+                    .setIcon(R.drawable.ic_drawer)
+                    .setTitle("Update Available")
+                    .setMessage("An update for the latest version is available!\n\nOpen Update page and download?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            /* User clicked OK so do some stuff */
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://dl.scatterbrain.xyz/senpai-current.apk"));
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            /* User clicked Cancel */
+                        }
+                    })
+                    .show();
         }
     };
 

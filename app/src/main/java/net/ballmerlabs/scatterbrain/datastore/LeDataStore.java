@@ -111,10 +111,10 @@ public class LeDataStore {
                 " WHERE " +
                 MsgDataDb.MessageQueue.COLUMN_NAME_HASH +
                 " = " + "?",
-                new String[] {bd.getHash("SenpaiDetector")});
+                new String[] {bd.getHash()});
 
         if(cu.getCount() == 0){
-            ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash("SenpaiDetector") +
+            ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash() +
            "  "+  bd.size + "  " + bd.senderluid.length);
             return enqueueMessage(bd);
         }
@@ -131,7 +131,7 @@ public class LeDataStore {
                 ScatterLogManager.e(TAG, "Tried to store an invalid packet");
                 return -1;
             }
-            enqueueMessage(bd.getHash("SenpaiDetector"), 0, Base64.encodeToString(bd.body, Base64.DEFAULT),
+            enqueueMessage(bd.getHash(), 0, Base64.encodeToString(bd.body, Base64.DEFAULT),
                     "SenpaiDetector", 1, -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
                    Base64.encodeToString(bd.senderluid,Base64.DEFAULT), "none" ,
                     Base64.encodeToString(bd.receiverluid, Base64.DEFAULT), "none, none");

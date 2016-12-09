@@ -115,7 +115,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
                     ArrayList<BlockDataPacket> ran = ds.getTopRandomMessages(5);
                     String print = "";
                     for(BlockDataPacket p : ran) {
-                        print = print +" ["  +p.getHash("SenpaiDetector") + "] luid:"
+                        print = print +" ["  +p.getHash() + "] luid:"
                                 + Base64.encodeToString(p.senderluid,Base64.DEFAULT) + " >> " +
                                 new String(p.body) + "\n";
                     }

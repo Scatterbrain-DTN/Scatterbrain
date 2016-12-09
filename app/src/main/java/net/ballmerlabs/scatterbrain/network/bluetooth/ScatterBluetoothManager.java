@@ -273,7 +273,7 @@ public class ScatterBluetoothManager {
                     if(p.isInvalid()) {
                         ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
                     }
-                    sendMessageToLocalPeer(device, p.body,true);
+                    sendRaw(device, p.contents);
                 }
             }
         });
@@ -333,6 +333,51 @@ public class ScatterBluetoothManager {
                         try {
                             //byte[] tmp = {5,5,5,5,5,5};
                             BlockDataPacket s = new BlockDataPacket(message,text,trunk.mainService.luid);
+                            if(s.invalid) {
+                                ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                            }
+                            target.socket.getOutputStream().write(s
+                                    .getContents());
+                            ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+                            break;
+                        } catch (IOException e) {
+                            ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
+                        }
+                    }
+                    else{
+                        break; //we moved out of range
+                    }
+                }
+            }
+        });
+
+        messageSendThread.start();
+    }
+
+
+    //sends a BlockDataPacket to all connected peers
+    public void SendRawToBroadcast(byte[] message) {
+        ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
+        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            sendRaw(ent.getKey(),message);
+        }
+    }
+
+
+    //send a direct private message to a nearby peer in a BlockDataPacket
+    public void sendRaw(final String mactarget, final byte[] message) {
+        ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
+        final LocalPeer target = connectedList.get(mactarget);
+        final BlockDataPacket blockDataPacket = new BlockDataPacket(message);
+        Thread messageSendThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int x=0;x<5;x++) {
+                    trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
+                    if (target.socket.isConnected()) {
+                        try {
+                            //byte[] tmp = {5,5,5,5,5,5};
+                            BlockDataPacket s = new BlockDataPacket(message);
                             if(s.invalid) {
                                 ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
                             }

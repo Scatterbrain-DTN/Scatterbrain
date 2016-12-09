@@ -35,12 +35,11 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
 
-    public String getHash(String applicationSalt) {
+    public String getHash() {
 
         String hash = null;
         try {
-            byte[] saltbytes = applicationSalt.getBytes("UTF-8");
-            byte[] combined = new byte[size+ senderluid.length + saltbytes.length];
+            byte[] combined = new byte[size+ senderluid.length];
             for(int i=0;i<size;i++) {
                 combined[i] = body[i];
             }
@@ -48,19 +47,12 @@ public class BlockDataPacket extends ScatterStanza {
             for(int i=size;i<senderluid.length;i++) {
                 combined[i] = senderluid[i-size];
             }
-
-            for(int i=size+senderluid.length;i<saltbytes.length;i++) {
-                combined[i] = saltbytes[i-size - senderluid.length];
-            }
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.update(combined, 0, combined.length);
             combined = digest.digest();
             hash = bytesToHex(combined);
 
 
-        }
-        catch(UnsupportedEncodingException use) {
-            ScatterLogManager.e("BlockDataPacket", "UTF-8 is not supported in BlockData hashing digest!~");
         }
         catch(NoSuchAlgorithmException nsa) {
             ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");

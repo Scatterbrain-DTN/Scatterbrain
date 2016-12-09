@@ -215,9 +215,6 @@ public class SearchForSenpai extends AppCompatActivity {
 
             }
 
-
-
-
     }
 
 

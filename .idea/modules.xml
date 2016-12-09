@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Scatterbrain3.iml" filepath="$PROJECT_DIR$/Scatterbrain3.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Scatterbrain4.iml" filepath="$PROJECT_DIR$/Scatterbrain4.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/blelib/blelib.iml" filepath="$PROJECT_DIR$/blelib/blelib.iml" />
       <module fileurl="file://$PROJECT_DIR$/totallynormal/totallynormal.iml" filepath="$PROJECT_DIR$/totallynormal/totallynormal.iml" />

@@ -32,7 +32,7 @@ public class AdvertisePacket extends ScatterStanza {
         protocolversion = new byte[2];
         byte[] raw = new byte[13];
 
-        if(raw.length < 13) {
+        if(raw.length < 13 || raw.length > 13) {
             invalid = true;
             return;
         }

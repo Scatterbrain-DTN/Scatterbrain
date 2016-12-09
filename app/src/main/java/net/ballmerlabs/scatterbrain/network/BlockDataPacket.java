@@ -113,10 +113,14 @@ public class BlockDataPacket extends ScatterStanza {
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-        body = new byte[contents.length - 18];
+        if(size < (contents.length - 18))
+            invalid = true;
+        else {
+            body = new byte[size];
 
-        for(int x=0;x<contents.length - 18;x++) {
-            body[x] = contents[x+18];
+            for (int x = 0; x < size; x++) {
+                body[x] = contents[x + 18];
+            }
         }
     }
 

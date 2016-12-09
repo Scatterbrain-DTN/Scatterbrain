@@ -201,12 +201,13 @@ public class ScatterBluetoothManager {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if(NormalActivity.active) {
-                    trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
-                            Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
-                    trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                    trunk.mainService.dataStore.enqueueMessage(bd);
-                    ScatterLogManager.e(TAG, "Appended message to message list");
+                if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(bd) == 0) {
+                    if (NormalActivity.active) {
+                        trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
+                                Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
+                        trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                        ScatterLogManager.e(TAG, "Appended message to message list");
+                    }
                 }
             }
         });

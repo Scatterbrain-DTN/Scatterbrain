@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Represents a block data packet
@@ -113,23 +114,17 @@ public class BlockDataPacket extends ScatterStanza {
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-        //ScatterLogManager.e("BDPacket", "size::" + size);
-        if(size > (contents.length - 18))
-            invalid = true;
-        else if(size < contents.length - 18)
-            invalid = true;
-        else {
-            body = new byte[size];
+        body = new byte[contents.length - 18];
 
-            for (int x = 0; x < size; x++) {
-                body[x] = contents[x + 18];
-            }
+        for(int x=0;x<contents.length - 18;x++) {
+            body[x] = contents[x+18];
         }
     }
 
     private byte[] init() {
         contents[0] = 1;
         if(senderluid.length != 6) {
+            ScatterLogManager.e("BDinit", "Senderluid wrong length");
             return null;
         }
         byte senderluidbytes[] = senderluid;
@@ -143,6 +138,7 @@ public class BlockDataPacket extends ScatterStanza {
         byte receiverluidbytes[] = receiverluid;
         if(receiverluid.length != 6) {
             invalid = true;
+            ScatterLogManager.e("BDinit", "ReceiverLuid wrong size");
             return null;
         }
 

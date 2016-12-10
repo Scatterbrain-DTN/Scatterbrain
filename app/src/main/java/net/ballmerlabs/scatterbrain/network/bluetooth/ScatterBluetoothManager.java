@@ -195,9 +195,10 @@ public class ScatterBluetoothManager {
         if (!NormalActivity.active)
             trunk.mainService.startMessageActivity();
         final BlockDataPacket bd = new BlockDataPacket(incoming);
-        if (bd.isInvalid())
+        if (bd.isInvalid()) {
             ScatterLogManager.e(TAG, "Received corrupt blockdata packet.");
-
+            return;
+        }
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
@@ -336,6 +337,7 @@ public class ScatterBluetoothManager {
                             BlockDataPacket s = new BlockDataPacket(message,text,trunk.mainService.luid);
                             if(s.invalid) {
                                 ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                                return;
                             }
                             target.socket.getOutputStream().write(s
                                     .getContents());
@@ -357,7 +359,7 @@ public class ScatterBluetoothManager {
 
 
     //sends a BlockDataPacket to all connected peers
-    public void SendRawToBroadcast(byte[] message) {
+    public void sendRawToBroadcast(byte[] message) {
         ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
         for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
             sendRaw(ent.getKey(),message);

@@ -74,6 +74,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
                     //mService.getBluetoothManager().startDiscoverLoopThread();
                     launchBtDialog();
+            mService.dataStore.flushDb();
             scatterBound = true;
 
 

@@ -101,10 +101,15 @@ public class NormalActivity extends AppCompatActivity {
                     new String(Base64.encodeToString(out.senderluid, Base64.DEFAULT))));
             // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
-            mService.dataStore.enqueueMessageNoDuplicate(bd);
-            ScatterLogManager.v(TAG, "Updating list");
-            mService.getBluetoothManager().sendMessageToBroadcast(
-                    MsgBox.getText().toString().getBytes(), true);
+            if(!out.isInvalid()) {
+                mService.dataStore.enqueueMessageNoDuplicate(out);
+                ScatterLogManager.v(TAG, "Updating list");
+                mService.getBluetoothManager().sendMessageToBroadcast(
+                        MsgBox.getText().toString().getBytes(), true);
+            }
+            else {
+                ScatterLogManager.e(TAG, "Packet was corrupt from the start");
+            }
         }
 
         MsgBox.setText("");

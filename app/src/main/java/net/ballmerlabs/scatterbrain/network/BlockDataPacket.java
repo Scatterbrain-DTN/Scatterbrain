@@ -113,7 +113,10 @@ public class BlockDataPacket extends ScatterStanza {
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-        if(size < (contents.length - 18))
+        ScatterLogManager.e("BDPacket", "size::" + size);
+        if(size > (contents.length - 18))
+            invalid = true;
+        else if(size < contents.length - 18)
             invalid = true;
         else {
             body = new byte[size];

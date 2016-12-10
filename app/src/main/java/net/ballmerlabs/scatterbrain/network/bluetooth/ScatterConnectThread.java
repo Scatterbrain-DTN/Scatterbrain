@@ -60,6 +60,7 @@ public class ScatterConnectThread extends Thread {
 
                         //call this function in the context of the bluetoothManager
                         ScatterLogManager.v(trunk.blman.TAG, "Connection successful");
+                        trunk.blman.onSuccessfulConnect(mmSocket);
                     } else {
                         ScatterLogManager.e(trunk.blman.TAG, "Connection raised no exception, but failed");
                     }
@@ -71,8 +72,6 @@ public class ScatterConnectThread extends Thread {
                     } catch (IOException c) {
                     }
 
-                } finally {
-                    trunk.blman.onSuccessfulConnect(mmSocket);
                 }
                 if (!success) {
                  //   trunk.blman.blackList.add(mmDevice.getAddress());

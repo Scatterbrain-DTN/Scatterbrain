@@ -97,7 +97,7 @@ public class ScatterBluetoothManager {
                                 connectedList.remove(s);
                             }
                         }
-                        trunk.mainService.updateUiOnDevicesFound(connectedList);  
+                        trunk.mainService.updateUiOnDevicesFound(connectedList);
                     }
                 });
                 prunePeer.start();

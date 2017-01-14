@@ -1,5 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
 
+import android.util.Base64;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
 import java.io.UnsupportedEncodingException;
@@ -27,7 +29,6 @@ public class BlockDataPacket extends ScatterStanza {
         this.senderluid = senderluid;
         this.size = body.length;
         invalid = false;
-
         if(init() == null)
             invalid = true;
 
@@ -35,14 +36,26 @@ public class BlockDataPacket extends ScatterStanza {
 
 
     public String getHash(String applicationSalt) {
-        String working = applicationSalt + body + senderluid;
+
         String hash = null;
         try {
+            byte[] saltbytes = applicationSalt.getBytes("UTF-8");
+            byte[] combined = new byte[body.length + senderluid.length + saltbytes.length];
+            for(int i=0;i<body.length;i++) {
+                combined[i] = body[i];
+            }
+
+            for(int i=body.length;i<senderluid.length;i++) {
+                combined[i] = senderluid[i-body.length];
+            }
+
+            for(int i=body.length+senderluid.length;i<saltbytes.length;i++) {
+                combined[i] = saltbytes[i-body.length - senderluid.length];
+            }
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            byte[] workingByteArray = working.getBytes("UTF-8");
-            digest.update(workingByteArray, 0, workingByteArray.length);
-            workingByteArray = digest.digest();
-            hash = bytesToHex(workingByteArray);
+            digest.update(combined, 0, combined.length);
+            combined = digest.digest();
+            hash = bytesToHex(combined);
 
 
         }
@@ -125,7 +138,7 @@ public class BlockDataPacket extends ScatterStanza {
         for(int x=1;x<7;x++) {
             contents[x] = senderluidbytes[x-1];
         }
-        byte[] receiverluid = {5,5,5,5,5,5} ;
+        byte[] receiverluid = {0,0,0,0,0,0}; //not implemented yet
 
         this.receiverluid = receiverluid;
         byte receiverluidbytes[] = receiverluid;

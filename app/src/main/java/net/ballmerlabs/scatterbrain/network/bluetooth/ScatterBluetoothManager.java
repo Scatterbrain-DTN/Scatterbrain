@@ -250,15 +250,24 @@ public class ScatterBluetoothManager {
         }
     }
 
+
     //attempt to intelligently transmit a number of packets from datastore to peer nearby
-    public void offloadRandomPackets(int count) {
+    public void offloadRandomPacketsToBroadcast(int count) {
+        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            offloadRandomPackets(count, ent.getKey());
+        }
+
+    }
+
+    //sends a random set of packets from the datastore to a nearby device
+    public void offloadRandomPackets(int count, final String device) {
         final ArrayList<BlockDataPacket> ran = trunk.mainService.dataStore.getTopRandomMessages(count);
         pauseDiscoverLoopThread();
         Thread offloadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 for(BlockDataPacket p : ran) {
-                    sendMessageToBroadcast(p.contents,true);
+                    sendMessageToLocalPeer(device, p.contents,true);
                 }
             }
         });
@@ -313,11 +322,11 @@ public class ScatterBluetoothManager {
             @Override
             public void run() {
                 for(int x=0;x<5;x++) {
-                    trunk.dataStore.enqueueMessage(blockDataPacket);
+                    trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
                     if (target.socket.isConnected()) {
                         try {
-                            byte[] tmp = {5,5,5,5,5,5};
-                            BlockDataPacket s = new BlockDataPacket(message,text,tmp);
+                            //byte[] tmp = {5,5,5,5,5,5};
+                            BlockDataPacket s = new BlockDataPacket(message,text,trunk.mainService.luid);
                             if(s.invalid) {
                                 ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
                             }

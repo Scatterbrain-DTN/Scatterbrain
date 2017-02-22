@@ -3,6 +3,10 @@ package net.ballmerlabs.scatterbrain.network;
 import android.util.Log;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.zip.CRC32;
+
 /**
  * Created by gnu3ra on 3/28/16.
  */
@@ -17,7 +21,7 @@ public class AdvertisePacket extends ScatterStanza {
     public byte[] luid;
 
     public AdvertisePacket(DeviceProfile dv) {
-        super(13);
+        super(17);
         protocolversion = new byte[2];
         this.luid = new byte[6];
         invalid = false;
@@ -55,6 +59,19 @@ public class AdvertisePacket extends ScatterStanza {
             for(int i=1;i<=luid.length;i++) {
                 luid[i-1] = contents[6+i];
             }
+
+            //check stored CRC against calculated one. 
+            CRC32 crc = new CRC32();
+            crc.update(contents,0, contents.length - 4);
+            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putLong(crc.getValue()).array();
+            byte[] current = new byte[4];
+
+            for(int x=0;x<current.length;x++) {
+                current[x] = contents[13+x];
+            }
+
+            if(!current.equals(check))
+                invalid = true;
         }
     }
 
@@ -121,6 +138,15 @@ public class AdvertisePacket extends ScatterStanza {
         for(int i=1;i<=6;i++) {
             contents[6+i] = dv.getLUID()[i-1];
         }
+
+        //CRC for integrity check
+        CRC32 crc = new CRC32();
+        crc.update(contents,0, contents.length - 4);
+        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putLong(crc.getValue()).array();
+        for(int x=0;x<c.length;x++) {
+            contents[13+x] = c[x];
+        }
+
         return contents;
     }
 

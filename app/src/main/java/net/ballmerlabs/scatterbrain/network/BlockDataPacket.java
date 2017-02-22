@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.zip.CRC32;
 
 /**
  * Represents a block data packet
@@ -24,7 +25,7 @@ public class BlockDataPacket extends ScatterStanza {
 
 
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
-        super(18+body.length);
+        super(22+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
@@ -32,6 +33,7 @@ public class BlockDataPacket extends ScatterStanza {
         invalid = false;
         if(init() == null)
             invalid = true;
+
 
     }
 
@@ -119,6 +121,18 @@ public class BlockDataPacket extends ScatterStanza {
         for(int x=0;x<contents.length - 18;x++) {
             body[x] = contents[x+18];
         }
+
+        //verify crc with stored copy 
+        CRC32 crc = new CRC32();
+        crc.update(contents,0, contents.length - 4);
+        byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putLong(crc.getValue()).array();
+        byte[] real = new byte[4];
+        for(int x=0;x<real.length;x++) {
+            real[x] = contents[(contents.length - 4) + x];
+        }
+
+        if(!check.equals(real))
+            invalid = true;
     }
 
     private byte[] init() {
@@ -161,7 +175,13 @@ public class BlockDataPacket extends ScatterStanza {
         for(int x=0;x<body.length;x++) {
             contents[x+18] = body[x];
         }
-
+        //basic crc for integrity check
+        CRC32 crc = new CRC32();
+        crc.update(contents,0, contents.length - 4);
+        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putLong(crc.getValue()).array();
+        for(int x=0;x<c.length;x++) {
+            contents[(contents.length - 4) + x] = c[x];
+        }
         return contents;
     }
 }

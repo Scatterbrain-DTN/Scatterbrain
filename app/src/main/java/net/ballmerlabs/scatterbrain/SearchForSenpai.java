@@ -55,22 +55,22 @@ public class SearchForSenpai extends AppCompatActivity {
             mService.registerPeersChangedCallback(new PeersChangedCallback() {
                                                       @Override
                                                       public void run(final Map<String, LocalPeer> connectedList) {
-                                                          runOnUiThread(new Runnable() {
-                                                              @Override
-                                                              public void run() {
+                                              runOnUiThread(new Runnable() {
+                                                  @Override
+                                                  public void run() {
 
-                                                                  String peers = "Connected peers:\n";
-                                                                  for(Map.Entry d : connectedList.entrySet()) {
-                                                                      peers = peers + d.getKey() + "\n";
-                                                                  }
-
-                                                                  TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
-                                                                  senpai_notice.setVisibility(View.VISIBLE);
-                                                                  senpai_notice.setText(peers);
-                                                              }
-                                                          });
+                                                      String peers = "Connected peers:\n";
+                                                      for(Map.Entry d : connectedList.entrySet()) {
+                                                          peers = peers + d.getKey() + "\n";
                                                       }
-                                                  });
+
+                                                      TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
+                                                      senpai_notice.setVisibility(View.VISIBLE);
+                                                      senpai_notice.setText(peers);
+                                                  }
+                                              });
+                                          }
+                                      });
 
                     //mService.getBluetoothManager().startDiscoverLoopThread();
                     launchBtDialog();

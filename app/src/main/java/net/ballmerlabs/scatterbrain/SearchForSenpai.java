@@ -198,32 +198,35 @@ public class SearchForSenpai extends AppCompatActivity {
     }
     public void launchBtDialog() {
             ScatterLogManager.v(TAG,"Running bluetooth prompt dialog");
-            if(!mService.getBluetoothManager().getAdapter().isEnabled()) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent, mService.getBluetoothManager().REQUEST_ENABLE_BT);
+            if(mService.getBluetoothManager().getAdapter() != null) {
+                if (!mService.getBluetoothManager().getAdapter().isEnabled()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                            startActivityForResult(enableBtIntent, mService.getBluetoothManager().REQUEST_ENABLE_BT);
+                        }
+                    });
+                } else {
+                    if (mService.getBluetoothManager().getAdapter().getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+                        Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                        enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+                        startActivity(enableAndDiscoverBtIntent);
                     }
-                });
-            }
-            else {
-                if(mService.getBluetoothManager().getAdapter().getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-                    Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                    enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-                    startActivity(enableAndDiscoverBtIntent);
+                    mService.getBluetoothManager().init();
+                    Handler handler = new Handler(this.getMainLooper());
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mService.getBluetoothManager().startDiscoverLoopThread();
+                        }
+                    }, 5000);
+
                 }
-                mService.getBluetoothManager().init();
-                Handler handler = new Handler(this.getMainLooper());
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mService.getBluetoothManager().startDiscoverLoopThread();
-                    }
-                }, 5000);
-
             }
-
+            else{
+                ScatterLogManager.e(TAG, "Tried to start bluetooth dialog without bluetooth");
+            }
     }
 
 

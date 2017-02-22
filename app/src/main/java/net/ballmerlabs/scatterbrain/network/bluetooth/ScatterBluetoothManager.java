@@ -141,7 +141,7 @@ public class ScatterBluetoothManager {
         filter.addAction(BluetoothDevice.ACTION_UUID);
         trunk.mainService.registerReceiver(mReceiver, filter);
         adapter = BluetoothAdapter.getDefaultAdapter();
-        if (adapter == null) {
+        if (adapter !=  null) {
             ScatterLogManager.e(TAG, "ERROR, bluetooth not supported");
         }
         isAccepting = false;
@@ -176,7 +176,8 @@ public class ScatterBluetoothManager {
                 ScatterLogManager.v(TAG, "Scanning...");
 
                 if(!threadPaused)
-                    adapter.startDiscovery();
+                    if(adapter != null)
+                        adapter.startDiscovery();
                 else if(runScanThread){
                     int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
                     ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
@@ -286,7 +287,8 @@ public class ScatterBluetoothManager {
     public synchronized void stopDiscoverLoopThread() {
         ScatterLogManager.v(TAG, "Stopping bluetooth discovery thread");
         runScanThread = false;
-        adapter.cancelDiscovery();
+        if(adapter != null)
+            adapter.cancelDiscovery();
     }
 
     //temporarilly stops the discovery thread with the option to quickly resume without loss of data
@@ -294,7 +296,8 @@ public class ScatterBluetoothManager {
         if(!threadPaused) {
             ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
             threadPaused = true;
-            adapter.cancelDiscovery();
+            if(adapter != null)
+                adapter.cancelDiscovery();
         }
     }
 

@@ -8,7 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="net.ballmerlabs.scatterbrain.DatastoreCommandActivity">
+    tools:context="net.ballmerlabs.scatterbrain.DatastoreCommandActivity"
+    android:background="@color/background_material_dark">
 
     <TextView
         android:text="TextView"
@@ -24,7 +25,8 @@
         android:text="@string/db_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/refreshdb_button" />
+        android:id="@+id/refreshdb_button"
+        android:background="@color/button_material_dark" />
 
     <TextView
         android:text="TextView"
@@ -34,7 +36,8 @@
         android:id="@+id/db_textview2"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/button_trim" />
+        android:layout_below="@+id/button_trim"
+        android:textColor="@color/primary_text_default_material_dark" />
 
     <Button
         android:text="@string/dbtrim_str"
@@ -42,7 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/refreshdb_button"
         android:layout_alignParentStart="true"
-        android:id="@+id/button_trim" />
+        android:id="@+id/button_trim"
+        android:background="@color/button_material_dark" />
 
     <Button
         android:text="@string/db_clear_str"
@@ -50,7 +54,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/clear_button"
         android:layout_below="@+id/refreshdb_button"
-        android:layout_toEndOf="@+id/button_trim" />
+        android:layout_toEndOf="@+id/button_trim"
+        android:background="@color/button_material_dark" />
 
     <Button
         android:text="@string/db_rand_str"
@@ -58,5 +63,6 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/clear_button"
         android:layout_alignParentEnd="true"
-        android:id="@+id/db_rand_button" />
+        android:id="@+id/db_rand_button"
+        android:background="@color/button_material_dark" />
 </RelativeLayout>

@@ -221,7 +221,6 @@ public class SearchForSenpai extends AppCompatActivity {
                             mService.getBluetoothManager().startDiscoverLoopThread();
                         }
                     }, 5000);
-
                 }
             }
             else{

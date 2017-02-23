@@ -36,7 +36,7 @@ Scatterbrain will eventually provide an API for developers to make connected app
 
 ### Wow! Can I use it now?
 Sort of.
-Grab an apk from https://dl.scatterbrain.xyz/senpaiDetector/
+Grab an apk from https://dl.scatterbrain.xyz/
 
  Zero hop messaging works (you can text people directly near you, like a generic bluetooth chat),
   and service discovery works to an extent. It does not scale very well yet, as the datastore and  

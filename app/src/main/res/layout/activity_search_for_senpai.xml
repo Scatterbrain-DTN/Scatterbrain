@@ -50,8 +50,7 @@
         android:id="@+id/castbutton"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:background="@color/button_material_dark"
-        android:theme="@android:style/Widget.Material.Button.Borderless.Colored" />
+        android:background="@color/button_material_dark" />
 
     <TextView
         android:text="TextView"

@@ -60,7 +60,7 @@ public class AdvertisePacket extends ScatterStanza {
                 luid[i-1] = contents[6+i];
             }
 
-            //check stored CRC against calculated one. 
+            //check stored CRC against calculated one.
             CRC32 crc = new CRC32();
             crc.update(contents,0, contents.length - 4);
             byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putLong(crc.getValue()).array();

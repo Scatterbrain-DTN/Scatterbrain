@@ -45,7 +45,6 @@ public class ScatterBluetoothManager {
     public BluetoothAdapter adapter;
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
-    public ArrayList<String> blackList; //todo: clear blacklist after some time
     public HashMap<String, LocalPeer> connectedList;
     public HashMap<byte[], String> luidAddressMap;
     public NetTrunk trunk;
@@ -134,7 +133,6 @@ public class ScatterBluetoothManager {
         foundList = new ArrayList<>();
         connectedList = new HashMap<>();
         luidAddressMap = new HashMap<>();
-        blackList = new ArrayList<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);

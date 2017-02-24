@@ -43,7 +43,7 @@ public class ScatterConnectThread extends Thread {
         bleman.pauseDiscoverLoopThread();
         ScatterLogManager.v(trunk.blman.TAG, "Attempting to connect to " +devicelist.size() + " devices");
         for(BluetoothDevice mmDevice : devicelist) {
-            if(!trunk.blman.blackList.contains(mmDevice.getAddress()) && !trunk.blman.connectedList.containsKey(mmDevice.getAddress())) {
+            if(!trunk.blman.connectedList.containsKey(mmDevice.getAddress())) {
                 success = false;
                 BluetoothSocket tmp = null;
                 try {

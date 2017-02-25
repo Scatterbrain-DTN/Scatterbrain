@@ -46,7 +46,6 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
     public HashMap<String, LocalPeer> connectedList;
-    public HashMap<byte[], String> luidAddressMap;
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -107,7 +106,6 @@ public class ScatterBluetoothManager {
         bluetoothHan = new Handler();
         foundList = new ArrayList<>();
         connectedList = new HashMap<>();
-        luidAddressMap = new HashMap<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -144,8 +142,6 @@ public class ScatterBluetoothManager {
         scanr = new Runnable() {
             @Override
             public void run() {
-                //directmanager.scan();
-                //
                 ScatterLogManager.v(TAG, "Scanning...");
 
                 if(!threadPaused)
@@ -208,7 +204,6 @@ public class ScatterBluetoothManager {
                     trunk.mainService.updateUiOnDevicesFound(connectedList);
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
                     connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
-                    luidAddressMap.put(inpacket.luid, socket.getRemoteDevice().getAddress());
                     ScatterLogManager.v(TAG, "List size = " + connectedList.size());
 
                 }
@@ -280,11 +275,6 @@ public class ScatterBluetoothManager {
             ScatterLogManager.v(TAG, "Resuming bluetooth discovery thread");
             threadPaused = false;
         }
-    }
-
-    //grabs a nearby connected device by local user ID
-    public LocalPeer getPeerByLuid(byte[] luid) {
-        return connectedList.get(luidAddressMap.get(luid));
     }
 
 

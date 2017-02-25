@@ -93,25 +93,30 @@ public class NormalActivity extends AppCompatActivity {
 
     //adds a message to the list and clears the input field
     private void updateList() {
+
         if(scatterBound) {
             byte[] tmp = {5, 5, 5, 5, 5, 5};
             BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true, mService.luid);
             BlockDataPacket out = new BlockDataPacket(bd.contents);
             Messages.data.add(new DispMessage(new String(out.body),
-                    new String(Base64.encodeToString(out.senderluid, Base64.DEFAULT))));
+                   new String(Base64.encodeToString(out.senderluid, Base64.DEFAULT))));
             // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
             if(!out.isInvalid()) {
-                mService.dataStore.enqueueMessageNoDuplicate(out);
-                ScatterLogManager.v(TAG, "Updating list");
-                mService.getBluetoothManager().sendMessageToBroadcast(
-                        MsgBox.getText().toString().getBytes(), true);
+                    mService.dataStore.enqueueMessageNoDuplicate(out);
+                    ScatterLogManager.v(TAG, "Updating list");
+                    if (mService.getBluetoothManager() != null) {
+                        mService.getBluetoothManager().sendMessageToBroadcast(
+                                MsgBox.getText().toString().getBytes(), true);
+                    }
+
             }
+
             else {
                 ScatterLogManager.e(TAG, "Packet was corrupt from the start");
             }
-        }
 
+        }
         MsgBox.setText("");
 
     }

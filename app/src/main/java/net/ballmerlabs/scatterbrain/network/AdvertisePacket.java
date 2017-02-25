@@ -63,7 +63,7 @@ public class AdvertisePacket extends ScatterStanza {
             //check stored CRC against calculated one.
             CRC32 crc = new CRC32();
             crc.update(contents,0, contents.length - 4);
-            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putLong(crc.getValue()).array();
+            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int)crc.getValue()).array();
             byte[] current = new byte[4];
 
             for(int x=0;x<current.length;x++) {
@@ -142,7 +142,7 @@ public class AdvertisePacket extends ScatterStanza {
         //CRC for integrity check
         CRC32 crc = new CRC32();
         crc.update(contents,0, contents.length - 4);
-        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putLong(crc.getValue()).array();
+        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
         for(int x=0;x<c.length;x++) {
             contents[13+x] = c[x];
         }

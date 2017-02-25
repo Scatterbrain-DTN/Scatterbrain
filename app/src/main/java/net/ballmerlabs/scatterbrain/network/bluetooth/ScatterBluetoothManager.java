@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.widget.ArrayAdapter;
@@ -56,7 +57,9 @@ public class ScatterBluetoothManager {
     public boolean isAccepting;
     public boolean acceptThreadRunning;
     public boolean threadPaused;
-
+    public int currentUUID; //the device we are currently querying for uuid.
+    public int targetUUID; //the number of devices to stop at
+    public final int PARALLELUUID = 2; //number of devices to scan at a time.
     /* listens for events thrown by bluetooth adapter when scanning for devices
      * and calls actions for different scenarios.
      */
@@ -75,6 +78,21 @@ public class ScatterBluetoothManager {
             //when we are done scanning, attempt to connect to devices we found
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 ScatterLogManager.v(TAG, "Device disvovery finished.");
+
+                //stop discovering and attempt to gently fetch UUIDs from devices.
+                //This can fail with an overloaded adapter or saturated channels, so we do it slowly.
+                pauseDiscoverLoopThread();
+                targetUUID = foundList.size();
+                for(int x=currentUUID;x<foundList.size() && x< (PARALLELUUID+currentUUID);x++) {
+                    foundList.get(x).fetchUuidsWithSdp();
+                }
+                if(currentUUID < targetUUID)
+                    currentUUID += PARALLELUUID;
+                else {
+                    currentUUID = 0;
+                    unpauseDiscoverLoopThread();
+                }
+
                 //if we are still turned on, rescan later at interval defined by settings
                 if (runScanThread) {
                     int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
@@ -84,9 +102,26 @@ public class ScatterBluetoothManager {
                     ScatterLogManager.v(TAG, "Stopping wifi direct scan thread");
             }
 
-            //handle UUID events. May not be a good idea to do this when we are discovering. 
+            //handle UUID events. May not be a good idea to do this when we are discovering.
             else if (BluetoothDevice.ACTION_UUID.equals(action)) {
-                ScatterLogManager.v(TAG, "Discovered a new UUID");
+                Parcelable[] p = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
+                if(p != null) {
+                    for(Parcelable uu : p) {
+                        if(uu != null) {
+                            ScatterLogManager.v(TAG, "found UUID " + uu.toString());
+                        }
+                    }
+                }
+
+                for(int x=currentUUID;x<foundList.size() && x< (PARALLELUUID+currentUUID);x++) {
+                    foundList.get(x).fetchUuidsWithSdp();
+                }
+                if(currentUUID < targetUUID)
+                    currentUUID += PARALLELUUID;
+                else {
+                    currentUUID = 0;
+                    unpauseDiscoverLoopThread();
+                }
             }
         }
     };
@@ -113,6 +148,7 @@ public class ScatterBluetoothManager {
         connectedList = new HashMap<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
+        currentUUID = 0;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothDevice.ACTION_UUID);
         trunk.mainService.registerReceiver(mReceiver, filter);

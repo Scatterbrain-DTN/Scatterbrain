@@ -75,32 +75,7 @@ public class ScatterBluetoothManager {
 
             //when we are done scanning, attempt to connect to devices we found
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                ScatterLogManager.v(TAG, "Device disvovery finished. Attempting to connect to peers");
-                final ArrayList<BluetoothDevice> nlist = (ArrayList<BluetoothDevice>)foundList.clone();
-                foundList.clear();
-                Thread discoveryFinishedThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        connectToDevice(nlist);
-                    }
-                });
-                discoveryFinishedThread.start();
-
-                //prune any peer that disconnected from the connected list
-                final Thread prunePeer = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (Map.Entry<String, LocalPeer> s : connectedList.entrySet()) {
-                            if (!s.getValue().socket.isConnected()) {
-                                ScatterLogManager.v(TAG, "Removing unneeded device " + s.getKey().toString());
-                                connectedList.remove(s);
-                            }
-                        }
-                        trunk.mainService.updateUiOnDevicesFound(connectedList);
-                    }
-                });
-                prunePeer.start();
-
+                ScatterLogManager.v(TAG, "Device disvovery finished.");
                 //if we are still turned on, rescan later at interval defined by settings
                 if (runScanThread) {
                     int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));

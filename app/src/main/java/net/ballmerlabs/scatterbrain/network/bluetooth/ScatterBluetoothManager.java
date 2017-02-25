@@ -83,6 +83,11 @@ public class ScatterBluetoothManager {
                 } else
                     ScatterLogManager.v(TAG, "Stopping wifi direct scan thread");
             }
+
+            //handle UUID events. May not be a good idea to do this when we are discovering. 
+            else if (BluetoothDevice.ACTION_UUID.equals(action)) {
+                ScatterLogManager.v(TAG, "Discovered a new UUID");
+            }
         }
     };
 

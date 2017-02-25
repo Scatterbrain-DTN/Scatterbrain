@@ -46,7 +46,8 @@ public class ScatterBluetoothManager {
     public BluetoothAdapter adapter;
     public final static int REQUEST_ENABLE_BT = 1;
     public ArrayList<BluetoothDevice> foundList;
-    public HashMap<String, LocalPeer> connectedList;
+    public HashMap<String, LocalPeer> connectedList; //discovered devices
+    public ArrayList<BluetoothDevice> scatterList; //devices confirmed to run scatterbrain
     public NetTrunk trunk;
     public boolean runScanThread;
     public Handler bluetoothHan;
@@ -60,6 +61,8 @@ public class ScatterBluetoothManager {
     public int currentUUID; //the device we are currently querying for uuid.
     public int targetUUID; //the number of devices to stop at
     public final int PARALLELUUID = 2; //number of devices to scan at a time.
+
+
     /* listens for events thrown by bluetooth adapter when scanning for devices
      * and calls actions for different scenarios.
      */
@@ -90,6 +93,7 @@ public class ScatterBluetoothManager {
                     currentUUID += PARALLELUUID;
                 else {
                     currentUUID = 0;
+                    connectToDevice(scatterList);
                     unpauseDiscoverLoopThread();
                 }
 
@@ -105,10 +109,17 @@ public class ScatterBluetoothManager {
             //handle UUID events. May not be a good idea to do this when we are discovering.
             else if (BluetoothDevice.ACTION_UUID.equals(action)) {
                 Parcelable[] p = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(p != null) {
                     for(Parcelable uu : p) {
                         if(uu != null) {
-                            ScatterLogManager.v(TAG, "found UUID " + uu.toString());
+                            if(UID.toString().equals(uu.toString())) {
+                                ScatterLogManager.v(TAG, "found a scatterbrain UUID");
+                                scatterList.add(device);
+                            }
+                            else {
+                                ScatterLogManager.v(TAG, "found UUID " + uu.toString());
+                            }
                         }
                     }
                 }
@@ -120,6 +131,7 @@ public class ScatterBluetoothManager {
                     currentUUID += PARALLELUUID;
                 else {
                     currentUUID = 0;
+                    connectToDevice(scatterList);
                     unpauseDiscoverLoopThread();
                 }
             }
@@ -146,6 +158,7 @@ public class ScatterBluetoothManager {
         bluetoothHan = new Handler();
         foundList = new ArrayList<>();
         connectedList = new HashMap<>();
+        scatterList = new ArrayList<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.filter = filter;
         currentUUID = 0;

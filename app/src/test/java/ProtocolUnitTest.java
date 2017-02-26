@@ -36,4 +36,44 @@ public class ProtocolUnitTest {
         assertThat(newpacket.isInvalid(), is(false));
     }
 
+    @Test
+    public void BlockDataPacketIsValid() {
+        byte[] senderluid = {1,2,3,4,5};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+        assertThat(bd.isInvalid(), is(false));
+    }
+
+    @Test
+    public void BlockDataPacketHandlesNullData() {
+        byte[] senderluid = {1,2,3,4,5};
+        byte[] randomdata = {};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+        assertThat(bd.isInvalid(), is(false));
+    }
+
+    @Test
+    public void BlockDataPacketFromDataIsValid() {
+        byte[] senderluid = {1,2,3,4,5};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+        BlockDataPacket ne = new BlockDataPacket(bd.getContents());
+
+        assertThat(ne.isInvalid(), is(false));
+    }
+
+
+    @Test
+    public void BlockDataPacketHasSameHashWhenReconstructed() {
+        byte[] senderluid = {1,2,3,4,5};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+        BlockDataPacket ne = new BlockDataPacket(bd.getContents());
+
+        assertThat(bd.getHash().equals(ne.getHash()), is(true));
+    }
+
 }

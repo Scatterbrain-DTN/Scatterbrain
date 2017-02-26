@@ -20,7 +20,20 @@ public class ProtocolUnitTest {
         DeviceProfile profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTH, test);
         AdvertisePacket ap  = new AdvertisePacket(profile);
+
         assertThat(ap.isInvalid() , is(false));
+    }
+
+    @Test
+    public void AdvertisePacketFromDataAndProfileIsValid() {
+        byte[] test = {1,2,3,4,5};
+        DeviceProfile profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
+                DeviceProfile.HardwareServices.BLUETOOTH, test);
+        AdvertisePacket ap  = new AdvertisePacket(profile);
+        byte[] data = ap.getContents();
+        AdvertisePacket newpacket = new AdvertisePacket(data);
+
+        assertThat(newpacket.isInvalid(), is(false));
     }
 
 }

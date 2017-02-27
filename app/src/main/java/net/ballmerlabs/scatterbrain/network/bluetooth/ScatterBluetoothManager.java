@@ -22,13 +22,19 @@ import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.BlockingDeque;
 
@@ -336,22 +342,59 @@ public class ScatterBluetoothManager {
     public void sendMessageToBroadcast(byte[] message, boolean text) {
         ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
         for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-            sendMessageToLocalPeer(ent.getKey(),message, text);
+            sendMessageToLocalPeer(ent.getKey(),message, text, false);
         }
     }
 
-    //send a direct private message to a nearby peer in a BlockDataPacket
-    public void sendMessageToLocalPeer(final String mactarget, final byte[] message,final  boolean text) {
+    /*
+     * Send a message to an already connected scatterbrain peer.
+     * This method also has a function to connect to a local tcp debug
+     * server outside of android for unit testing. 
+     */
+    public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
+                                       final  boolean text, final boolean fake) {
         ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-       final LocalPeer target = connectedList.get(mactarget);
+
+        final OutputStream ostream;
+        final Socket sock;
+        final boolean isConnected;
+        if(!fake) {
+            LocalPeer target = connectedList.get(mactarget);
+            target.socket.isConnected();
+            try {
+                ostream = target.socket.getOutputStream();
+                isConnected = true;
+            }
+            catch(IOException e) {
+                ScatterLogManager.e(TAG, "IOException on sending packet to " + mactarget);
+                return;
+            }
+        }
+        else {
+            try {
+                sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
+                ostream = sock.getOutputStream();
+                isConnected = true;
+            }
+            catch(UnknownHostException u) {
+                System.out.println("Cannot connect to local debug server");
+                return;
+            }
+            catch(IOException e) {
+                System.out.println("IOException when connecting to local debug server");
+                return;
+            }
+
+        }
         final BlockDataPacket blockDataPacket = new BlockDataPacket(message, text,
                 trunk.mainService.luid);
         Thread messageSendThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 for(int x=0;x<5;x++) {
-                    trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
-                    if (target.socket.isConnected()) {
+                    if(!fake)
+                        trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
+                    if (isConnected) {
                         try {
                             //byte[] tmp = {5,5,5,5,5,5};
                             BlockDataPacket s = new BlockDataPacket(message,text,trunk.mainService.luid);
@@ -359,8 +402,7 @@ public class ScatterBluetoothManager {
                                 ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
                                 return;
                             }
-                            target.socket.getOutputStream().write(s
-                                    .getContents());
+                            ostream.write(s.getContents());
                             ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
                             break;
                         } catch (IOException e) {

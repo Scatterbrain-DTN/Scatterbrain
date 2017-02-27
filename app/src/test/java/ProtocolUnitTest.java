@@ -76,4 +76,18 @@ public class ProtocolUnitTest {
         assertThat(bd.getHash().equals(ne.getHash()), is(true));
     }
 
+    @Test
+    public void AdvertisePacketIsInvalidWithBogusLUID() {
+        byte[] test = {1, 2, 3, 4};
+        DeviceProfile profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
+                DeviceProfile.HardwareServices.BLUETOOTH, test);
+        AdvertisePacket ap = new AdvertisePacket(profile);
+
+        byte[] test2 = {1, 2, 3, 4, 8, 4};
+        DeviceProfile profile2 = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
+                DeviceProfile.HardwareServices.BLUETOOTH, test2);
+        AdvertisePacket ap2 = new AdvertisePacket(profile2);
+
+        assertThat(ap.isInvalid() && ap2.isInvalid(), is(true));
+    }
 }

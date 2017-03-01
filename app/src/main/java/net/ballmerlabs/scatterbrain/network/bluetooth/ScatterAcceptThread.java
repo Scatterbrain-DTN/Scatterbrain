@@ -27,9 +27,17 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 public class ScatterAcceptThread extends Thread {
     private BluetoothServerSocket mmServerSocket = null;
     private NetTrunk trunk;
+    private BluetoothAdapter adapter;
     public ScatterAcceptThread(NetTrunk trunk, BluetoothAdapter adapter) {
-        trunk.blman.acceptThreadRunning = true;
+        this.adapter = adapter;
         this.trunk = trunk;
+    }
+
+    @Override
+    public void run() {
+        ScatterLogManager.v(trunk.blman.TAG,"Started accept thread" );
+        BluetoothSocket socket;
+        trunk.blman.acceptThreadRunning = true;
         BluetoothServerSocket tmp = null;
         try {
             tmp = adapter.listenUsingInsecureRfcommWithServiceRecord(
@@ -39,12 +47,6 @@ public class ScatterAcceptThread extends Thread {
         }
 
         mmServerSocket = tmp;
-    }
-
-    @Override
-    public void run() {
-        ScatterLogManager.v(trunk.blman.TAG,"Started accept thread" );
-        BluetoothSocket socket = null;
         while (true) {
             try {
                 socket = mmServerSocket.accept();

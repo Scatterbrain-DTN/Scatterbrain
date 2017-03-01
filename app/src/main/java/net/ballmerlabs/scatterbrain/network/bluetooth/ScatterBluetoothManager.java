@@ -66,7 +66,7 @@ public class ScatterBluetoothManager {
     public boolean threadPaused;
     public int currentUUID; //the device we are currently querying for uuid.
     public int targetUUID; //the number of devices to stop at
-    public final int PARALLELUUID = 2; //number of devices to scan at a time.
+    public final int PARALLELUUID = 1; //number of devices to scan at a time.
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
@@ -349,7 +349,7 @@ public class ScatterBluetoothManager {
     /*
      * Send a message to an already connected scatterbrain peer.
      * This method also has a function to connect to a local tcp debug
-     * server outside of android for unit testing. 
+     * server outside of android for unit testing.
      */
     public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                        final  boolean text, final boolean fake) {

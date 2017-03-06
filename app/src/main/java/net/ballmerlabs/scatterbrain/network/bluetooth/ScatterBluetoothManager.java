@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
@@ -26,6 +27,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -37,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.Exchanger;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
@@ -67,6 +70,7 @@ public class ScatterBluetoothManager {
     public int currentUUID; //the device we are currently querying for uuid.
     public int targetUUID; //the number of devices to stop at
     public final int PARALLELUUID = 1; //number of devices to scan at a time.
+    private Method setDuration;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
@@ -178,6 +182,22 @@ public class ScatterBluetoothManager {
         isAccepting = false;
         acceptThreadRunning = false;
         threadPaused = false;
+        try {
+            Class c = Class.forName(adapter.getClass().getName());
+            Method[] methods = c.getDeclaredMethods();
+            setDuration = null;
+                    /* why on earth do I have to do this?
+                     * for some reason getDeclaredMethod("setDiscoverableTimeout") can't find the
+                     * method, but this can.
+                     */
+            for (Method m : methods) {
+                if (m.getName().contains("setDiscoverableTimeout"))
+                    setDuration = m;
+            }
+        }
+        catch(Exception e) {
+            ScatterLogManager.e(TAG,e.getMessage());
+        }
     }
 
     //some initialization routines that can't be called at the same time as constructur.
@@ -462,6 +482,16 @@ public class ScatterBluetoothManager {
         });
 
         messageSendThread.start();
+    }
+
+    public void resetBluetoothDiscoverability(final int time) {
+        try {
+            setDuration.invoke(adapter, time);
+        }
+        catch(Exception e) {
+            ScatterLogManager.e(TAG, e.getMessage());
+        }
+
     }
 
 }

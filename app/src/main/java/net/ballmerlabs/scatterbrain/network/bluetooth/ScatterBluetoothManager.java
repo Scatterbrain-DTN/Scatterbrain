@@ -324,7 +324,7 @@ public class ScatterBluetoothManager {
                     if(p.isInvalid()) {
                         ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
                     }
-                    sendRaw(device, p.contents);
+                    sendRaw(device, p.contents,false);
                 }
             }
         });
@@ -444,30 +444,58 @@ public class ScatterBluetoothManager {
     public void sendRawToBroadcast(byte[] message) {
         ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
         for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-            sendRaw(ent.getKey(),message);
+            sendRaw(ent.getKey(),message, false);
         }
     }
 
-
-    //send a direct private message to a nearby peer in a BlockDataPacket
-    public void sendRaw(final String mactarget, final byte[] message) {
+    public void sendRaw(final String mactarget, final byte[] message, final boolean fake) {
         ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-        final LocalPeer target = connectedList.get(mactarget);
+
+        final OutputStream ostream;
+        final Socket sock;
+        final boolean isConnected;
+        if(!fake) {
+            LocalPeer target = connectedList.get(mactarget);
+            target.socket.isConnected();
+            try {
+                ostream = target.socket.getOutputStream();
+                isConnected = true;
+            }
+            catch(IOException e) {
+                ScatterLogManager.e(TAG, "IOException on sending packet to " + mactarget);
+                return;
+            }
+        }
+        else {
+            try {
+                sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
+                ostream = sock.getOutputStream();
+                isConnected = true;
+            }
+            catch(UnknownHostException u) {
+                System.out.println("Cannot connect to local debug server");
+                return;
+            }
+            catch(IOException e) {
+                System.out.println("IOException when connecting to local debug server");
+                return;
+            }
+
+        }
         final BlockDataPacket blockDataPacket = new BlockDataPacket(message);
         Thread messageSendThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 for(int x=0;x<5;x++) {
-                    trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
-                    if (target.socket.isConnected()) {
+                    if(!fake)
+                        trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
+                    if (isConnected) {
                         try {
-                            //byte[] tmp = {5,5,5,5,5,5};
-                            BlockDataPacket s = new BlockDataPacket(message);
-                            if(s.invalid) {
+                            if(blockDataPacket.invalid) {
                                 ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                                return;
                             }
-                            target.socket.getOutputStream().write(s
-                                    .getContents());
+                            ostream.write(blockDataPacket.getContents());
                             ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
                             break;
                         } catch (IOException e) {

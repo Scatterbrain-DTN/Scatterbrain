@@ -232,6 +232,8 @@ public class ScatterBluetoothManager {
                     ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
                     bluetoothHan.postDelayed(scanr, scan * 1000);
                 }
+
+                resetBluetoothDiscoverability(9999);
             }
         };
 

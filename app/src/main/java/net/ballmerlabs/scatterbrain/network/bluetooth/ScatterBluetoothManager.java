@@ -376,69 +376,8 @@ public class ScatterBluetoothManager {
     public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                        final  boolean text, final boolean fake) {
         ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-
-        final OutputStream ostream;
-        final Socket sock;
-        final boolean isConnected;
-        if(!fake) {
-            LocalPeer target = connectedList.get(mactarget);
-            target.socket.isConnected();
-            try {
-                ostream = target.socket.getOutputStream();
-                isConnected = true;
-            }
-            catch(IOException e) {
-                ScatterLogManager.e(TAG, "IOException on sending packet to " + mactarget);
-                return;
-            }
-        }
-        else {
-            try {
-                sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
-                ostream = sock.getOutputStream();
-                isConnected = true;
-            }
-            catch(UnknownHostException u) {
-                System.out.println("Cannot connect to local debug server");
-                return;
-            }
-            catch(IOException e) {
-                System.out.println("IOException when connecting to local debug server");
-                return;
-            }
-
-        }
-        final BlockDataPacket blockDataPacket = new BlockDataPacket(message, text,
-                trunk.mainService.luid);
-        Thread messageSendThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for(int x=0;x<5;x++) {
-                    if(!fake)
-                        trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
-                    if (isConnected) {
-                        try {
-                            //byte[] tmp = {5,5,5,5,5,5};
-                            BlockDataPacket s = new BlockDataPacket(message,text,trunk.mainService.luid);
-                            if(s.invalid) {
-                                ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
-                                return;
-                            }
-                            ostream.write(s.getContents());
-                            ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
-                            break;
-                        } catch (IOException e) {
-                            ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
-                        }
-                    }
-                    else{
-                        break; //we moved out of range
-                    }
-                }
-            }
-        });
-
-        messageSendThread.start();
+        BlockDataPacket bd = new BlockDataPacket(message,text, trunk.profile.getLUID() );
+        sendRaw(mactarget,bd.getContents(), fake);
     }
 
 

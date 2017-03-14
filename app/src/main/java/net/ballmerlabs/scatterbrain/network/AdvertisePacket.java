@@ -5,6 +5,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.zip.CRC32;
 
 /**
@@ -19,35 +20,37 @@ public class AdvertisePacket extends ScatterStanza {
     public byte congestion;
     public byte hwservices;
     public byte[] luid;
+    public byte[] err;
+    public final int ERR_SIZE = 7;
 
     public AdvertisePacket(DeviceProfile dv) {
         super(17);
         protocolversion = new byte[2];
         this.luid = new byte[6];
         invalid = false;
+        err = new byte[ERR_SIZE];
         if(init(dv) == null)
             invalid = true;
     }
 
 
-    public AdvertisePacket(byte raw_in[]) {
-        super(13);
+    public AdvertisePacket(byte raw[]) {
+        super(17);
+        this.err = new byte[ERR_SIZE];
         this.luid = new byte[6];
         protocolversion = new byte[2];
-        byte[] raw = new byte[13];
 
-        if(raw.length < 13 || raw.length > 13) {
+        if(raw.length != 17) {
             invalid = true;
+            err[0] = 1;
             return;
         }
         else {
-            for(int i=0;i<7;i++) {
-                raw[i] = raw_in[i];
-            }
             contents = raw;
 
             if(contents[0] != 0) {
                 invalid = true;
+                err[1] = 1;
                 return;
             }
             devicetype = contents[1];
@@ -70,13 +73,20 @@ public class AdvertisePacket extends ScatterStanza {
                 current[x] = contents[13+x];
             }
 
-            if(!current.equals(check))
+            if(!Arrays.equals(check, current)) {
                 invalid = true;
+                err[3] = 1;
+            }
         }
     }
 
     private byte[] init(DeviceProfile dv) {
         contents[0] = 0;
+
+        if(dv.getLUID().length != 6) {
+            err[4] = 1;
+            return null;
+        }
 
         DeviceProfile.deviceType type = dv.getType();
         if(type == DeviceProfile.deviceType.ANDROID)
@@ -87,6 +97,7 @@ public class AdvertisePacket extends ScatterStanza {
             contents[1] = 2;
         else {
             ScatterLogManager.e(TAG, "Wrong device type");
+            err[5] = 1;
             return null;
         }
         devicetype = contents[1];
@@ -100,6 +111,7 @@ public class AdvertisePacket extends ScatterStanza {
             contents[2] = 2;
         else {
             ScatterLogManager.e(TAG, "Wrong mobile status");
+            err[6] = 1;
             return null;
         }
 

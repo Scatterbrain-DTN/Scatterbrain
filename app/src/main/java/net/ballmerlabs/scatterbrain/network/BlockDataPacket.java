@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.zip.CRC32;
 
@@ -22,7 +23,8 @@ public class BlockDataPacket extends ScatterStanza {
     public byte[] senderluid;
     public byte[] receiverluid;
     public Integer size;
-
+    public int[] err;
+    public final int ERRSIZE =10;
 
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
         super(22+body.length);
@@ -30,6 +32,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.text = text;
         this.senderluid = senderluid;
         this.size = body.length;
+        this.err = new int[ERRSIZE];
         invalid = false;
         if(init() == null)
             invalid = true;
@@ -80,13 +83,18 @@ public class BlockDataPacket extends ScatterStanza {
 
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
+        this.err = new int[ERRSIZE];
         if(raw.length > 14)
             contents = raw.clone();
-        else
+        else {
+            err[0] = 1;
             invalid = true;
+        }
 
-        if(contents[0] != 1)
+        if(contents[0] != 1) {
+            err[1] = 1;
             invalid = true;
+        }
 
         byte recieverluid[] = new byte[6];
         byte senderluid[] = new byte[6];
@@ -116,9 +124,9 @@ public class BlockDataPacket extends ScatterStanza {
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-        body = new byte[contents.length - 18];
+        body = new byte[size];
 
-        for(int x=0;x<contents.length - 18;x++) {
+        for(int x=0;x<size;x++) {
             body[x] = contents[x+18];
         }
 
@@ -131,14 +139,17 @@ public class BlockDataPacket extends ScatterStanza {
             real[x] = contents[(contents.length - 4) + x];
         }
 
-        if(!check.equals(real))
+        if(!Arrays.equals(real, check)) {
+            err[2] = 1;
             invalid = true;
+        }
     }
 
     private byte[] init() {
         contents[0] = 1;
         if(senderluid.length != 6) {
             ScatterLogManager.e("BDinit", "Senderluid wrong length");
+            err[3] = 1;
             return null;
         }
         byte senderluidbytes[] = senderluid;
@@ -151,6 +162,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.receiverluid = receiverluid;
         byte receiverluidbytes[] = receiverluid;
         if(receiverluid.length != 6) {
+            err[4] = 1;
             invalid = true;
             ScatterLogManager.e("BDinit", "ReceiverLuid wrong size");
             return null;
@@ -182,6 +194,7 @@ public class BlockDataPacket extends ScatterStanza {
         for(int x=0;x<c.length;x++) {
             contents[(contents.length - 4) + x] = c[x];
         }
+
         return contents;
     }
 }

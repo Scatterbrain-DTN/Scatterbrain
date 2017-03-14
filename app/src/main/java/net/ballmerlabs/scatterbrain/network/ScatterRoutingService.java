@@ -145,7 +145,6 @@ public class ScatterRoutingService extends Service {
     @Override
     public void onCreate() {
         me = this;
-        trunk = new NetTrunk(this);
         Context context = this.getApplicationContext();
         sharedPreferences = context.getSharedPreferences(getString(R.string.scatter_preference_key),
                 Context.MODE_PRIVATE);
@@ -160,6 +159,7 @@ public class ScatterRoutingService extends Service {
         else {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
+        trunk = new NetTrunk(this);
         this.dataStore = new LeDataStore(this, 100);
         dataStore.connect();
     }

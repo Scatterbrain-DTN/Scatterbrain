@@ -22,8 +22,11 @@ public class NetTrunk {
 
     public NetTrunk(ScatterRoutingService mainService) {
         this.mainService = mainService;
+        profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
+                DeviceProfile.HardwareServices.BLUETOOTHLE, mainService.luid);
         globnet = new GlobalNet(this);
         settings = new SettingsManager();
+       // globnet.getWifiManager().startWifiDirctLoopThread();
         blman = new ScatterBluetoothManager(this);
     }
 }

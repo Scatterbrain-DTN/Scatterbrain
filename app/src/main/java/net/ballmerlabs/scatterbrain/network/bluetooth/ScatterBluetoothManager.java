@@ -123,7 +123,7 @@ public class ScatterBluetoothManager {
                 if(p != null) {
                     for(Parcelable uu : p) {
                         if(uu != null) {
-                            if(UID.toString().equals(uu.toString())) {
+                            if(UID.toString().compareTo(uu.toString()) == 0) {
                                 ScatterLogManager.v(TAG, "found a scatterbrain UUID");
                                 scatterList.add(device);
                             }

@@ -59,7 +59,7 @@ public class ScatterReceiveThread extends Thread{
                 }
 
                 byte[] block = new byte[100];
-                int counter = 18;
+                int counter = BlockDataPacket.HEADERSIZE;
                 while(socket.getInputStream().read(block) != -1) {
                     for(int x=0;(x<block.length) && (counter < buffer.length);x++) {
                         buffer[counter] = block[x];

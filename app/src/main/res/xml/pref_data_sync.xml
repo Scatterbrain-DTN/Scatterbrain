@@ -10,7 +10,7 @@
         android:summary=""
         android:title="@string/backgroundservice" />
     <ListPreference
-        android:defaultValue="15"
+        android:defaultValue="10"
         android:entries="@array/pref_sync_frequency_titles"
         android:entryValues="@array/pref_sync_frequency_values"
         android:key="sync_frequency"

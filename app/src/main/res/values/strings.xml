@@ -68,20 +68,18 @@
 
     <string name="pref_title_sync_frequency">Bluetooth Scan Frequency</string>
     <string-array name="pref_sync_frequency_titles">
-        <item>3 sec</item>
-        <item>5 sec</item>
-        <item>7 sec</item>
         <item>10 sec</item>
-        <item>15 sec</item>
-        <item>25 sec</item>
+        <item>20 sec</item>
+        <item>30 sec</item>
+        <item>40 sec</item>
+        <item>50 sec</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">
-        <item>3</item>
-        <item>5</item>
-        <item>7</item>
         <item>10</item>
-        <item>15</item>
-        <item>25</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
     </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>

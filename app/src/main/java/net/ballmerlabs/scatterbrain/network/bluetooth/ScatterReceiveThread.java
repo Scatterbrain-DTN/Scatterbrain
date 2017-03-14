@@ -19,18 +19,22 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 public class ScatterReceiveThread extends Thread{
     BluetoothSocket socket;
     NetTrunk trunk;
+    int errcount;
     public boolean fake;
+    public boolean go;
     public ScatterReceiveThread(BluetoothSocket socket, boolean fake) {
         this.fake = fake;
         this.socket = socket;
         this.trunk = ScatterRoutingService.getNetTrunk();
+        go = true;
+        errcount = 0;
     }
 
 
     @Override
     public void run() {
         int errorcount = 0;
-        while(true) {
+        while(go) {
             try {
                 errorcount = 0;
                 int pos = 0;
@@ -82,6 +86,14 @@ public class ScatterReceiveThread extends Thread{
                 }
 
                 ScatterLogManager.e(trunk.blman.TAG, "IOException when receiving stanza");
+                errcount++;
+                if(errorcount > 20) {
+                    synchronized (trunk.blman.connectedList) {
+                        trunk.blman.connectedList.remove(socket.getRemoteDevice().getAddress());
+                    }
+                    go = false;
+                }
+
             }
         }
     }

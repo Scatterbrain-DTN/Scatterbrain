@@ -285,8 +285,11 @@ public class ScatterBluetoothManager {
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound(connectedList);
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
-                    connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
-                    ScatterLogManager.v(TAG, "List size = " + connectedList.size());
+                    synchronized (connectedList) {
+                        connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
+
+                        ScatterLogManager.v(TAG, "List size = " + connectedList.size());
+                    }
 
                 }
                 else {
@@ -310,10 +313,11 @@ public class ScatterBluetoothManager {
 
     //attempt to intelligently transmit a number of packets from datastore to peer nearby
     public void offloadRandomPacketsToBroadcast(int count) {
-        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-            offloadRandomPackets(count, ent.getKey());
+        synchronized (connectedList) {
+            for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+                offloadRandomPackets(count, ent.getKey());
+            }
         }
-
     }
 
     //sends a random set of packets from the datastore to a nearby device
@@ -363,9 +367,11 @@ public class ScatterBluetoothManager {
 
     //sends a BlockDataPacket to all connected peers
     public void sendMessageToBroadcast(byte[] message, boolean text) {
-        ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
-        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-            sendMessageToLocalPeer(ent.getKey(),message, text, false);
+        synchronized (connectedList) {
+            ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
+            for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+                sendMessageToLocalPeer(ent.getKey(), message, text, false);
+            }
         }
     }
 
@@ -384,9 +390,11 @@ public class ScatterBluetoothManager {
 
     //sends a BlockDataPacket to all connected peers
     public void sendRawToBroadcast(byte[] message) {
-        ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
-        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-            sendRaw(ent.getKey(),message, false);
+        synchronized (connectedList) {
+            ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
+            for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+                sendRaw(ent.getKey(), message, false);
+            }
         }
     }
 
@@ -397,7 +405,10 @@ public class ScatterBluetoothManager {
         final Socket sock;
         final boolean isConnected;
         if(!fake) {
-            LocalPeer target = connectedList.get(mactarget);
+            LocalPeer target;
+            synchronized (connectedList) {
+                target = connectedList.get(mactarget);
+            }
             target.socket.isConnected();
             try {
                 ostream = target.socket.getOutputStream();

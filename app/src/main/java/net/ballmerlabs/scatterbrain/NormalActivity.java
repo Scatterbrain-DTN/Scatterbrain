@@ -97,17 +97,15 @@ public class NormalActivity extends AppCompatActivity {
         if(scatterBound) {
             byte[] tmp = {5, 5, 5, 5, 5, 5};
             BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true, mService.luid);
-            BlockDataPacket out = new BlockDataPacket(bd.contents);
-            Messages.data.add(new DispMessage(new String(out.body),
-                   new String(Base64.encodeToString(out.senderluid, Base64.DEFAULT))));
+            Messages.data.add(new DispMessage(new String(bd.body),
+                   new String(Base64.encodeToString(bd.senderluid, Base64.DEFAULT))));
             // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
-            if(!out.isInvalid()) {
-                    mService.dataStore.enqueueMessageNoDuplicate(out);
+            if(!bd.isInvalid()) {
+                    mService.dataStore.enqueueMessageNoDuplicate(bd);
                     ScatterLogManager.v(TAG, "Updating list");
                     if (mService.getBluetoothManager() != null) {
-                        mService.getBluetoothManager().sendMessageToBroadcast(
-                                MsgBox.getText().toString().getBytes(), true);
+                        mService.getBluetoothManager().sendRawToBroadcast(bd.getContents());
                     }
 
             }

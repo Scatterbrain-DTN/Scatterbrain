@@ -383,7 +383,7 @@ public class ScatterBluetoothManager {
     public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                        final  boolean text, final boolean fake) {
         ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-        BlockDataPacket bd = new BlockDataPacket(message,text, trunk.profile.getLUID() );
+        BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
         sendRaw(mactarget,bd.getContents(), fake);
     }
 

@@ -28,6 +28,7 @@ public class ScatterAcceptThread extends Thread {
     private BluetoothServerSocket mmServerSocket = null;
     private NetTrunk trunk;
     private BluetoothAdapter adapter;
+
     public ScatterAcceptThread(NetTrunk trunk, BluetoothAdapter adapter) {
         this.adapter = adapter;
         this.trunk = trunk;

@@ -277,11 +277,11 @@ public class ScatterBluetoothManager {
             trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
             AdvertisePacket outpacket = new AdvertisePacket(trunk.profile);
             o.write(outpacket.getContents());
-            byte[] buffer = new byte[50];
+            byte[] buffer = new byte[AdvertisePacket.PACKET_SIZE];
             i.read(buffer);
             AdvertisePacket inpacket= null;
             if(buffer != null) {
-                inpacket = trunk.globnet.decodeAdvertise(buffer);
+                inpacket = new AdvertisePacket(buffer);
                 if(!inpacket.isInvalid()) {
                     trunk.mainService.updateUiOnDevicesFound(connectedList);
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
@@ -290,7 +290,8 @@ public class ScatterBluetoothManager {
 
                 }
                 else {
-                    ScatterLogManager.e(TAG, "Received an advertise stanza, but it is invalid");
+                    byte b = inpacket.getContents()[0];
+                    ScatterLogManager.e(TAG, "Received an advertise stanza, but it is invalid (" + b + ")");
                     socket.close();
                 }
 

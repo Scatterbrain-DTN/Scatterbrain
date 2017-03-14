@@ -19,7 +19,9 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 public class ScatterReceiveThread extends Thread{
     BluetoothSocket socket;
     NetTrunk trunk;
-    public ScatterReceiveThread(BluetoothSocket socket) {
+    public boolean fake;
+    public ScatterReceiveThread(BluetoothSocket socket, boolean fake) {
+        this.fake = fake;
         this.socket = socket;
         this.trunk = ScatterRoutingService.getNetTrunk();
     }

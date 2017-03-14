@@ -127,7 +127,6 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
                     //gui element manimulating ommitted
                     //textViewToChange.setText(oldText + subMessage.substring(0, subMessage.length() - 1) + (enter ? "\n" : ""))
 
-                    net.appendPacket(decodePacket(subMessage.getBytes()));
 
                     ui = ui == 2 ? -1 : ui;
                     ui ++;
@@ -163,14 +162,6 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     }
 
 
-    private ScatterStanza decodePacket(byte in[]) {
-        if(in[0] == 0)
-            return net.decodeAdvertise(in);
-        else if(in[0] == 1)
-            return net.decodeBlockData(in);
-        else
-            return null;
-    }
 
     private AdvertisePacket decodeAdvertise(byte in[]) {
         return new AdvertisePacket(in);

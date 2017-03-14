@@ -69,22 +69,6 @@ public class GlobalNet {
     }
 
 
-    /*
-     * decodes a packet for casting into packet types
-     */
-    private ScatterStanza decodePacket(byte in[]) {
-        if (in[0] == 0)
-            return decodeAdvertise(in);
-        else if (in[0] == 1)
-            return decodeBlockData(in);
-        else
-            return null;
-    }
-
-    public AdvertisePacket decodeAdvertise(byte in[]) {
-        return new AdvertisePacket(in);
-    }
-
     public BlockDataPacket decodeBlockData(byte in[]) {
         return new BlockDataPacket(in);
     }

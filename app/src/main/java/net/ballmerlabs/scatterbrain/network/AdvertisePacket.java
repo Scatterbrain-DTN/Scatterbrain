@@ -22,9 +22,10 @@ public class AdvertisePacket extends ScatterStanza {
     public byte[] luid;
     public byte[] err;
     public final int ERR_SIZE = 7;
+    public static final int PACKET_SIZE = 17;
 
     public AdvertisePacket(DeviceProfile dv) {
-        super(17);
+        super(PACKET_SIZE);
         protocolversion = new byte[2];
         this.luid = new byte[6];
         invalid = false;
@@ -35,12 +36,12 @@ public class AdvertisePacket extends ScatterStanza {
 
 
     public AdvertisePacket(byte raw[]) {
-        super(17);
+        super(PACKET_SIZE);
         this.err = new byte[ERR_SIZE];
         this.luid = new byte[6];
         protocolversion = new byte[2];
 
-        if(raw.length < 17) {
+        if(raw.length < PACKET_SIZE) {
             invalid = true;
             err[0] = 1;
             return;

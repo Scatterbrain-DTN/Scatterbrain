@@ -251,7 +251,7 @@ public class SearchForSenpai extends AppCompatActivity {
                 @Override
                 public void run() {
                     mService.getBluetoothManager().startDiscoverLoopThread();
-                    mService.getBluetoothManager().resetBluetoothDiscoverability(9999);
+                    mService.getBluetoothManager().resetBluetoothDiscoverability(300);
 
                 }
             }, 5000);

@@ -92,7 +92,7 @@ public class ScatterBluetoothManager {
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 ScatterLogManager.v(TAG, "Device disvovery finished.");
 
-                resetBluetoothDiscoverability(999);
+                resetBluetoothDiscoverability(300);
                 //stop discovering and attempt to gently fetch UUIDs from devices.
                 //This can fail with an overloaded adapter or saturated channels, so we do it slowly.
                 pauseDiscoverLoopThread();
@@ -192,7 +192,7 @@ public class ScatterBluetoothManager {
                      * method, but this can.
                      */
             for (Method m : methods) {
-                if (m.getName().contains("setDiscoverableTimeout"))
+                if (m.getName().contains("setScanMode"))
                     setDuration = m;
             }
         }
@@ -455,7 +455,7 @@ public class ScatterBluetoothManager {
 
     public void resetBluetoothDiscoverability(final int time) {
         try {
-            setDuration.invoke(adapter, time);
+            setDuration.invoke(adapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, time);
         }
         catch(Exception e) {
             ScatterLogManager.e(TAG, e.getMessage());

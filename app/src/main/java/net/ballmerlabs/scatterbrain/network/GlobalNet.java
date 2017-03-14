@@ -63,14 +63,6 @@ public class GlobalNet {
     }
 
 
-    /*
-     * encodes advertise packet with current device profile as source
-     */
-    public AdvertisePacket encodeAdvertise(DeviceProfile prof) {
-        byte result[] = new byte[7];
-        AdvertisePacket adpack = new AdvertisePacket(prof);
-        return adpack;
-    }
 
     public WifiManager getWifiManager() {
         return directmanager;

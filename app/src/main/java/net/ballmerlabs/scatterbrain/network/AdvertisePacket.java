@@ -40,7 +40,7 @@ public class AdvertisePacket extends ScatterStanza {
         this.luid = new byte[6];
         protocolversion = new byte[2];
 
-        if(raw.length != 17) {
+        if(raw.length < 17) {
             invalid = true;
             err[0] = 1;
             return;

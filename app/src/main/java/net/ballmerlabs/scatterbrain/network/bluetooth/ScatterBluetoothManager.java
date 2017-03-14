@@ -92,6 +92,7 @@ public class ScatterBluetoothManager {
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 ScatterLogManager.v(TAG, "Device disvovery finished.");
 
+                resetBluetoothDiscoverability(999);
                 //stop discovering and attempt to gently fetch UUIDs from devices.
                 //This can fail with an overloaded adapter or saturated channels, so we do it slowly.
                 pauseDiscoverLoopThread();
@@ -233,7 +234,6 @@ public class ScatterBluetoothManager {
                     bluetoothHan.postDelayed(scanr, scan * 1000);
                 }
 
-                resetBluetoothDiscoverability(9999);
             }
         };
 
@@ -275,7 +275,7 @@ public class ScatterBluetoothManager {
             OutputStream o = socket.getOutputStream();
             BluetoothDevice d = socket.getRemoteDevice();
             trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
-            AdvertisePacket outpacket = trunk.globnet.encodeAdvertise(trunk.profile);
+            AdvertisePacket outpacket = new AdvertisePacket(trunk.profile);
             o.write(outpacket.getContents());
             byte[] buffer = new byte[50];
             i.read(buffer);

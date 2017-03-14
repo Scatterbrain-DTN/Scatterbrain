@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +33,8 @@ import net.ballmerlabs.scatterbrain.network.PeersChangedCallback;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 
+import org.w3c.dom.Text;
+
 /*
  * Main 'Home screen' activity for the scatterbrain testing phase.
  */
@@ -43,6 +46,7 @@ public class SearchForSenpai extends AppCompatActivity {
     private ScatterRoutingService mService;
     private Button castButton;
     private TextView peerDisplay;
+    private TextView peersText;
     private String TAG = "SenpaiActivity";
     final Activity main  = this;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -64,6 +68,9 @@ public class SearchForSenpai extends AppCompatActivity {
                                                           peers = peers + d.getKey() + "\n";
                                                       }
 
+                                                      TextView pt = (TextView) findViewById(R.id.peersText);
+                                                      pt.setText("peers : " + peers.length());
+                                                      pt.setTextColor(Color.GREEN);
                                                       TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
                                                       senpai_notice.setVisibility(View.VISIBLE);
                                                       senpai_notice.setText(peers);
@@ -164,6 +171,9 @@ public class SearchForSenpai extends AppCompatActivity {
         progress = (ProgressBar) findViewById(R.id.progressBar);
         progress.setProgress(0);
 
+        peersText = (TextView) findViewById(R.id.peersText);
+        peersText.setText("peers: 0");
+        peersText.setTextColor(Color.RED);
         castButton = (Button) findViewById(R.id.castbutton);
         final Intent launchMessagingIntent = new Intent(this,NormalActivity.class);
 
@@ -241,6 +251,8 @@ public class SearchForSenpai extends AppCompatActivity {
                 @Override
                 public void run() {
                     mService.getBluetoothManager().startDiscoverLoopThread();
+                    mService.getBluetoothManager().resetBluetoothDiscoverability(9999);
+
                 }
             }, 5000);
         }

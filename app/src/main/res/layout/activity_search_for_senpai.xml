@@ -60,5 +60,16 @@
         android:layout_toStartOf="@+id/notice_text"
         android:id="@+id/peerdisplay" />
 
+    <EditText
+        android:id="@+id/peersText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/progressBar"
+        android:layout_below="@+id/peerdisplay"
+        android:layout_marginStart="26dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
 </RelativeLayout>
 

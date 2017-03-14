@@ -25,9 +25,9 @@ public class BlockDataPacket extends ScatterStanza {
     public Integer size;
     public int[] err;
     public final int ERRSIZE =10;
-
+    public static int HEADERSIZE = 22;
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
-        super(22+body.length);
+        super(HEADERSIZE+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
@@ -84,9 +84,9 @@ public class BlockDataPacket extends ScatterStanza {
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
         this.err = new int[ERRSIZE];
-        if(raw.length > 14)
+        if(raw.length >= 22)
             contents = raw.clone();
-        else {
+        else if (raw.length < 22) {
             err[0] = 1;
             invalid = true;
         }
@@ -124,24 +124,27 @@ public class BlockDataPacket extends ScatterStanza {
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-        body = new byte[size];
 
-        for(int x=0;x<size;x++) {
-            body[x] = contents[x+18];
-        }
+        if(size > 0) {
+            body = new byte[size];
+            for (int x = 0; x < size; x++) {
+                body[x] = contents[x + 18];
+            }
 
-        //verify crc with stored copy 
-        CRC32 crc = new CRC32();
-        crc.update(contents,0, contents.length - 4);
-        byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int)crc.getValue()).array();
-        byte[] real = new byte[4];
-        for(int x=0;x<real.length;x++) {
-            real[x] = contents[(contents.length - 4) + x];
-        }
 
-        if(!Arrays.equals(real, check)) {
-            err[2] = 1;
-            invalid = true;
+            //verify crc with stored copy
+            CRC32 crc = new CRC32();
+            crc.update(contents, 0, contents.length - 4);
+            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
+            byte[] real = new byte[4];
+            for (int x = 0; x < real.length; x++) {
+                real[x] = contents[(contents.length - 4) + x];
+            }
+
+            if (!Arrays.equals(real, check)) {
+                err[2] = 1;
+                invalid = true;
+            }
         }
     }
 
@@ -196,5 +199,15 @@ public class BlockDataPacket extends ScatterStanza {
         }
 
         return contents;
+    }
+
+
+    public static int getSizeFromData(byte[] data) {
+        byte[] sizearr = new byte[4];
+
+        for(int i=0;i<4;i++) {
+            sizearr[i] = data[i+14];
+        }
+        return ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
     }
 }

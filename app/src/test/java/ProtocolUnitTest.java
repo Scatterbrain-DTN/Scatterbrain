@@ -102,4 +102,24 @@ public class ProtocolUnitTest {
 
         assertThat(ap.isInvalid() && ap2.isInvalid(), is(true));
     }
+
+    @Test
+    public void BlockDataPacketWithNullDataIsValid() {
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+        BlockDataPacket ne = new BlockDataPacket(bd.getContents());
+        if(bd.getContents().length == BlockDataPacket.HEADERSIZE) {
+            System.out.println("HEADERSIZE");
+        }
+        System.out.println(bd.getContents().length);
+        System.out.println(ne.getContents().length);
+        System.out.println("err");
+        for(int b : ne.err) {
+            System.out.print(b + " ");
+        }
+        System.out.println();
+        assertThat(bd.getHash().equals(ne.getHash()), is(true));
+    }
+
 }

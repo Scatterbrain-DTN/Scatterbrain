@@ -35,7 +35,7 @@ public class ScatterReceiveThread extends Thread{
                 errorcount = 0;
                 int pos = 0;
 
-                byte[] header = new byte[18];
+                byte[] header = new byte[BlockDataPacket.HEADERSIZE];
 
                 if(socket.getInputStream().read(header) == -1) {
                     ScatterLogManager.e(trunk.blman.TAG, "Received an incomplete blockdata header");
@@ -43,15 +43,12 @@ public class ScatterReceiveThread extends Thread{
                 }
 
 
-                BlockDataPacket intermediate_header = new BlockDataPacket(header);
-                if(intermediate_header.isInvalid()) {
-                    ScatterLogManager.e(trunk.blman.TAG, "Received a corrupt blockdata header");
-                    continue;
-                }
-                ScatterLogManager.v("Receive", "Got header with size " + intermediate_header.size);
+                ScatterLogManager.v("Receive", "Got header with size " +
+                        BlockDataPacket.getSizeFromData(header));
 
 
-                byte[] buffer = new byte[intermediate_header.size+18];
+                byte[] buffer = new byte[BlockDataPacket.getSizeFromData(header)+
+                        BlockDataPacket.HEADERSIZE];
 
                 for(int i=0;i<header.length; i++) {
                     buffer[i] = header[i];

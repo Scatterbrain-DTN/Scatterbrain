@@ -122,4 +122,20 @@ public class ProtocolUnitTest {
         assertThat(bd.getHash().equals(ne.getHash()), is(true));
     }
 
+    @Test
+    public void BlockDataSizeOperatorReturnsCorrectSize() {
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+
+        assertThat(bd.size == BlockDataPacket.getSizeFromData(bd.getContents()), is(true));
+
+        byte[] senderluid2 = {1,2,3,4,5,6};
+        byte[] randomdata2 = {3,3,65,34,6,3,52,52,5,2,5};
+
+        BlockDataPacket bd2 = new BlockDataPacket(randomdata2, false, senderluid2);
+
+        assertThat(bd2.size == BlockDataPacket.getSizeFromData(bd2.getContents()), is(true));
+    }
+
 }

@@ -332,18 +332,12 @@ public class ScatterBluetoothManager {
     public void offloadRandomPackets(int count, final String device) {
         final ArrayList<BlockDataPacket> ran = trunk.mainService.dataStore.getTopRandomMessages(count);
         pauseDiscoverLoopThread();
-        Thread offloadThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for(BlockDataPacket p : ran) {
-                    if(p.isInvalid()) {
-                        ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
-                    }
-                    sendRaw(device, p.contents,false);
-                }
+        for (BlockDataPacket p : ran) {
+            if (p.isInvalid()) {
+                ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
             }
-        });
-        offloadThread.start();
+            sendRaw(device, p.contents, false);
+        }
     }
 
     //stops (and kills) the discovery thread

@@ -25,7 +25,8 @@ public class BlockDataPacket extends ScatterStanza {
     public Integer size;
     public int[] err;
     public final int ERRSIZE =10;
-    public static int HEADERSIZE = 22;
+    public static final int HEADERSIZE = 22;
+    public static final byte MAGIC = 124;
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
         super(HEADERSIZE+body.length);
         this.body = body;
@@ -91,7 +92,7 @@ public class BlockDataPacket extends ScatterStanza {
             invalid = true;
         }
 
-        if(contents[0] != 1) {
+        if(contents[0] != BlockDataPacket.MAGIC) {
             err[1] = 1;
             invalid = true;
         }
@@ -149,7 +150,7 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
     private byte[] init() {
-        contents[0] = 1;
+        contents[0] = BlockDataPacket.MAGIC;
         if(senderluid.length != 6) {
             ScatterLogManager.e("BDinit", "Senderluid wrong length");
             err[3] = 1;
@@ -209,7 +210,7 @@ public class BlockDataPacket extends ScatterStanza {
             return -1;
         }
 
-        if(data[0] != 1) {
+        if(data[0] != BlockDataPacket.MAGIC) {
             return -1;
         }
 

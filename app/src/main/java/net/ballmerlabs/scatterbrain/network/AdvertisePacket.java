@@ -23,6 +23,7 @@ public class AdvertisePacket extends ScatterStanza {
     public byte[] err;
     public final int ERR_SIZE = 7;
     public static final int PACKET_SIZE = 17;
+    public static final byte MAGIC = -87;
 
     public AdvertisePacket(DeviceProfile dv) {
         super(PACKET_SIZE);
@@ -49,7 +50,7 @@ public class AdvertisePacket extends ScatterStanza {
         else {
             contents = raw;
 
-            if(contents[0] != 0) {
+            if(contents[0] != AdvertisePacket.MAGIC) {
                 invalid = true;
                 err[1] = 1;
                 return;
@@ -82,7 +83,7 @@ public class AdvertisePacket extends ScatterStanza {
     }
 
     private byte[] init(DeviceProfile dv) {
-        contents[0] = 0;
+        contents[0] = AdvertisePacket.MAGIC;
 
         if(dv.getLUID().length != 6) {
             err[4] = 1;

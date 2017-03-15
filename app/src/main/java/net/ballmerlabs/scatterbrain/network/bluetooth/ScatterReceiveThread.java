@@ -96,7 +96,7 @@ public class ScatterReceiveThread extends Thread{
                         trunk.blman.connectedList.remove(socket.getRemoteDevice().getAddress());
                     }
                     go = false;
-                
+                }
 
             }
             catch(Exception e) {

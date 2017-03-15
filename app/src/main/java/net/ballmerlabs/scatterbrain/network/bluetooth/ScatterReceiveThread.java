@@ -47,13 +47,14 @@ public class ScatterReceiveThread extends Thread{
                     continue;
                 }
 
+                int size = BlockDataPacket.getSizeFromData(header);
+                ScatterLogManager.v("Receive", "Got header with size " +size
+                        );
 
-                ScatterLogManager.v("Receive", "Got header with size " +
-                        BlockDataPacket.getSizeFromData(header));
-
-
+                if(size < 0)
+                    continue;
                 //TODO: stop doing stuff in memory so we can receive something huge
-                byte[] buffer = new byte[BlockDataPacket.getSizeFromData(header)+
+                byte[] buffer = new byte[size+
                         BlockDataPacket.HEADERSIZE];
 
                 for(int i=0;i<header.length; i++) {

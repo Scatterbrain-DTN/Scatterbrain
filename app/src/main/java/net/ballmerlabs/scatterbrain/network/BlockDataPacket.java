@@ -205,9 +205,22 @@ public class BlockDataPacket extends ScatterStanza {
     public static int getSizeFromData(byte[] data) {
         byte[] sizearr = new byte[4];
 
+        if (data.length < 22) {
+            return -1;
+        }
+
+        if(data[0] != 1) {
+            return -1;
+        }
+
         for(int i=0;i<4;i++) {
             sizearr[i] = data[i+14];
         }
-        return ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+        int size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        if(size < 0)
+            return -1;
+        else
+            return size;
     }
 }

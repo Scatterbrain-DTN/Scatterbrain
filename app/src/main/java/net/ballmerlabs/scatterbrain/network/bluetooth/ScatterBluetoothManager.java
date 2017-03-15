@@ -291,14 +291,16 @@ public class ScatterBluetoothManager {
             if(buffer != null) {
                 inpacket = new AdvertisePacket(buffer);
                 if(!inpacket.isInvalid()) {
-                    synchronized (connectedList) {
-                        trunk.mainService.updateUiOnDevicesFound(connectedList);
-                    }
+
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
                     synchronized (connectedList) {
                         connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
 
                      //   ScatterLogManager.v(TAG, "List size = " + connectedList.size());
+                    }
+
+                    synchronized (connectedList) {
+                        trunk.mainService.updateUiOnDevicesFound(connectedList);
                     }
 
                 }

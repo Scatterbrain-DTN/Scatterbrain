@@ -69,7 +69,7 @@ public class SearchForSenpai extends AppCompatActivity {
                                                       }
 
                                                       TextView pt = (TextView) findViewById(R.id.peersText);
-                                                      pt.setText("peers : " + peers.length());
+                                                      pt.setText("peers : " + connectedList.size());
                                                       pt.setTextColor(Color.GREEN);
                                                       TextView senpai_notice = (TextView) findViewById(R.id.notice_text);
                                                       senpai_notice.setVisibility(View.VISIBLE);

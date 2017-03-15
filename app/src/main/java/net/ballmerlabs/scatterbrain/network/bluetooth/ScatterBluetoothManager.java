@@ -159,6 +159,7 @@ public class ScatterBluetoothManager {
 
     //this should return a handler object later
     public void connectToDevice(List<BluetoothDevice> device) {
+        foundList.clear();
         if (!isAccepting) {
             ScatterConnectThread currentconnection;
             currentconnection = new ScatterConnectThread(device, trunk);

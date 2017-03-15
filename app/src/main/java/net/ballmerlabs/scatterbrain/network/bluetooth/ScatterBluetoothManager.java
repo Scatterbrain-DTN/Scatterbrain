@@ -447,7 +447,6 @@ public class ScatterBluetoothManager {
         Thread messageSendThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                for(int x=0;x<5;x++) {
                     if(!fake)
                         trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
                     if (isConnected) {
@@ -458,15 +457,14 @@ public class ScatterBluetoothManager {
                             }
                             ostream.write(blockDataPacket.getContents());
                             //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
-                            break;
+                            ostream.close();
                         } catch (IOException e) {
+
                             ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
                         }
                     }
                     else{
-                        break; //we moved out of range
                     }
-                }
             }
         });
 

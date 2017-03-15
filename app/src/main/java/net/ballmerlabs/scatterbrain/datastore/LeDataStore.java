@@ -105,7 +105,7 @@ public class LeDataStore {
 
     }
 
-    public int enqueueMessageNoDuplicate(BlockDataPacket bd) {
+    public synchronized int enqueueMessageNoDuplicate(BlockDataPacket bd) {
         Cursor cu = db.rawQuery("SELECT * FROM " +
                 MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE " +

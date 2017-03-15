@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.support.v4.view.NestedScrollingChild;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -48,6 +49,11 @@ public class NormalActivity extends AppCompatActivity {
 
             mService.registerMessageArrayAdapter(Messages);
 
+            //add some previously received messages.
+            for(BlockDataPacket b : mService.dataStore.getTopMessages(90)) {
+                Messages.data.add(new DispMessage(new String(b.body),
+                        Base64.encodeToString(b.senderluid, Base64.DEFAULT)));
+            }
             ScatterLogManager.v(TAG, "Bound to routing service");
             scatterBound = true;
 

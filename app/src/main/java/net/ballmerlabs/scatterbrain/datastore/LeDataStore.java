@@ -211,6 +211,7 @@ public class LeDataStore {
             finalresult.add(new Message(hash, extbody, body, application,
                     text, ttl, replylink, senderluid, receiverluid, sig, flags));
         }
+        cu.close();
 
         return finalresult;
 
@@ -259,7 +260,7 @@ public class LeDataStore {
                     text, ttl, replylink, senderluid, receiverluid, sig, flags));
         }
 
-
+        cu.close();
         return finalresult;
 
     }
@@ -318,6 +319,7 @@ public class LeDataStore {
             }
         }
 
+        cu.close();
         return finalresult;
 
     }

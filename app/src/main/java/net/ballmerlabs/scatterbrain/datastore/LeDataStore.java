@@ -218,7 +218,7 @@ public class LeDataStore {
     }
 
 
-    public ArrayList<Message> getMessageByHash(String compare_hash) {
+    public synchronized ArrayList<Message> getMessageByHash(String compare_hash) {
 
       //  ScatterLogManager.v(TAG, "Retreiving message from hash");
 

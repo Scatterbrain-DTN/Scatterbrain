@@ -49,17 +49,17 @@ public class LeDataStore {
 
     }
 
-    public void flushDb() {
+    public synchronized void flushDb() {
         db.execSQL("DELETE FROM " + MsgDataDb.MessageQueue.TABLE_NAME);
     }
 
-    public void connect() {
+    public synchronized void connect() {
         ScatterLogManager.v(TAG, "Connected to datastore");
         helper = new MsgDbHelper(mainService.getApplicationContext());
         db = helper.getWritableDatabase();
         connected = true;
     }
-    public void disconnect() {
+    public synchronized void disconnect() {
         ScatterLogManager.v(TAG, "Disconnected from datastore");
         db.close();
         connected = false;
@@ -78,7 +78,7 @@ public class LeDataStore {
     /*
      * sticks a message into the datastore at the front?.
      */
-    public void enqueueMessage(String uuid, int extbody,   String body, String application, int text,  int ttl,
+    public synchronized void enqueueMessage(String uuid, int extbody,   String body, String application, int text,  int ttl,
                                String replyto, String luid, String receiverLuid,
                                String sig, String flags) {
 
@@ -105,7 +105,7 @@ public class LeDataStore {
 
     }
 
-    public int enqueueMessageNoDuplicate(BlockDataPacket bd) {
+    public synchronized int enqueueMessageNoDuplicate(BlockDataPacket bd) {
         Cursor cu = db.rawQuery("SELECT * FROM " +
                 MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE " +
@@ -124,25 +124,29 @@ public class LeDataStore {
     }
 
     /* Very temporary method for writing a blockdata stanza to datastore */
-    public int enqueueMessage(BlockDataPacket bd) {
-        if(connected) {
-            if (bd.isInvalid()) {
-                ScatterLogManager.e(TAG, "Tried to store an invalid packet");
-                return -1;
+    public synchronized int enqueueMessage(BlockDataPacket bd) {
+        try {
+            if (connected) {
+                if (bd.isInvalid()) {
+                    ScatterLogManager.e(TAG, "Tried to store an invalid packet");
+                    return -1;
+                }
+                enqueueMessage(bd.getHash(), 0, Base64.encodeToString(bd.body, Base64.DEFAULT),
+                        "SenpaiDetector", 1, -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                        Base64.encodeToString(bd.senderluid, Base64.DEFAULT), "none",
+                        Base64.encodeToString(bd.receiverluid, Base64.DEFAULT), "none, none");
+            } else {
+                ScatterLogManager.e(TAG, "Tried to save a packet with datastore disconnected.");
+                return -2;
             }
-            enqueueMessage(bd.getHash(), 0, Base64.encodeToString(bd.body, Base64.DEFAULT),
-                    "SenpaiDetector", 1, -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
-                   Base64.encodeToString(bd.senderluid,Base64.DEFAULT), "none" ,
-                    Base64.encodeToString(bd.receiverluid, Base64.DEFAULT), "none, none");
         }
-        else {
-            ScatterLogManager.e(TAG, "Tried to save a packet with datastore disconnected.");
-            return -2;
+        catch(Exception e) {
+            ScatterLogManager.e(TAG, "Exception in enqueueMessage:\n" + e.getStackTrace());
         }
         return 0;
     }
 
-    public BlockDataPacket messageToBlockData(Message m) {
+    public synchronized BlockDataPacket messageToBlockData(Message m) {
         BlockDataPacket result = new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
                 Base64.decode(m.senderluid,Base64.DEFAULT));
         return result;
@@ -153,7 +157,7 @@ public class LeDataStore {
      * this is called to trim the datastore and leave only the x newest entires
      * Makes messages 'die out' after a while
      */
-    public void trimDatastore(int limit) {
+    public synchronized void trimDatastore(int limit) {
      //   ScatterLogManager.v(TAG, "Trimming message queue. Too long.");
         String del = "DELETE FROM " + MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE ROWID IN (SELECT ROWID FROM "
@@ -168,7 +172,7 @@ public class LeDataStore {
      * (Hopefully) returns an array list of Message objects with all the data
      * in the datastore in it.
      */
-    public ArrayList<Message> getMessages() {
+    public synchronized ArrayList<Message> getMessages() {
 
     //    ScatterLogManager.v(TAG, "Mass dumping all messages from datastore");
 

@@ -483,4 +483,5 @@ public class ScatterBluetoothManager {
 
     }
 
+
 }

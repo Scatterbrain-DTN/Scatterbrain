@@ -48,8 +48,7 @@ public class ScatterReceiveThread extends Thread{
                 }
 
                 int size = BlockDataPacket.getSizeFromData(header);
-                ScatterLogManager.v("Receive", "Got header with size " +size
-                        );
+               // ScatterLogManager.v("Receive", "Got header with size " +size);
 
                 if(size < 0)
                     continue;
@@ -71,7 +70,7 @@ public class ScatterReceiveThread extends Thread{
                     if(counter >= buffer.length)
                         break;
                 }
-                ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
+               // ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
 
                 trunk.blman.onSuccessfulReceive(buffer);
 

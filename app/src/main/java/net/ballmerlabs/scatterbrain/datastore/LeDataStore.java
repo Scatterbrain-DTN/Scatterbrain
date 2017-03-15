@@ -82,7 +82,7 @@ public class LeDataStore {
                                String replyto, String luid, String receiverLuid,
                                String sig, String flags) {
 
-        ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
+       // ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_HASH, uuid);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY, extbody);
@@ -114,12 +114,11 @@ public class LeDataStore {
                 new String[] {bd.getHash()});
 
         if(cu.getCount() == 0){
-            ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash() +
-           "  "+  bd.size + "  " + bd.senderluid.length);
+           // ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash() +"  "+  bd.size + "  " + bd.senderluid.length);
             return enqueueMessage(bd);
         }
         else {
-            ScatterLogManager.e(TAG, "Attempted to insert duplicate data to datastore");
+           // ScatterLogManager.e(TAG, "Attempted to insert duplicate data to datastore");
             return 1;
         }
     }
@@ -155,7 +154,7 @@ public class LeDataStore {
      * Makes messages 'die out' after a while
      */
     public void trimDatastore(int limit) {
-        ScatterLogManager.v(TAG, "Trimming message queue. Too long.");
+     //   ScatterLogManager.v(TAG, "Trimming message queue. Too long.");
         String del = "DELETE FROM " + MsgDataDb.MessageQueue.TABLE_NAME +
                 " WHERE ROWID IN (SELECT ROWID FROM "
                 + MsgDataDb.MessageQueue.TABLE_NAME +
@@ -171,7 +170,7 @@ public class LeDataStore {
      */
     public ArrayList<Message> getMessages() {
 
-        ScatterLogManager.v(TAG, "Mass dumping all messages from datastore");
+    //    ScatterLogManager.v(TAG, "Mass dumping all messages from datastore");
 
         final String SEP = ", ";
         Cursor cu = db.rawQuery("SELECT "+
@@ -216,7 +215,7 @@ public class LeDataStore {
 
     public ArrayList<Message> getMessageByHash(String compare_hash) {
 
-        ScatterLogManager.v(TAG, "Retreiving message from hash");
+      //  ScatterLogManager.v(TAG, "Retreiving message from hash");
 
         final String SEP = ", ";
         Cursor cu = db.rawQuery("SELECT "+
@@ -283,7 +282,7 @@ public class LeDataStore {
                 + " ORDER BY RANDOM() LIMIT " + count, null);
 
 
-        ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");
+       // ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");
         //check here for overrun problems
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         cu.moveToFirst();

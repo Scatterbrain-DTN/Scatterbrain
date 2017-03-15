@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public  class ScatterLogManager {
     private static ArrayAdapter<String> adapter;
     public static ArrayList<String> buffer = new ArrayList<>();
+    public static final int MAXBUFFER = 1000;
     public static void init(ArrayAdapter<String> madapter) {
         adapter = madapter;
         for(String line : buffer) {
@@ -22,7 +23,16 @@ public  class ScatterLogManager {
         }
     }
 
+    public static void checkBuffer() {
+        if(buffer.size() > MAXBUFFER) {
+            buffer.clear();
+        }
+        if(adapter.getCount() > MAXBUFFER) {
+            adapter.clear();
+        }
+    }
     public static void v(final String tag, final String msg) {
+        checkBuffer();
         Log.v(tag,msg);
         if(adapter != null) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -38,6 +48,7 @@ public  class ScatterLogManager {
     }
 
     public static void e(final String tag, final String msg) {
+        checkBuffer();
         Log.e(tag,msg);
         if(adapter != null) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -54,6 +65,7 @@ public  class ScatterLogManager {
     }
 
     public static void d(final String tag, final String msg) {
+        checkBuffer();
         Log.d(tag,msg);
         if(adapter != null) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -69,6 +81,7 @@ public  class ScatterLogManager {
     }
 
     public static void i(final String tag,final String msg) {
+        checkBuffer();
         Log.i(tag,msg);
         if(adapter != null) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {

@@ -162,7 +162,7 @@ public class ScatterBluetoothManager {
         if (!isAccepting) {
             ScatterConnectThread currentconnection;
             currentconnection = new ScatterConnectThread(device, trunk);
-            currentconnection.start();
+            bluetoothHan.post(currentconnection);
         }
         else {
             ScatterLogManager.e(TAG, "Tried to connect, but accept thread is dead for some reason");

@@ -257,20 +257,20 @@ public class ScatterBluetoothManager {
             ScatterLogManager.e(TAG, "Received corrupt blockdata packet.");
             return;
         }
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(bd) == 0) {
+        if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(bd) ==0) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
                     if (NormalActivity.active) {
                         trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
                                 Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
                         trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                    //    ScatterLogManager.e(TAG, "Appended message to message list");
+                        //    ScatterLogManager.e(TAG, "Appended message to message list");
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
 

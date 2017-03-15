@@ -448,7 +448,7 @@ public class ScatterBluetoothManager {
             @Override
             public void run() {
                     if(!fake)
-                        trunk.mainService.dataStore.enqueueMessage(blockDataPacket);
+                        trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
                     if (isConnected) {
                         try {
                             if(blockDataPacket.invalid) {
@@ -457,7 +457,6 @@ public class ScatterBluetoothManager {
                             }
                             ostream.write(blockDataPacket.getContents());
                             //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
-                            ostream.close();
                         } catch (IOException e) {
 
                             ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);

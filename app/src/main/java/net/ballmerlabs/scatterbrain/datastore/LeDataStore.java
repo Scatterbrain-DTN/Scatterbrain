@@ -271,55 +271,59 @@ public class LeDataStore {
      * the entire datastore.
      */
     public synchronized ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
-        final String SEP = ", ";
-        Cursor cu = db.rawQuery("SELECT " +
-                MsgDataDb.MessageQueue.COLUMN_NAME_HASH + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
-                MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS  +" FROM " + MsgDataDb.MessageQueue.TABLE_NAME
-                + " ORDER BY RANDOM() LIMIT " + count, null);
-
-
-       // ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");
-        //check here for overrun problems
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
-        cu.moveToFirst();
-        //check here for overrun problems
-        while (!cu.isAfterLast()) {
-            String  hash = cu.getString(0);
-            int extbody = cu.getInt(1);
-            String body = cu.getString(2);
-            String application = cu.getString(3);
-            int text = cu.getInt(4);
-            int ttl = cu.getInt(5);
-            String replylink = cu.getString(6);
-            String senderluid = cu.getString(7);
-            String receiverluid = cu.getString(8);
-            String sig = cu.getString(9);
-            String flags = cu.getString(10);
+        try {
+            final String SEP = ", ";
+            Cursor cu = db.rawQuery("SELECT " +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_HASH + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS + " FROM " + MsgDataDb.MessageQueue.TABLE_NAME
+                    + " ORDER BY RANDOM() LIMIT " + count, null);
 
-            cu.moveToNext();
-            boolean t;
-            if(text == 0) {
-                t = false;
+
+            // ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");
+            //check here for overrun problems
+            cu.moveToFirst();
+            //check here for overrun problems
+            while (!cu.isAfterLast()) {
+                String hash = cu.getString(0);
+                int extbody = cu.getInt(1);
+                String body = cu.getString(2);
+                String application = cu.getString(3);
+                int text = cu.getInt(4);
+                int ttl = cu.getInt(5);
+                String replylink = cu.getString(6);
+                String senderluid = cu.getString(7);
+                String receiverluid = cu.getString(8);
+                String sig = cu.getString(9);
+                String flags = cu.getString(10);
+
+                cu.moveToNext();
+                boolean t;
+                if (text == 0) {
+                    t = false;
+                } else {
+                    t = true;
+                }
+                //ScatterLogManager.e(TAG, body);
+                if (body.length() > 0) {
+                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
+                }
             }
-            else {
-                t = true;
-            }
-            //ScatterLogManager.e(TAG, body);
-            if(body.length() > 0) {
-                finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
-            }
+
+            cu.close();
         }
-
-        cu.close();
+        catch(Exception e) {
+            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + e.getStackTrace());
+        }
         return finalresult;
 
     }

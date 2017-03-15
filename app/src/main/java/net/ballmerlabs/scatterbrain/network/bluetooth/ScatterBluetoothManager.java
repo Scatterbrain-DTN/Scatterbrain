@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.Exchanger;
+import java.util.concurrent.RunnableFuture;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
@@ -438,30 +439,29 @@ public class ScatterBluetoothManager {
 
         }
         final BlockDataPacket blockDataPacket = new BlockDataPacket(message);
-        Thread messageSendThread = new Thread(new Runnable() {
+        Runnable messageSendThread = new Runnable() {
             @Override
             public void run() {
-                    if(!fake)
-                        trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
-                    if (isConnected) {
-                        try {
-                            if(blockDataPacket.invalid) {
-                                ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
-                                return;
-                            }
-                            ostream.write(blockDataPacket.getContents());
-                            //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
-                        } catch (IOException e) {
-
-                            ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
+                if (!fake)
+                    trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
+                if (isConnected) {
+                    try {
+                        if (blockDataPacket.invalid) {
+                            ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                            return;
                         }
-                    }
-                    else{
-                    }
-            }
-        });
+                        ostream.write(blockDataPacket.getContents());
+                        //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+                    } catch (IOException e) {
 
-        messageSendThread.start();
+                        ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
+                    }
+                } else {
+                }
+            }
+        };
+
+        bluetoothHan.post(messageSendThread);
     }
 
     public void resetBluetoothDiscoverability(final int time) {

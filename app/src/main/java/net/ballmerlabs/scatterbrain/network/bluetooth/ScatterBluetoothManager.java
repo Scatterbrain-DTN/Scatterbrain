@@ -230,7 +230,7 @@ public class ScatterBluetoothManager {
                         adapter.startDiscovery();
                 else if(runScanThread){
                     int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
-                    ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
+               //     ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
                     bluetoothHan.postDelayed(scanr, scan * 1000);
                 }
 
@@ -243,7 +243,7 @@ public class ScatterBluetoothManager {
 
     //function called when a packet is received from a connected device
     public void onSuccessfulReceive(byte[] incoming) {
-        ScatterLogManager.v(TAG, "Called onSuccessfulReceive for incoming message");
+      //  ScatterLogManager.v(TAG, "Called onSuccessfulReceive for incoming message");
         if (!NormalActivity.active)
             trunk.mainService.startMessageActivity();
         final BlockDataPacket bd = new BlockDataPacket(incoming);
@@ -260,7 +260,7 @@ public class ScatterBluetoothManager {
                         trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
                                 Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
                         trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                        ScatterLogManager.e(TAG, "Appended message to message list");
+                    //    ScatterLogManager.e(TAG, "Appended message to message list");
                     }
                 }
             }
@@ -288,7 +288,7 @@ public class ScatterBluetoothManager {
                     synchronized (connectedList) {
                         connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
 
-                        ScatterLogManager.v(TAG, "List size = " + connectedList.size());
+                     //   ScatterLogManager.v(TAG, "List size = " + connectedList.size());
                     }
 
                 }
@@ -368,7 +368,7 @@ public class ScatterBluetoothManager {
     //sends a BlockDataPacket to all connected peers
     public void sendMessageToBroadcast(byte[] message, boolean text) {
         synchronized (connectedList) {
-            ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
+           // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
             for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
                 sendMessageToLocalPeer(ent.getKey(), message, text, false);
             }
@@ -382,7 +382,7 @@ public class ScatterBluetoothManager {
      */
     public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                        final  boolean text, final boolean fake) {
-        ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
+        //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
         BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
         sendRaw(mactarget,bd.getContents(), fake);
     }
@@ -391,7 +391,7 @@ public class ScatterBluetoothManager {
     //sends a BlockDataPacket to all connected peers
     public void sendRawToBroadcast(byte[] message) {
         synchronized (connectedList) {
-            ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
+            //ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
             for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
                 sendRaw(ent.getKey(), message, false);
             }
@@ -399,7 +399,7 @@ public class ScatterBluetoothManager {
     }
 
     public void sendRaw(final String mactarget, final byte[] message, final boolean fake) {
-        ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
+        //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
 
         final OutputStream ostream;
         final Socket sock;
@@ -449,7 +449,7 @@ public class ScatterBluetoothManager {
                                 return;
                             }
                             ostream.write(blockDataPacket.getContents());
-                            ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+                            //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
                             break;
                         } catch (IOException e) {
                             ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);

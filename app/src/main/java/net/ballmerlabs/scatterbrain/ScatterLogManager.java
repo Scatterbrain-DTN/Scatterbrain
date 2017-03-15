@@ -27,8 +27,10 @@ public  class ScatterLogManager {
         if(buffer.size() > MAXBUFFER) {
             buffer.clear();
         }
-        if(adapter.getCount() > MAXBUFFER) {
-            adapter.clear();
+        if(adapter != null) {
+            if (adapter.getCount() > MAXBUFFER) {
+                adapter.clear();
+         }
         }
     }
     public static void v(final String tag, final String msg) {

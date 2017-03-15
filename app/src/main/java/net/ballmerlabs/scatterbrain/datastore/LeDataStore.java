@@ -270,7 +270,7 @@ public class LeDataStore {
      * Gets n rows from the datastore in a random order. For use when there is no time to transmit
      * the entire datastore.
      */
-    public ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
+    public synchronized ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
         final String SEP = ", ";
         Cursor cu = db.rawQuery("SELECT " +
                 MsgDataDb.MessageQueue.COLUMN_NAME_HASH + SEP +

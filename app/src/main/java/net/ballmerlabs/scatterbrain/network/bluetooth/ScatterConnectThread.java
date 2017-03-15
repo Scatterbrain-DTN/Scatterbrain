@@ -43,41 +43,44 @@ public class ScatterConnectThread extends Thread {
         bleman.pauseDiscoverLoopThread();
         ScatterLogManager.v(trunk.blman.TAG, "Attempting to connect to " +devicelist.size() + " devices");
         for(BluetoothDevice mmDevice : devicelist) {
-            if(!trunk.blman.connectedList.containsKey(mmDevice.getAddress())) {
-                success = false;
-                BluetoothSocket tmp = null;
-                try {
-                    tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);
-                } catch (IOException e) {
-
-                }
-                mmSocket = tmp;
-                try {
-
-                    mmSocket.connect();
-                    if (mmSocket.isConnected()) {
-                        success = true;
-
-                        //call this function in the context of the bluetoothManager
-                        ScatterLogManager.v(trunk.blman.TAG, "Connection successful");
-                        trunk.blman.onSuccessfulConnect(mmSocket);
-                    } else {
-                        ScatterLogManager.e(trunk.blman.TAG, "Connection raised no exception, but failed");
-                    }
-                } catch (IOException e) {
-                    ScatterLogManager.e(trunk.blman.TAG, "Failed to connect, IOException");
-                    // e.printStackTrace();
+            synchronized (trunk.blman.connectedList) {
+                if (!trunk.blman.connectedList.containsKey(mmDevice.getAddress())) {
+                    success = false;
+                    BluetoothSocket tmp = null;
                     try {
-                        mmSocket.close();
-                    } catch (IOException c) {
-                    }
+                        tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);
+                    } catch (IOException e) {
 
-                }
-                if (!success) {
-                 //   trunk.blman.blackList.add(mmDevice.getAddress());
+                    }
+                    mmSocket = tmp;
+                    try {
+
+                        mmSocket.connect();
+                        if (mmSocket.isConnected()) {
+                            success = true;
+
+                            //call this function in the context of the bluetoothManager
+                            ScatterLogManager.v(trunk.blman.TAG, "Connection successful");
+                            trunk.blman.onSuccessfulConnect(mmSocket);
+                        } else {
+                            ScatterLogManager.e(trunk.blman.TAG, "Connection raised no exception, but failed");
+                        }
+                    } catch (IOException e) {
+                        ScatterLogManager.e(trunk.blman.TAG, "Failed to connect, IOException");
+                        // e.printStackTrace();
+                        try {
+                            mmSocket.close();
+                        } catch (IOException c) {
+                        }
+
+                    }
+                    if (!success) {
+                        //   trunk.blman.blackList.add(mmDevice.getAddress());
+                    }
                 }
             }
         }
+
         devicelist.clear();
 
         trunk.blman.offloadRandomPacketsToBroadcast(500);

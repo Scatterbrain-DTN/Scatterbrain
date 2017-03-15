@@ -50,7 +50,9 @@ public class ScatterReceiveThread extends Thread{
                 int size = BlockDataPacket.getSizeFromData(header);
                // ScatterLogManager.v("Receive", "Got header with size " +size);
 
-                if(size < 0)
+
+                //temporary 15mb filesize limit. Sorry. TODO: remove this
+                if(size < 0 || size > 15728640)
                     continue;
                 //TODO: stop doing stuff in memory so we can receive something huge
                 byte[] buffer = new byte[size+
@@ -94,7 +96,7 @@ public class ScatterReceiveThread extends Thread{
                         trunk.blman.connectedList.remove(socket.getRemoteDevice().getAddress());
                     }
                     go = false;
-                }
+                
 
             }
             catch(Exception e) {

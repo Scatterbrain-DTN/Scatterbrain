@@ -85,7 +85,9 @@ public class ScatterBluetoothManager {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 ScatterLogManager.v(TAG, "Found a bluetooth device!");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                foundList.add(device);
+                synchronized (foundList) {
+                    foundList.add(device);
+                }
             }
 
             //when we are done scanning, attempt to connect to devices we found
@@ -96,9 +98,11 @@ public class ScatterBluetoothManager {
                 //stop discovering and attempt to gently fetch UUIDs from devices.
                 //This can fail with an overloaded adapter or saturated channels, so we do it slowly.
                 pauseDiscoverLoopThread();
-                targetUUID = foundList.size();
-                for(int x=currentUUID;x<foundList.size() && x< (PARALLELUUID+currentUUID);x++) {
-                    foundList.get(x).fetchUuidsWithSdp();
+                synchronized (foundList) {
+                    targetUUID = foundList.size();
+                    for (int x = currentUUID; x < foundList.size() && x < (PARALLELUUID + currentUUID); x++) {
+                        foundList.get(x).fetchUuidsWithSdp();
+                    }
                 }
                 if(currentUUID < targetUUID)
                     currentUUID += PARALLELUUID;
@@ -135,8 +139,10 @@ public class ScatterBluetoothManager {
                     }
                 }
 
-                for(int x=currentUUID;x<foundList.size() && x< (PARALLELUUID+currentUUID);x++) {
-                    foundList.get(x).fetchUuidsWithSdp();
+                synchronized (foundList) {
+                    for (int x = currentUUID; x < foundList.size() && x < (PARALLELUUID + currentUUID); x++) {
+                        foundList.get(x).fetchUuidsWithSdp();
+                    }
                 }
                 if(currentUUID < targetUUID)
                     currentUUID += PARALLELUUID;
@@ -283,7 +289,9 @@ public class ScatterBluetoothManager {
             if(buffer != null) {
                 inpacket = new AdvertisePacket(buffer);
                 if(!inpacket.isInvalid()) {
-                    trunk.mainService.updateUiOnDevicesFound(connectedList);
+                    synchronized (connectedList) {
+                        trunk.mainService.updateUiOnDevicesFound(connectedList);
+                    }
                     ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
                     synchronized (connectedList) {
                         connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));

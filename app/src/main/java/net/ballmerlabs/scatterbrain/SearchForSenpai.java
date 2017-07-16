@@ -320,11 +320,8 @@ public class SearchForSenpai extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // trunk.globnet.startWifiDirectLoopThread();
-        if(scatterBound && false) {
-            if (mService.getBluetoothManager().mReceiver != null )
-                mService.registerReceiver(mService.getBluetoothManager().mReceiver, mService.getBluetoothManager().filter);
-            mService.getBluetoothManager().startDiscoverLoopThread();
-        }
+        //noinspection PointlessBooleanExpression
+
     }
 
 
@@ -333,11 +330,8 @@ public class SearchForSenpai extends AppCompatActivity {
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
-        if(scatterBound && false) {
-            if (mService.getBluetoothManager().mReceiver != null)
-                mService.unregisterReceiver(mService.getBluetoothManager().mReceiver);
-            mService.getBluetoothManager().stopDiscoverLoopThread();
-        }
+        //noinspection PointlessBooleanExpression
+
     }
 
     @Override

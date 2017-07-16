@@ -51,6 +51,7 @@ public class BlockDataPacket extends BLEPacket{
         this.sendermac = new String(sendermac);
         this.receivermac = new String(recievermac);
 
+        //noinspection RedundantIfStatement
         if(contents[24] == 1)
             text = true;
         else

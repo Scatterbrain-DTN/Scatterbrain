@@ -74,8 +74,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
             return tmp;
         }
         else {
-            WifiP2pDeviceList tmp = new WifiP2pDeviceList();
-            return tmp;
+            return new WifiP2pDeviceList();
         }
     }
 }

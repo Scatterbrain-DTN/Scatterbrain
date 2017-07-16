@@ -40,7 +40,6 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
      * Remember to ca);ll this constructor in OnCreate()? maybe?
      */
     public BluetoothSpewer(Activity mainActivity,DeviceProfile me, GlobalNet globnet) throws LeNotSupportedException {
-        Activity mainActivity1 = mainActivity;
         if (!BleUtil.isBLESupported(mainActivity)) {
             throw (new LeNotSupportedException());
         }
@@ -55,7 +54,6 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
         }
-        GlobalNet net = globnet;
         currentDevice = me;
 
     }
@@ -66,6 +64,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
      * Starts discovery. Remember to run on pause and resume. Needs to be running while daemon
      * is running.
      */
+    @SuppressWarnings("deprecation")
     public void startScan() {
         if((adapter != null) && (!isscanning)) {
             adapter.startLeScan(this); //may need main activity.
@@ -73,6 +72,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void stopScan() {
         if(adapter != null) {
             adapter.stopLeScan(this);
@@ -147,15 +147,13 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
      * a string for transmit over Scatterbrain protocol
      */
     private BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
-        BlockDataPacket bdpacket = new BlockDataPacket(body, text, to);
-        return bdpacket;
+        return new BlockDataPacket(body, text, to);
     }
 
 
     private AdvertisePacket encodeAdvertise() {
         byte result[] = new byte[7];
-        AdvertisePacket adpack = new AdvertisePacket(currentDevice);
-        return adpack;
+        return new AdvertisePacket(currentDevice);
     }
 
 

@@ -151,9 +151,8 @@ public class LeDataStore {
     }
 
     public synchronized BlockDataPacket messageToBlockData(Message m) {
-        BlockDataPacket result = new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
+        return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
                 Base64.decode(m.senderluid,Base64.DEFAULT));
-        return result;
     }
 
 
@@ -312,6 +311,7 @@ public class LeDataStore {
 
                 cu.moveToNext();
                 boolean t;
+                //noinspection RedundantIfStatement
                 if (text == 0) {
                     t = false;
                 } else {
@@ -374,6 +374,7 @@ public class LeDataStore {
 
                 cu.moveToNext();
                 boolean t;
+                //noinspection RedundantIfStatement
                 if (text == 0) {
                     t = false;
                 } else {

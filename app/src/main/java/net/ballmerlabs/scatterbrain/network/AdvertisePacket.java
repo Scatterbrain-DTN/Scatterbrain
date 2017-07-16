@@ -45,7 +45,6 @@ public class AdvertisePacket extends ScatterStanza {
         if(raw.length < PACKET_SIZE) {
             invalid = true;
             err[0] = 1;
-            return;
         }
         else {
             contents = raw;

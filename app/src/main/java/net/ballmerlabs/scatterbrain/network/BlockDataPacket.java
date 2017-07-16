@@ -35,6 +35,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.size = body.length;
         this.err = new int[ERRSIZE];
         invalid = false;
+        //noinspection RedundantIfStatement
         if(init() == null)
             invalid = true;
 
@@ -112,6 +113,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.senderluid = senderluid;
         this.receiverluid = recieverluid;
 
+        //noinspection RedundantIfStatement
         if(contents[13] == 1)
             text = true;
         else
@@ -164,7 +166,6 @@ public class BlockDataPacket extends ScatterStanza {
         byte[] receiverluid = {0,0,0,0,0,0}; //not implemented yet
 
         this.receiverluid = receiverluid;
-        byte receiverluidbytes[] = receiverluid;
         if(receiverluid.length != 6) {
             err[4] = 1;
             invalid = true;
@@ -173,8 +174,8 @@ public class BlockDataPacket extends ScatterStanza {
         }
 
         int counter = 0;
-        for(int x=0;x<receiverluidbytes.length;x++) {
-            contents[x+7] = receiverluidbytes[x];
+        for(int x = 0; x< receiverluid.length; x++) {
+            contents[x+7] = receiverluid[x];
         }
 
         if(text)

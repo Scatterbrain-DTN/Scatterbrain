@@ -151,7 +151,6 @@ public class WifiManager extends BroadcastReceiver {
 
     /* registers a listener for action on connect to a peer */
     public void registerConnectActionListener(WifiP2pManager.ActionListener listener) {
-        WifiP2pManager.ActionListener connectlistener = listener;
     }
 
     public IntentFilter getP2pIntenetFilter() {

@@ -10,8 +10,8 @@
     <string name="scatter_uuid">scatterUUID</string>
     <string name="service_ticker">Senpai detector</string>
     <string name="service_title">Senpai Detector</string>
-    <string name="service_body">Background detection service is running...</string>
-
+    <string name="service_body">Background detection service is running</string>
+    <string name="nothing">nothing</string>
     <string name="scramble_pref">scramblePref</string>
     <string name="pref_luid_display">prefuuiddisplay</string>
     <string name="queue_pref">pref_queue_length</string>
@@ -63,7 +63,6 @@
         <item>40</item>
         <item>50</item>
     </string-array>
-    <string name="nothing">nothing</string>
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->

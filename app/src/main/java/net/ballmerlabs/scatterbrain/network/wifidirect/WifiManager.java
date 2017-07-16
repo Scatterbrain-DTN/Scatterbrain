@@ -41,7 +41,7 @@ public class WifiManager extends BroadcastReceiver {
     private WifiP2pManager manager;
     private WifiP2pManager.Channel chan;
     private WifiP2pManager.ActionListener scanlistener;
-    private HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
+    private final HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
     private IntentFilter p2pIntenetFilter;
     private WifiP2pManager.Channel channel;
     private Handler wifiHan;

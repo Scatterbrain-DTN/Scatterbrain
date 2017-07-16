@@ -35,7 +35,6 @@ public class LoggingActivity extends AppCompatActivity {
     @SuppressWarnings("FieldCanBeLocal")
     private Spinner sp;
     private ListViewAutoScrollHelper autoScroll;
-    private ListView listView;
     private ArrayAdapter<String> listViewArrayAdapter;
     private LogManager logManager;
 
@@ -79,7 +78,7 @@ public class LoggingActivity extends AppCompatActivity {
 
         sp.setAdapter(spinnerArrayAdapter);
 
-        listView = (ListView) this.findViewById(R.id.loggerlist);
+        ListView listView = (ListView) this.findViewById(R.id.loggerlist);
         listViewArrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_expandable_list_item_1);
 

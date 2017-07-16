@@ -78,7 +78,7 @@ public class AdvertisePacket extends BLEPacket {
         DeviceProfile.HardwareServices serv = dv.getServices();
 
         if(serv == DeviceProfile.HardwareServices.WIFIP2P)
-            contents[6] |= (1<<0);
+            contents[6] |= (1);
         if(serv == DeviceProfile.HardwareServices.WIFICLIENT)
             contents[6] |= (1<<1);
         if(serv == DeviceProfile.HardwareServices.WIFIAP)

@@ -39,7 +39,6 @@ import org.w3c.dom.Text;
  * Main 'Home screen' activity for the scatterbrain testing phase.
  */
 public class SearchForSenpai extends AppCompatActivity {
-    private ProgressBar progress;
     private TextView senpai_notice;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
@@ -164,7 +163,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_for_senpai);
-        progress = (ProgressBar) findViewById(R.id.progressBar);
+        ProgressBar progress = (ProgressBar) findViewById(R.id.progressBar);
         progress.setProgress(0);
 
         TextView peersText = (TextView) findViewById(R.id.peersText);

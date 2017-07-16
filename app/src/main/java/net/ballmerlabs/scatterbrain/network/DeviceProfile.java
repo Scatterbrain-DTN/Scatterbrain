@@ -8,15 +8,15 @@ public class DeviceProfile {
 
     protected byte[] luid;
 
-    public static enum deviceType {
+    public enum deviceType {
         ANDROID, IOS, LINUX
     };
 
-    public static enum MobileStatus {
+    public enum MobileStatus {
       STATIONARY, MOBILE, VERYMOBILE
     };
 
-    public static enum HardwareServices {
+    public enum HardwareServices {
         WIFIP2P, WIFICLIENT, WIFIAP, BLUETOOTH,
         BLUETOOTHLE, INTERNET
     };

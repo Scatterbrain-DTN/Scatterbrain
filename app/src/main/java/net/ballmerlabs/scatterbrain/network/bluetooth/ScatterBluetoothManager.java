@@ -342,6 +342,7 @@ public class ScatterBluetoothManager {
             }
             sendRaw(device, p.contents, false);
         }
+        unpauseDiscoverLoopThread();
     }
 
     //stops (and kills) the discovery thread

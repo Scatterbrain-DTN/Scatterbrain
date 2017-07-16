@@ -63,7 +63,7 @@ public class ScatterAcceptThread extends Thread {
                     catch (Exception ex) {
                         ScatterLogManager.e(trunk.blman.TAG, ex.getStackTrace().toString());
                     }
-                    go = false;
+                    //TODO: find a way to break out of loop on standby.
             }
 
 

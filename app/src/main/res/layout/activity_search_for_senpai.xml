@@ -17,10 +17,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:textAlignment="center"
-        android:autoText="false"
         android:gravity="center"
         android:textSize="20dp"
-        android:background="@color/highlighted_text_material_dark" />
+        android:background="@color/highlighted_text_material_dark"
+        tools:ignore="SpUsage" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"

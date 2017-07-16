@@ -154,7 +154,7 @@ public class ScatterRoutingService extends Service {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             this.luid = genLUID();
             editor.putString(getString(R.string.scatter_uuid),new String(Base64.encodeToString(this.luid,Base64.DEFAULT) ));
-            editor.commit();
+            editor.apply();
         }
         else {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
@@ -177,7 +177,7 @@ public class ScatterRoutingService extends Service {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         this.luid = genLUID();
         editor.putString(getString(R.string.scatter_uuid),new String(this.luid) );
-        editor.commit();
+        editor.apply();
     }
 
     private byte[] genLUID() {

@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain.network.BLE;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
@@ -58,7 +59,7 @@ public class BlockDataPacket extends BLEPacket{
 
     private byte[] init() {
         contents[0] = 1;
-        String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
+        @SuppressLint("HardwareIds") String sendermac = BluetoothAdapter.getDefaultAdapter().getAddress().replace(":","");
         if(sendermac.length() != 12)
             return null;
         this.sendermac = sendermac;

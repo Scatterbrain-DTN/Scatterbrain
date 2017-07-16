@@ -27,15 +27,14 @@ public class WifiDirectLooper extends Thread {
     @Override
     public void run() {
         Looper.prepare();
-        handler = new Handler() {
-
+        handler = new Handler(new Handler.Callback() {
             @Override
-            public void handleMessage(Message msg)  {
-
+            public boolean handleMessage(Message msg) {
+                return true;
             }
-        };
+        });
 
-        Looper.loop();
+                Looper.loop();
 
 
     }

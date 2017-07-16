@@ -44,7 +44,7 @@ public class MessageBoxAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if(vi == null)
-            vi = inflater.inflate(R.layout.messagerow,null);
+            vi = inflater.inflate(R.layout.messagerow,parent);
         TextView text = (TextView) vi.findViewById(R.id.messagebody);
         TextView header =(TextView) vi.findViewById(R.id.messageheader);
         text.setText(data.get(position).body);

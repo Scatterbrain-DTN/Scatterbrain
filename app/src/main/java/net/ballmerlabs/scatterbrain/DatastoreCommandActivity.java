@@ -23,16 +23,11 @@ import java.util.ArrayList;
 
 public class DatastoreCommandActivity extends AppCompatActivity {
     private ScatterRoutingService mService;
-    private String TAG = "DatastoreCommand";
     private TextView dbDisplay;
     private LeDataStore ds;
     private boolean scatterBound;
     private boolean dbConnected;
-    private Button refresh_button;
     private TextView dbTextView;
-    private Button clearButton;
-    private Button trimButton;
-    private Button randButton;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -47,6 +42,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             ds = mService.dataStore;
 
             dbConnected = mService.dataStore.connected;
+            String TAG = "DatastoreCommand";
             if (dbConnected) {
                 ScatterLogManager.v(TAG, "DatastoreCommandActivity connected");
                 dbDisplay.setText("CONNECTED");
@@ -100,11 +96,11 @@ public class DatastoreCommandActivity extends AppCompatActivity {
         dbDisplay.setText("DISCONNECTED");
         dbDisplay.setTextColor(Color.RED);
 
-        refresh_button = (Button) findViewById(R.id.refreshdb_button);
+        Button refresh_button = (Button) findViewById(R.id.refreshdb_button);
         dbTextView = (TextView) findViewById(R.id.db_textview2);
-        clearButton = (Button) findViewById(R.id.clear_button);
-        trimButton = (Button) findViewById(R.id.button_trim);
-        randButton = (Button) findViewById(R.id.db_rand_button);
+        Button clearButton = (Button) findViewById(R.id.clear_button);
+        Button trimButton = (Button) findViewById(R.id.button_trim);
+        Button randButton = (Button) findViewById(R.id.db_rand_button);
 
 
 

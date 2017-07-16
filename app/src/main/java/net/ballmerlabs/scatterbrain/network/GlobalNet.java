@@ -16,7 +16,6 @@ import java.util.ArrayList;
  */
 public class GlobalNet {
     private ArrayList<ScatterStanza> packetqueue;
-    private DeviceProfile prof;
     public final String TAG = "GlobNet";
     public WifiManager directmanager;
     private NetTrunk trunk;
@@ -25,7 +24,7 @@ public class GlobalNet {
 
     public GlobalNet(NetTrunk trunk) {
         packetqueue = new ArrayList<>();
-        prof = trunk.profile;
+        DeviceProfile prof = trunk.profile;
         this.trunk = trunk;
         directmanager = new WifiManager(trunk);
         directmanager.stopWifiDirectLoopThread();

@@ -183,15 +183,15 @@ public class AdvertisePacket extends ScatterStanza {
 
         DeviceProfile.HardwareServices serv = null;
 
-        if((hwservices & (1<<0)) == 1)
+        if((hwservices & 1) == 1)
             serv = DeviceProfile.HardwareServices.WIFIP2P;
-        else if((hwservices & (1<<1)) == 1)
+        else if((hwservices & (1<<1)) == (1<<1))
             serv = DeviceProfile.HardwareServices.WIFICLIENT;
-        else if((hwservices & (1<<2)) == 1)
+        else if((hwservices & (1<<2)) == (1<<2))
             serv = DeviceProfile.HardwareServices.WIFIAP;
-        else if((hwservices & (1<<3)) == 1)
+        else if((hwservices & (1<<3)) == (1<<3))
             serv = DeviceProfile.HardwareServices.BLUETOOTH;
-        else if((hwservices & (1<<4)) == 1)
+        else if((hwservices & (1<<4)) == (1<<4))
             serv = DeviceProfile.HardwareServices.INTERNET;
 
 
@@ -201,4 +201,3 @@ public class AdvertisePacket extends ScatterStanza {
         return new DeviceProfile(type, mob, serv, this.luid);
     }
 }
-

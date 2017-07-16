@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain.network;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -60,7 +61,7 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
-        Notification notification = new Notification(R.drawable.icon, getText(R.string.service_ticker),
+        @SuppressLint("IconColors") Notification notification = new Notification(R.drawable.icon, getText(R.string.service_ticker),
                 System.currentTimeMillis());
         Intent notificationIntent = new Intent(this, ScatterRoutingService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,notificationIntent,0);

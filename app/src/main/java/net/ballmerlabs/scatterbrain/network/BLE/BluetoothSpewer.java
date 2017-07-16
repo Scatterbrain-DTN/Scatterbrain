@@ -29,21 +29,18 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     private BluetoothAdapter adapter;
     private BluetoothLeAdvertiser advertiser;
     public boolean CONNECTED = false;
-    private String TAG = "BLE_daemon";
     private android.os.Handler threadHandler = new android.os.Handler();
     public String stagedMsg;
-    private Activity mainActivity;
     public boolean isscanning = false;
     public String[] used = new String[3];
     public int ui = 0;
-    private GlobalNet net;
     public DeviceProfile currentDevice;
 
     /*);
      * Remember to ca);ll this constructor in OnCreate()? maybe?
      */
     public BluetoothSpewer(Activity mainActivity,DeviceProfile me, GlobalNet globnet) throws LeNotSupportedException {
-        this.mainActivity = mainActivity;
+        Activity mainActivity1 = mainActivity;
         if (!BleUtil.isBLESupported(mainActivity)) {
             throw (new LeNotSupportedException());
         }
@@ -58,7 +55,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
         }
-        net = globnet;
+        GlobalNet net = globnet;
         currentDevice = me;
 
     }
@@ -232,6 +229,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             CONNECTED = true;
             if(settingsInEffect == null) {
+                String TAG = "BLE_daemon";
                 ScatterLogManager.d(TAG,"onStartSuccess, settingInEffect is null");
             }
             super.onStartSuccess(settingsInEffect);

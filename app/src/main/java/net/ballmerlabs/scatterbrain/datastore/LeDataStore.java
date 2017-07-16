@@ -114,13 +114,16 @@ public class LeDataStore {
                 new String[] {bd.getHash()});
 
         if(cu.getCount() == 0){
+            cu.close();
            // ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash() +"  "+  bd.size + "  " + bd.senderluid.length);
             return enqueueMessage(bd);
         }
         else {
            // ScatterLogManager.e(TAG, "Attempted to insert duplicate data to datastore");
+            cu.close();
             return 1;
         }
+
     }
 
     /* Very temporary method for writing a blockdata stanza to datastore */

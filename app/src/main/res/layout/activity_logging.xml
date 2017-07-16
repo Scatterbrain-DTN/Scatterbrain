@@ -11,16 +11,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="net.ballmerlabs.scatterbrain.LoggingActivity"
     android:background="@color/background_material_dark">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:id="@+id/filterchooser"
             android:spinnerMode="dropdown" />
 
@@ -28,10 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="11dp"
-            android:layout_alignParentStart="true"
             android:id="@+id/loggerlist"
             android:background="@color/accent_material_dark" />
-
-    </LinearLayout>
-
 </RelativeLayout>

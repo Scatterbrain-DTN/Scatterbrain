@@ -14,8 +14,6 @@
         android:id="@+id/textView"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="false"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:textAlignment="center"
         android:gravity="center"
         android:textSize="20dp"

@@ -67,7 +67,8 @@
         android:layout_marginStart="26dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:text="Name"
+        tools:ignore="LabelFor" />
 
 </RelativeLayout>
 

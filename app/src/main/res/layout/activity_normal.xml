@@ -17,7 +17,8 @@
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
         android:layout_toStartOf="@+id/send"
-        android:background="@color/button_material_dark" />
+        android:background="@color/button_material_dark"
+        tools:ignore="LabelFor" />
 
     <Button
         style="?android:attr/buttonStyleSmall"

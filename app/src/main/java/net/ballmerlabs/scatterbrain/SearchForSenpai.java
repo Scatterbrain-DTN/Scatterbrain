@@ -41,12 +41,8 @@ import org.w3c.dom.Text;
 public class SearchForSenpai extends AppCompatActivity {
     private ProgressBar progress;
     private TextView senpai_notice;
-    private ScatterRoutingService service;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
-    private Button castButton;
-    private TextView peerDisplay;
-    private TextView peersText;
     private String TAG = "SenpaiActivity";
     final Activity main  = this;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -171,10 +167,10 @@ public class SearchForSenpai extends AppCompatActivity {
         progress = (ProgressBar) findViewById(R.id.progressBar);
         progress.setProgress(0);
 
-        peersText = (TextView) findViewById(R.id.peersText);
+        TextView peersText = (TextView) findViewById(R.id.peersText);
         peersText.setText("peers: 0");
         peersText.setTextColor(Color.RED);
-        castButton = (Button) findViewById(R.id.castbutton);
+        Button castButton = (Button) findViewById(R.id.castbutton);
         final Intent launchMessagingIntent = new Intent(this,NormalActivity.class);
 
         castButton.setOnClickListener(new View.OnClickListener() {
@@ -192,11 +188,11 @@ public class SearchForSenpai extends AppCompatActivity {
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
 
-        peerDisplay = (TextView) findViewById(R.id.peerdisplay);
+        TextView peerDisplay = (TextView) findViewById(R.id.peerdisplay);
         peerDisplay.setText("");
 
 
-        service = new ScatterRoutingService();
+        ScatterRoutingService service = new ScatterRoutingService();
 
         ScatterLogManager.v(TAG, "Initial Initialization");
         Intent srs = new Intent(this,ScatterRoutingService.class);

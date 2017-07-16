@@ -24,8 +24,10 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     public final int maxsize = 5;
     private TextView peersView;
     private WifiManager manager;
+    @SuppressWarnings("FieldCanBeLocal")
     private GlobalNet globnet;
     private WifiP2pManager.Channel channel;
+    @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "PeerListener";
     public ScatterPeerListener(NetTrunk trunk) {
         this.manager = trunk.globnet.getWifiManager();

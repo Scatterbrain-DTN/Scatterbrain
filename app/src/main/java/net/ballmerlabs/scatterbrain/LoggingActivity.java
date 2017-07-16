@@ -28,15 +28,15 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 public class LoggingActivity extends AppCompatActivity {
 
+    @SuppressWarnings("FieldCanBeLocal")
     private ScatterRoutingService mService;
     private boolean scatterBound;
     private final String TAG = "LoggingActivity";
+    @SuppressWarnings("FieldCanBeLocal")
     private Spinner sp;
     private ListViewAutoScrollHelper autoScroll;
     private ListView listView;
-    private ArrayAdapter<String> spinnerArrayAdapter;
     private ArrayAdapter<String> listViewArrayAdapter;
-    private LogPrinter logPrinter;
     private LogManager logManager;
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -71,10 +71,10 @@ public class LoggingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging);
-        logPrinter = new LogPrinter(Log.VERBOSE,this.TAG);
+        LogPrinter logPrinter = new LogPrinter(Log.VERBOSE, this.TAG);
         sp = (Spinner) this.findViewById(R.id.filterchooser);
         String items[] = {"Verbose", "Info", "Error"};
-        spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
                 items);
 
         sp.setAdapter(spinnerArrayAdapter);

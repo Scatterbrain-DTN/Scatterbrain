@@ -37,7 +37,6 @@ public class ScatterRoutingService extends Service {
 
     private final IBinder mBinder = new ScatterBinder();
     private static NetTrunk trunk;
-    private Service me;
     private boolean bound = false;
     public final String TAG = "ScatterRoutingService";
     private  PeersChangedCallback onDevicesFound;
@@ -145,7 +144,7 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public void onCreate() {
-        me = this;
+        Service me = this;
         Context context = this.getApplicationContext();
         sharedPreferences = context.getSharedPreferences(getString(R.string.scatter_preference_key),
                 Context.MODE_PRIVATE);

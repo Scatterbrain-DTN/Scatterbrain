@@ -39,7 +39,6 @@ public class WifiManager extends BroadcastReceiver {
     private GlobalNet net;
     private WifiP2pManager manager;
     private WifiP2pManager.Channel chan;
-    private WifiP2pManager.ActionListener connectlistener;
     private WifiP2pManager.ActionListener scanlistener;
     private HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
     private IntentFilter p2pIntenetFilter;
@@ -151,7 +150,7 @@ public class WifiManager extends BroadcastReceiver {
 
     /* registers a listener for action on connect to a peer */
     public void registerConnectActionListener(WifiP2pManager.ActionListener listener) {
-        connectlistener = listener;
+        WifiP2pManager.ActionListener connectlistener = listener;
     }
 
     public IntentFilter getP2pIntenetFilter() {

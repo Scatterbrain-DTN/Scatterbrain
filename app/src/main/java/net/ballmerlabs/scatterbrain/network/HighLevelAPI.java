@@ -4,6 +4,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  * basic interface to the Scatterbrain protocol, to be used by
  * external applications
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class HighLevelAPI {
     private DeviceProfile MyProfile;
 

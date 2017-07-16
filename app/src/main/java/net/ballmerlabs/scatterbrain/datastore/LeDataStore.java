@@ -24,6 +24,7 @@ import java.util.HashMap;
  */
 public class LeDataStore {
     private SQLiteDatabase db;
+    @SuppressWarnings("FieldCanBeLocal")
     private MsgDbHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";

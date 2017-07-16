@@ -28,9 +28,7 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 public class NormalActivity extends AppCompatActivity {
 
     private EditText MsgBox;
-    private ListView messageTimeline;
     private MessageBoxAdapter Messages;
-    private Button sendButton;
     private GlobalNet globnet;
     private DeviceProfile profile;
     private TextView peersView;
@@ -73,7 +71,7 @@ public class NormalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_normal);
 
-        messageTimeline = (ListView) this.findViewById(R.id.timeline);
+        ListView messageTimeline = (ListView) this.findViewById(R.id.timeline);
 
         MsgBox = (EditText) this.findViewById(R.id.editText);
         Messages = new MessageBoxAdapter(this);
@@ -83,7 +81,7 @@ public class NormalActivity extends AppCompatActivity {
         messageTimeline.setAdapter(Messages);
 
         //messagebox handeling
-        sendButton = (Button) this.findViewById(R.id.send);
+        Button sendButton = (Button) this.findViewById(R.id.send);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

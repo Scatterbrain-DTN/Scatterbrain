@@ -91,7 +91,7 @@ public class ScatterReceiveThread extends Thread{
 
                 ScatterLogManager.e(trunk.blman.TAG, "IOException when receiving stanza");
                 errcount++;
-                if(errorcount > 20) {
+                if(errcount > 20) {
                     synchronized (trunk.blman.connectedList) {
                         trunk.blman.connectedList.remove(socket.getRemoteDevice().getAddress());
                     }

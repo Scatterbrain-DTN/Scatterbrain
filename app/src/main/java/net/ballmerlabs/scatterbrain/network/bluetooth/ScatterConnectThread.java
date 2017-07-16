@@ -50,6 +50,7 @@ public class ScatterConnectThread extends Thread {
                     try {
                         tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);
                     } catch (IOException e) {
+                        ScatterLogManager.e(trunk.blman.TAG, e.getStackTrace().toString());
 
                     }
                     mmSocket = tmp;
@@ -71,6 +72,7 @@ public class ScatterConnectThread extends Thread {
                         try {
                             mmSocket.close();
                         } catch (IOException c) {
+                            ScatterLogManager.e(trunk.blman.TAG, c.getStackTrace().toString());
                         }
 
                     }

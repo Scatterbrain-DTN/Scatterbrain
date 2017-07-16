@@ -115,6 +115,7 @@ public class SearchForSenpai extends AppCompatActivity {
                 }
                 in.close();
             } catch (Exception e) {
+                ScatterLogManager.e(TAG, e.getStackTrace().toString());
             }
         }
 

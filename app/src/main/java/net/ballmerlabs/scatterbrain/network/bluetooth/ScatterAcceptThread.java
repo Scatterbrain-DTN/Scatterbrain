@@ -75,6 +75,7 @@ public class ScatterAcceptThread extends Thread {
         try {
             mmServerSocket.close();
         } catch (IOException e) {
+            ScatterLogManager.e(trunk.blman.TAG, e.getStackTrace().toString());
 
 
         }

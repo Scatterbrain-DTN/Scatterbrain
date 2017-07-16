@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ public class MessageBoxAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;

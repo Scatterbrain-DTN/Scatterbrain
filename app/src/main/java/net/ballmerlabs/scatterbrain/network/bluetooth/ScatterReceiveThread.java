@@ -100,7 +100,7 @@ public class ScatterReceiveThread extends Thread{
                         socket.close();
                     }
                     catch(IOException c) {
-                        
+                        ScatterLogManager.e(trunk.blman.TAG, c.getStackTrace().toString());
                     }
 
                     break;

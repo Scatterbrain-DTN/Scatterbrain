@@ -27,6 +27,7 @@ import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Created by gnu3ra on 10/31/15.
@@ -220,11 +221,12 @@ public class WifiManager extends BroadcastReceiver {
     /*
     * Registers a service for autodiscovery
     */
+    @SuppressWarnings("unchecked")
     public void registerService(DeviceProfile profile) {
 
-        Map record = new HashMap<>();
-        record.put("listenport", String.valueOf(trunk.mainService));
-        record.put("protocolVersion", "0"); //TODO: add actual version
+        HashMap record = new HashMap<>();
+       // record.put("listenport", String.valueOf(trunk.mainService));
+        //record.put("protocolVersion", "0"); //TODO: add actual version
         //record.put("deviceType", profile.getType().toString());
         //record.put("mobileStatus", profile.getStatus().toString());
         //record.put("congestion", String.valueOf(profile.getCongestion()));

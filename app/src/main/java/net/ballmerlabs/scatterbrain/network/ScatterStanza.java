@@ -16,7 +16,8 @@ public abstract class ScatterStanza {
         invalid = false;
     }
 
-    public byte getHeader() { return contents[0];};
+    public byte getHeader() { return contents[0];}
+
     public boolean isInvalid() {
         return invalid;
     }

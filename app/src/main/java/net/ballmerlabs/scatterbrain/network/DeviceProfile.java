@@ -10,16 +10,16 @@ public class DeviceProfile {
 
     public enum deviceType {
         ANDROID, IOS, LINUX
-    };
+    }
 
     public enum MobileStatus {
       STATIONARY, MOBILE, VERYMOBILE
-    };
+    }
 
     public enum HardwareServices {
         WIFIP2P, WIFICLIENT, WIFIAP, BLUETOOTH,
         BLUETOOTHLE, INTERNET
-    };
+    }
 
 
     protected deviceType type;

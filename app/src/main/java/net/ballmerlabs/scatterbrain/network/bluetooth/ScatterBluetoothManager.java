@@ -193,16 +193,18 @@ public class ScatterBluetoothManager {
         acceptThreadRunning = false;
         threadPaused = false;
         try {
-            Class c = Class.forName(adapter.getClass().getName());
-            Method[] methods = c.getDeclaredMethods();
-            setDuration = null;
+            if(adapter != null) {
+                Class c = Class.forName(adapter.getClass().getName());
+                Method[] methods = c.getDeclaredMethods();
+                setDuration = null;
                     /* why on earth do I have to do this?
                      * for some reason getDeclaredMethod("setDiscoverableTimeout") can't find the
                      * method, but this can.
                      */
-            for (Method m : methods) {
-                if (m.getName().contains("setScanMode"))
-                    setDuration = m;
+                for (Method m : methods) {
+                    if (m.getName().contains("setScanMode"))
+                        setDuration = m;
+                }
             }
         }
         catch(Exception e) {
@@ -289,7 +291,6 @@ public class ScatterBluetoothManager {
             byte[] buffer = new byte[AdvertisePacket.PACKET_SIZE];
             i.read(buffer);
             AdvertisePacket inpacket= null;
-            if(buffer != null) {
                 inpacket = new AdvertisePacket(buffer);
                 if(!inpacket.isInvalid()) {
 
@@ -311,7 +312,6 @@ public class ScatterBluetoothManager {
                     socket.close();
                 }
 
-            }
 
         }
         catch(IOException c) {
@@ -449,6 +449,7 @@ public class ScatterBluetoothManager {
             public void run() {
                 if (!fake)
                     trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
+                //noinspection ConstantConditions
                 if (isConnected) {
                     try {
                         if (blockDataPacket.invalid) {

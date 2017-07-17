@@ -57,7 +57,8 @@ public class ScatterConnectThread extends Thread {
                     mmSocket = tmp;
                     try {
 
-                        mmSocket.connect();
+                        if(mmSocket != null)
+                            mmSocket.connect();
                         if (mmSocket.isConnected()) {
                             success = true;
 

@@ -1,7 +1,7 @@
-/**
+/*
  * Performs tests on the scatterbrain protocol outside android to
  * reduce the chance of bugged out packets.
- */
+ **/
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;

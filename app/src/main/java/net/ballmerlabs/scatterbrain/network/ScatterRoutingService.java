@@ -148,7 +148,6 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public void onCreate() {
-        Service me = this;
         Context context = this.getApplicationContext();
         sharedPreferences = context.getSharedPreferences(getString(R.string.scatter_preference_key),
                 Context.MODE_PRIVATE);

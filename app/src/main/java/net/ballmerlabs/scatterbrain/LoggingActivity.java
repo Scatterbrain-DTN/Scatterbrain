@@ -8,8 +8,6 @@ import android.os.IBinder;
 import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.LogPrinter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -63,11 +61,11 @@ public class LoggingActivity extends AppCompatActivity {
             ScatterLogManager.init(listViewArrayAdapter);
     }
 
+    @SuppressWarnings("Convert2Diamond")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging);
-        LogPrinter logPrinter = new LogPrinter(Log.VERBOSE, this.TAG);
         sp = (Spinner) this.findViewById(R.id.filterchooser);
         String items[] = {"Verbose", "Info", "Error"};
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,

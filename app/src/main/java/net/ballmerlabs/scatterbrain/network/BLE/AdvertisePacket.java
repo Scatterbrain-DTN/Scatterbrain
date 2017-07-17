@@ -3,7 +3,7 @@ package net.ballmerlabs.scatterbrain.network.BLE;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 /**
- * Created by gnu3ra on 3/28/16.
+ * BLE advertisePacket
  */
 class AdvertisePacket extends BLEPacket {
 

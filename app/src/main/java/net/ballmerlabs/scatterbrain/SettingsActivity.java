@@ -240,7 +240,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     try {
-                        int result = Integer.parseInt((String)newValue);
+                        Integer.parseInt((String)newValue);
                     }
                     catch(Exception e) {
                         return false;

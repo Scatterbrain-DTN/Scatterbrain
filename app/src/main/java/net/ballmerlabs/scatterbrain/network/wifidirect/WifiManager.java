@@ -50,6 +50,7 @@ public class WifiManager extends BroadcastReceiver {
 
 
     //used for service discovery
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "Convert2Diamond"})
     private final HashMap<String, String> buddies = new HashMap<String, String>();
 
 

@@ -19,6 +19,7 @@ import java.util.Arrays;
  * retrieved all at once for burst transmission. Mesages are deleted when older than a certain
  * age.
  */
+@SuppressWarnings("UnusedAssignment")
 public class LeDataStore {
     private SQLiteDatabase db;
     @SuppressWarnings("FieldCanBeLocal")
@@ -177,6 +178,7 @@ public class LeDataStore {
      * (Hopefully) returns an array list of Message objects with all the data
      * in the datastore in it.
      */
+    @SuppressWarnings("Convert2Diamond")
     public synchronized ArrayList<Message> getMessages() {
 
     //    ScatterLogManager.v(TAG, "Mass dumping all messages from datastore");
@@ -223,7 +225,7 @@ public class LeDataStore {
     }
 
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "Convert2Diamond"})
     public synchronized ArrayList<Message> getMessageByHash(String compare_hash) {
 
       //  ScatterLogManager.v(TAG, "Retreiving message from hash");
@@ -276,7 +278,7 @@ public class LeDataStore {
      * Gets n rows from the datastore in a random order. For use when there is no time to transmit
      * the entire datastore.
      */
-    @SuppressWarnings("UnusedAssignment")
+    @SuppressWarnings({"UnusedAssignment", "Convert2Diamond"})
     public synchronized ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         try {
@@ -340,6 +342,7 @@ public class LeDataStore {
     /*
     * Gets n rows from the datastore 
     */
+    @SuppressWarnings("Convert2Diamond")
     public synchronized ArrayList<BlockDataPacket> getTopMessages() {
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         try {

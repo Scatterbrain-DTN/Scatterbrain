@@ -3,7 +3,7 @@ package net.ballmerlabs.scatterbrain;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 /**
- * Created by user on 7/7/16.
+ * Scatterbrain settings
  */
 public class SettingsManager {
     @SuppressWarnings("unused")

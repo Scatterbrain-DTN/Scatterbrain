@@ -169,7 +169,6 @@ public class BlockDataPacket extends ScatterStanza {
             return null;
         }
 
-        int counter = 0;
         for(int x = 0; x< receiverluid.length; x++) {
             contents[x+7] = receiverluid[x];
         }

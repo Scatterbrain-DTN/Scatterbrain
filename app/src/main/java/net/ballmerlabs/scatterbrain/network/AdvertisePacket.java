@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.zip.CRC32;
 
 /**
- * Created by gnu3ra on 3/28/16.
+ * AdvertisePacket. Represents an Advertise stanza
  */
 @SuppressWarnings("ManualArrayCopy")
 public class AdvertisePacket extends ScatterStanza {

@@ -45,7 +45,6 @@ class ScatterReceiveThread extends Thread{
         while(go) {
             try {
                 errorcount = 0;
-                int pos = 0;
 
                 byte[] header = new byte[BlockDataPacket.HEADERSIZE];
 

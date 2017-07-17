@@ -275,13 +275,12 @@ public class ScatterBluetoothManager {
         try {
             InputStream i = socket.getInputStream();
             OutputStream o = socket.getOutputStream();
-            BluetoothDevice d = socket.getRemoteDevice();
             trunk.mainService.noticeNotify();
             AdvertisePacket outpacket = new AdvertisePacket(trunk.profile);
             o.write(outpacket.getContents());
             byte[] buffer = new byte[AdvertisePacket.PACKET_SIZE];
             if(i.read(buffer) == AdvertisePacket.PACKET_SIZE) {
-                AdvertisePacket inpacket = null;
+                AdvertisePacket inpacket;
                 inpacket = new AdvertisePacket(buffer);
                 if (!inpacket.isInvalid()) {
 

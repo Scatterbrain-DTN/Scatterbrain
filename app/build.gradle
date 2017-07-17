@@ -41,7 +41,6 @@ idea {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':blelib')
     //noinspection GradleDependency
     compile 'com.android.support:appcompat-v7:22.2.1'
     //noinspection GradleDependency

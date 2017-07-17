@@ -27,7 +27,7 @@ class ServerAsyncTask extends WifiAsyncTask {
     @Override
     protected Object[] doInBackground(Object[] params) {
         ArrayList<Byte> received = new ArrayList<>();
-        InputStream inputStream = null;
+        InputStream inputStream;
         try {
             ServerSocket serverSocket = new ServerSocket(8222);
             Socket client = serverSocket.accept();

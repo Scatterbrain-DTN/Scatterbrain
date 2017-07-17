@@ -195,9 +195,6 @@ public class SearchForSenpai extends AppCompatActivity {
         TextView peerDisplay = (TextView) findViewById(R.id.peerdisplay);
         peerDisplay.setText("");
 
-
-        ScatterRoutingService service = new ScatterRoutingService();
-
         ScatterLogManager.v(TAG, "Initial Initialization");
         Intent srs = new Intent(this,ScatterRoutingService.class);
         startService(srs);

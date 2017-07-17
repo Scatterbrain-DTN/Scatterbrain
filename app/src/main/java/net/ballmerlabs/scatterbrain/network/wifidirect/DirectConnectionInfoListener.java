@@ -10,9 +10,6 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import java.net.InetAddress;
 import java.util.HashMap;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
-/**
- * Created by user on 5/25/16.
- */
 @SuppressWarnings("FieldCanBeLocal")
 class DirectConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
     @SuppressWarnings("unused")

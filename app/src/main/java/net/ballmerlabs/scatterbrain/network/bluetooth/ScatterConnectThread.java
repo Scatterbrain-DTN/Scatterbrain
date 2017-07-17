@@ -17,6 +17,7 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
@@ -50,7 +51,7 @@ public class ScatterConnectThread extends Thread {
                     try {
                         tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);
                     } catch (IOException e) {
-                        ScatterLogManager.e(trunk.blman.TAG, e.getStackTrace().toString());
+                        ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(e.getStackTrace()));
 
                     }
                     mmSocket = tmp;
@@ -72,7 +73,7 @@ public class ScatterConnectThread extends Thread {
                         try {
                             mmSocket.close();
                         } catch (IOException c) {
-                            ScatterLogManager.e(trunk.blman.TAG, c.getStackTrace().toString());
+                            ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(c.getStackTrace()));
                         }
 
                     }

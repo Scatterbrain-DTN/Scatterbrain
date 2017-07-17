@@ -34,19 +34,13 @@ public class BlockDataPacket extends BLEPacket{
         super(26+raw.length);
         contents = raw;
         byte body[] = new byte[raw.length - 26];
-        for(int x=25;x<contents.length;x++) {
-            body[x-25] = contents[x];
-        }
+        System.arraycopy(contents, 25, body, 0, contents.length - 25);
         byte recievermac[] = new byte[12];
         byte sendermac[] = new byte[12];
 
-        for(int x = 1;x<(1+12);x++) {
-            sendermac[x-1] = contents[x];
-        }
+        System.arraycopy(contents, 1, sendermac, 0, 1 + 12 - 1);
 
-        for(int x=13;x<(13+12);x++) {
-            recievermac[x-13] = contents[x];
-        }
+        System.arraycopy(contents, 13, recievermac, 0, 13 + 12 - 13);
 
         this.sendermac = new String(sendermac);
         this.receivermac = new String(recievermac);
@@ -65,26 +59,20 @@ public class BlockDataPacket extends BLEPacket{
             return null;
         this.sendermac = sendermac;
         byte sendermacbytes[] = sendermac.getBytes();
-        for(int x=0;x<sendermacbytes.length;x++) {
-            contents[x+1] = sendermacbytes[x];
-        }
+        System.arraycopy(sendermacbytes, 0, contents, 1, sendermacbytes.length);
         String receivermac = new String(to.getLUID()).replace(":","");
         if(receivermac.length() != 12)
             return null;
 
         this.receivermac = receivermac;
         byte receivermacbytes[] = receivermac.getBytes();
-        for(int x=0;x<receivermacbytes.length;x++) {
-            contents[x+13] = receivermacbytes[x];
-        }
+        System.arraycopy(receivermacbytes, 0, contents, 13, receivermacbytes.length);
         if(text)
             contents[26] = 1;
         else
             contents[26] = 0;
 
-        for(int x=27;x<body.length;x++) {
-            contents[x] = body[x];
-        }
+        System.arraycopy(body, 27, contents, 27, body.length - 27);
 
         return contents;
     }

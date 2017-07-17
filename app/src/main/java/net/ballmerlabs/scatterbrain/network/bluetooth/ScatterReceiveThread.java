@@ -10,6 +10,7 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Exchanger;
 
@@ -58,9 +59,7 @@ public class ScatterReceiveThread extends Thread{
                 byte[] buffer = new byte[size+
                         BlockDataPacket.HEADERSIZE];
 
-                for(int i=0;i<header.length; i++) {
-                    buffer[i] = header[i];
-                }
+                System.arraycopy(header, 0, buffer, 0, header.length);
 
                 byte[] block = new byte[100];
                 int counter = BlockDataPacket.HEADERSIZE;
@@ -100,7 +99,7 @@ public class ScatterReceiveThread extends Thread{
                         socket.close();
                     }
                     catch(IOException c) {
-                        ScatterLogManager.e(trunk.blman.TAG, c.getStackTrace().toString());
+                        ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(c.getStackTrace()));
                     }
 
                     break;
@@ -109,7 +108,7 @@ public class ScatterReceiveThread extends Thread{
             }
             catch(Exception e) {
                 ScatterLogManager.e(trunk.blman.TAG, "Generic exception in ScatterReciveThread:\n" +
-                        e.getStackTrace());
+                        Arrays.toString(e.getStackTrace()));
             }
         }
     }

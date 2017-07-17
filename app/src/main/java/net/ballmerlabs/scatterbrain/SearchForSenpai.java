@@ -24,6 +24,7 @@ import java.net.URL;
 import java.io.BufferedReader;
 import android.content.pm.PackageInfo;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -116,7 +117,7 @@ public class SearchForSenpai extends AppCompatActivity {
                 }
                 in.close();
             } catch (Exception e) {
-                ScatterLogManager.e(TAG, e.getStackTrace().toString());
+                ScatterLogManager.e(TAG, Arrays.toString(e.getStackTrace()));
             }
         }
 

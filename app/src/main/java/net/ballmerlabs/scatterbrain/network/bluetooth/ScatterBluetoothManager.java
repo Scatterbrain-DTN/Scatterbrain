@@ -33,6 +33,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -292,7 +293,7 @@ public class ScatterBluetoothManager {
                 inpacket = new AdvertisePacket(buffer);
                 if(!inpacket.isInvalid()) {
 
-                    ScatterLogManager.v(TAG, "Adding new device " + inpacket.convertToProfile().getLUID());
+                    ScatterLogManager.v(TAG, "Adding new device " + Arrays.toString(inpacket.convertToProfile().getLUID()));
                     synchronized (connectedList) {
                         connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
 

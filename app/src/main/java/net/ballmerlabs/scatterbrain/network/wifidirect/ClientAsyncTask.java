@@ -44,6 +44,7 @@ public class ClientAsyncTask extends WifiAsyncTask{
             ScatterLogManager.e(TAG,"IOException when creating socket");
         }
         finally {
+            //noinspection ConstantConditions
             if(socket != null) {
                 if(socket.isConnected()) {
                     try {

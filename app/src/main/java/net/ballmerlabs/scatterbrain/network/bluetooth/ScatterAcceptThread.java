@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.concurrent.Exchanger;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Listens for incoming bluetooth connections
@@ -50,6 +53,7 @@ public class ScatterAcceptThread extends Thread {
         mmServerSocket = tmp;
         boolean go = true;
         socket = null;
+        //noinspection ConstantConditions
         while (go) {
             try {
                 socket = mmServerSocket.accept();
@@ -61,9 +65,11 @@ public class ScatterAcceptThread extends Thread {
                             socket.close();
                     }
                     catch (Exception ex) {
-                        ScatterLogManager.e(trunk.blman.TAG, ex.getStackTrace().toString());
+                        ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(ex.getStackTrace()));
                     }
                     //TODO: find a way to break out of loop on standby.
+            } catch (Exception e) {
+                ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(e.getStackTrace()));
             }
 
 
@@ -75,7 +81,7 @@ public class ScatterAcceptThread extends Thread {
         try {
             mmServerSocket.close();
         } catch (IOException e) {
-            ScatterLogManager.e(trunk.blman.TAG, e.getStackTrace().toString());
+            ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(e.getStackTrace()));
 
 
         }

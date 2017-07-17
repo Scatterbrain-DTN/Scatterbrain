@@ -13,6 +13,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -145,7 +146,7 @@ public class LeDataStore {
             }
         }
         catch(Exception e) {
-            ScatterLogManager.e(TAG, "Exception in enqueueMessage:\n" + e.getStackTrace());
+            ScatterLogManager.e(TAG, "Exception in enqueueMessage:\n" + Arrays.toString(e.getStackTrace()));
         }
         return 0;
     }
@@ -326,7 +327,7 @@ public class LeDataStore {
             cu.close();
         }
         catch(Exception e) {
-            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + e.getStackTrace());
+            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + Arrays.toString(e.getStackTrace()));
         }
         return finalresult;
 
@@ -389,7 +390,7 @@ public class LeDataStore {
             cu.close();
         }
         catch(Exception e) {
-            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + e.getStackTrace());
+            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + Arrays.toString(e.getStackTrace()));
         }
         return finalresult;
 

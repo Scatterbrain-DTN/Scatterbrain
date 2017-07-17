@@ -102,7 +102,7 @@ public class NormalActivity extends AppCompatActivity {
             byte[] tmp = {5, 5, 5, 5, 5, 5};
             BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true, mService.luid);
             Messages.data.add(new DispMessage(new String(bd.body),
-                   new String(Base64.encodeToString(bd.senderluid, Base64.DEFAULT))));
+                    Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
             // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
             if(!bd.isInvalid()) {
@@ -151,6 +151,6 @@ public class NormalActivity extends AppCompatActivity {
 
     public void addMessage(String message, byte[] luid) {
         Messages.data.add(  new DispMessage(message,
-                new  String(Base64.encodeToString(luid,Base64.DEFAULT))));
+                Base64.encodeToString(luid, Base64.DEFAULT)));
     }
 }

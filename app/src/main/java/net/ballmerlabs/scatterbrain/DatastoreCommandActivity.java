@@ -130,7 +130,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
                     String result = "";
                     for(Message m : res) {
                         result = result.concat(m.application +" luid: " +
-                                new String(m.senderluid) + " >> "  +
+                                m.senderluid + " >> "  +
                                 new String(Base64.decode(m.body,Base64.DEFAULT)) + "\n");
                     }
                     dbTextView.setText(result);

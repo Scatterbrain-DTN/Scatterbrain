@@ -48,13 +48,9 @@ public class BlockDataPacket extends ScatterStanza {
         String hash = null;
         try {
             byte[] combined = new byte[size+ senderluid.length];
-            for(int i=0;i<size;i++) {
-                combined[i] = body[i];
-            }
+            System.arraycopy(body, 0, combined, 0, size);
 
-            for(int i=size;i<senderluid.length;i++) {
-                combined[i] = senderluid[i-size];
-            }
+            System.arraycopy(senderluid, size - size, combined, size, senderluid.length - size);
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.update(combined, 0, combined.length);
             combined = digest.digest();
@@ -102,13 +98,9 @@ public class BlockDataPacket extends ScatterStanza {
         byte senderluid[] = new byte[6];
 
         int counter3 = 0;
-        for(int x = 1;x<7;x++) {
-            senderluid[x-1] = contents[x];
-        }
+        System.arraycopy(contents, 1, senderluid, 0, 6);
         counter3 = 0;
-        for(int x=7;x<13;x++) {
-            recieverluid[x-7] = contents[x];
-        }
+        System.arraycopy(contents, 7, recieverluid, 0, 6);
 
         this.senderluid = senderluid;
         this.receiverluid = recieverluid;
@@ -121,18 +113,14 @@ public class BlockDataPacket extends ScatterStanza {
 
         byte[] sizearr = new byte[4];
 
-        for(int i=0;i<4;i++) {
-            sizearr[i] = contents[i+14];
-        }
+        System.arraycopy(contents, 14, sizearr, 0, 4);
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
 
         if(size > 0) {
             body = new byte[size];
-            for (int x = 0; x < size; x++) {
-                body[x] = contents[x + 18];
-            }
+            System.arraycopy(contents, 18, body, 0, size);
 
 
             //verify crc with stored copy
@@ -140,9 +128,7 @@ public class BlockDataPacket extends ScatterStanza {
             crc.update(contents, 0, contents.length - 4);
             byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
             byte[] real = new byte[4];
-            for (int x = 0; x < real.length; x++) {
-                real[x] = contents[(contents.length - 4) + x];
-            }
+            System.arraycopy(contents, (contents.length - 4) + 0, real, 0, real.length);
 
             if (!Arrays.equals(real, check)) {
                 err[2] = 1;
@@ -160,9 +146,7 @@ public class BlockDataPacket extends ScatterStanza {
         }
         byte senderluidbytes[] = senderluid;
         int counter1 = 0;
-        for(int x=1;x<7;x++) {
-            contents[x] = senderluidbytes[x-1];
-        }
+        System.arraycopy(senderluidbytes, 0, contents, 1, 6);
         byte[] receiverluid = {0,0,0,0,0,0}; //not implemented yet
 
         this.receiverluid = receiverluid;
@@ -174,9 +158,7 @@ public class BlockDataPacket extends ScatterStanza {
         }
 
         int counter = 0;
-        for(int x = 0; x< receiverluid.length; x++) {
-            contents[x+7] = receiverluid[x];
-        }
+        System.arraycopy(receiverluid, 0, contents, 7, receiverluid.length);
 
         if(text)
             contents[13] = 1;
@@ -185,20 +167,14 @@ public class BlockDataPacket extends ScatterStanza {
 
         byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(body.length).array();
 
-        for(int i=0;i<4;i++) {
-            contents[i+14] = sizebytes[i];
-        }
+        System.arraycopy(sizebytes, 0, contents, 14, 4);
 
-        for(int x=0;x<body.length;x++) {
-            contents[x+18] = body[x];
-        }
+        System.arraycopy(body, 0, contents, 18, body.length);
         //basic crc for integrity check
         CRC32 crc = new CRC32();
         crc.update(contents,0, contents.length - 4);
         byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int)crc.getValue()).array();
-        for(int x=0;x<c.length;x++) {
-            contents[(contents.length - 4) + x] = c[x];
-        }
+        System.arraycopy(c, 0, contents, (contents.length - 4) + 0, c.length);
 
         return contents;
     }
@@ -215,9 +191,7 @@ public class BlockDataPacket extends ScatterStanza {
             return -1;
         }
 
-        for(int i=0;i<4;i++) {
-            sizearr[i] = data[i+14];
-        }
+        System.arraycopy(data, 14, sizearr, 0, 4);
 
         int size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
         if(size < 0)

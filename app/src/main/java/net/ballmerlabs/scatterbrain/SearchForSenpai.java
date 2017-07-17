@@ -35,8 +35,6 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
-import org.w3c.dom.Text;
-
 /*
  * Main 'Home screen' activity for the scatterbrain testing phase.
  */

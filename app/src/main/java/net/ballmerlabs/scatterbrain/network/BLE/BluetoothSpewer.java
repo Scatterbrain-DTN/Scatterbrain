@@ -8,7 +8,6 @@ import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
-import android.util.Log;
 
 import com.bitgarage.blemingledroid.BleUtil;
 
@@ -16,10 +15,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.ballmerlabs.scatterbrain.datastore.Message;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
-import net.ballmerlabs.scatterbrain.network.ScatterStanza;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Created by gnu3ra on 10/31/15.

@@ -1,12 +1,8 @@
 package net.ballmerlabs.scatterbrain;
 
 import android.app.Activity;
-import android.net.wifi.p2p.WifiP2pManager;
 
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
-import net.ballmerlabs.scatterbrain.network.GlobalNet;
-import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterAcceptThread;
-import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /**
  * holds most of the objects needed to keep clutter off of

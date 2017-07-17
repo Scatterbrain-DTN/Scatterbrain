@@ -1,20 +1,16 @@
 package net.ballmerlabs.scatterbrain.datastore;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
-import android.util.Log;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by gnu3ra on 11/3/15.

@@ -1,16 +1,12 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import android.util.Base64;
-
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.zip.CRC32;
 
 /**

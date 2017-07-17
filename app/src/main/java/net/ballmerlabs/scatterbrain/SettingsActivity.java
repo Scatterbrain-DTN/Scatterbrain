@@ -16,7 +16,6 @@ import android.os.IBinder;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceGroup;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -24,11 +23,8 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
-import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 
 import java.util.List;
 

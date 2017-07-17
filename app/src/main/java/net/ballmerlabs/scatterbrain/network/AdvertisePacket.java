@@ -1,6 +1,5 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import android.util.Log;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
 import java.nio.ByteBuffer;

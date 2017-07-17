@@ -10,21 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.LogPrinter;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 public class LoggingActivity extends AppCompatActivity {
 

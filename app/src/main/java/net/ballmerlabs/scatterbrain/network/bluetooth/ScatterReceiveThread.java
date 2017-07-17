@@ -1,18 +1,13 @@
 package net.ballmerlabs.scatterbrain.network.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
-import android.util.Log;
 
-import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Exchanger;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**

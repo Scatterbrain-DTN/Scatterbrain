@@ -4,11 +4,9 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.util.Log;
 
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.HashMap;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;

@@ -2,8 +2,6 @@ package net.ballmerlabs.scatterbrain;
 
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
-import java.util.Set;
-
 /**
  * Created by user on 7/7/16.
  */

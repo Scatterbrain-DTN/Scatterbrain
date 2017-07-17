@@ -2,21 +2,10 @@ package net.ballmerlabs.scatterbrain.network.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.MainTrunk;
-import net.ballmerlabs.scatterbrain.R;
-import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
-import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
-import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 

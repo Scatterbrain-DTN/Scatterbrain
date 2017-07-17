@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Base64;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
@@ -23,11 +22,9 @@ import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.UUID;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Represents a background service for routing packets

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public  class ScatterLogManager {
     private static ArrayAdapter<String> adapter;
-    public static ArrayList<String> buffer = new ArrayList<>();
-    public static final int MAXBUFFER = 1000;
+    private static final ArrayList<String> buffer = new ArrayList<>();
+    private static final int MAXBUFFER = 1000;
     public static void init(ArrayAdapter<String> madapter) {
         adapter = madapter;
         for(String line : buffer) {
@@ -23,7 +23,7 @@ public  class ScatterLogManager {
         }
     }
 
-    public static void checkBuffer() {
+    private static void checkBuffer() {
         if(buffer.size() > MAXBUFFER) {
             buffer.clear();
         }
@@ -66,19 +66,19 @@ public  class ScatterLogManager {
 
     }
 
-    public static void d(final String tag, final String msg) {
+    public static void d(final String tag) {
         checkBuffer();
-        Log.d(tag,msg);
+        Log.d(tag, "onStartSuccess, settingInEffect is null");
         if(adapter != null) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    adapter.add("[" + tag + "]: " + msg);
+                    adapter.add("[" + tag + "]: " + "onStartSuccess, settingInEffect is null");
                 }
             });
         }
         else {
-            buffer.add("[" + tag + "]: " + msg);
+            buffer.add("[" + tag + "]: " + "onStartSuccess, settingInEffect is null");
         }
     }
 

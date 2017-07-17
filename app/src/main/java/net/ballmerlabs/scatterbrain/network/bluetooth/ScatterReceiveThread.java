@@ -14,13 +14,13 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  * Thread started to wait for messages sent by peers
  */
 public class ScatterReceiveThread extends Thread{
-    BluetoothSocket socket;
-    NetTrunk trunk;
-    int errcount;
-    public boolean fake;
-    public boolean go;
-    public ScatterReceiveThread(BluetoothSocket socket, boolean fake) {
-        this.fake = fake;
+    private final BluetoothSocket socket;
+    private final NetTrunk trunk;
+    private int errcount;
+    private final boolean fake;
+    private boolean go;
+    public ScatterReceiveThread(BluetoothSocket socket) {
+        this.fake = false;
         this.socket = socket;
         this.trunk = ScatterRoutingService.getNetTrunk();
         go = true;

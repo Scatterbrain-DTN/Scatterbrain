@@ -27,26 +27,26 @@ import java.util.Map;
  */
 public class WifiManager extends BroadcastReceiver {
     public boolean CONNECTED = false;
-    private String TAG = "WiFi_daemon";
+    private final String TAG = "WiFi_daemon";
     private android.os.Handler threadHandler = new android.os.Handler();
-    private GlobalNet net;
+    private final GlobalNet net;
     private WifiP2pManager manager;
-    private WifiP2pManager.Channel chan;
+    private final WifiP2pManager.Channel chan;
     private WifiP2pManager.ActionListener scanlistener;
     private final HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
-    private IntentFilter p2pIntenetFilter;
-    private WifiP2pManager.Channel channel;
+    private final IntentFilter p2pIntenetFilter;
+    private final WifiP2pManager.Channel channel;
     private Handler wifiHan;
     private boolean runScanThread;
     private WifiP2pDnsSdServiceInfo serviceInfo;
-    private WifiDirectLooper looper;
+    private final WifiDirectLooper looper;
     private BroadcastReceiver p2preceiver;
-    private NetTrunk trunk;
+    private final NetTrunk trunk;
 
 
 
     //used for service discovery
-    final HashMap<String, String> buddies = new HashMap<String, String>();
+    private final HashMap<String, String> buddies = new HashMap<String, String>();
 
 
     /*
@@ -71,7 +71,7 @@ public class WifiManager extends BroadcastReceiver {
     }
 
 
-    public void scanServices() {
+    private void scanServices() {
         manager.discoverServices(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -142,6 +142,7 @@ public class WifiManager extends BroadcastReceiver {
     }
 
     /* registers a listener for action on connect to a peer */
+    @SuppressWarnings("EmptyMethod")
     public void registerConnectActionListener(WifiP2pManager.ActionListener listener) {
     }
 
@@ -150,7 +151,7 @@ public class WifiManager extends BroadcastReceiver {
     }
 
     /* gets the manager */
-    public WifiP2pManager getManager() {
+    private WifiP2pManager getManager() {
         return manager;
     }
 
@@ -213,7 +214,7 @@ public class WifiManager extends BroadcastReceiver {
     * Registers a service for autodiscovery
     */
     @SuppressWarnings("unchecked")
-    public void registerService(DeviceProfile profile) {
+    private void registerService(DeviceProfile profile) {
 
         HashMap record = new HashMap<>();
        // record.put("listenport", String.valueOf(trunk.mainService));
@@ -267,7 +268,7 @@ public class WifiManager extends BroadcastReceiver {
         });
     }
 
-    public void connectToDevice(WifiP2pDevice dev) {
+    private void connectToDevice(WifiP2pDevice dev) {
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = dev.deviceAddress;
         config.wps.setup = WpsInfo.PBC;
@@ -288,7 +289,7 @@ public class WifiManager extends BroadcastReceiver {
 
 
     /* discovers nearby scatterbrain devices */
-    public void discoverServices() {
+    private void discoverServices() {
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
         /* Callback includes:
@@ -358,10 +359,10 @@ public class WifiManager extends BroadcastReceiver {
     public void onReceive(Context c, Intent i) {
         String action = i.getAction();
         //detect if the connection changes state
-        if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+        if(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             Log.v(TAG, "Recieved WIFI_P2P_CONNECTION_CHANGED_ACTION");
-            int state = i.getIntExtra(manager.EXTRA_WIFI_STATE, -1);
-            if( state == manager.WIFI_P2P_STATE_ENABLED) {
+            int state = i.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+            if( state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 Log.v(TAG, "Wifi p2p is enabled!");
             }
             else {
@@ -369,7 +370,7 @@ public class WifiManager extends BroadcastReceiver {
                 //not enabled
             }
         }
-        else if(manager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+        else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             Log.v(TAG, "Received WIFI_P2P_PEERS_CHANGED_ACTION");
             if(trunk.globnet.peerlistener != null)
                 manager.requestPeers(chan,trunk.globnet.peerlistener);
@@ -377,7 +378,7 @@ public class WifiManager extends BroadcastReceiver {
                 Log.e(TAG, "PeerListener is null. Is it not set?");
             }
         }
-        else if(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+        else if(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             Log.v(TAG, "Received WIFI_P2P_CONNECTION_CHANGED_ACTION");
             if(manager == null)
                 return;

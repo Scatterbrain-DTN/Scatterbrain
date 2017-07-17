@@ -35,12 +35,12 @@ public class ScatterRoutingService extends Service {
     private final IBinder mBinder = new ScatterBinder();
     private static NetTrunk trunk;
     private boolean bound = false;
-    public final String TAG = "ScatterRoutingService";
+    private final String TAG = "ScatterRoutingService";
     private  PeersChangedCallback onDevicesFound;
-    public SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     public byte[] luid;
     private MessageBoxAdapter Messages;
-    public ArrayAdapter<String> logbuffer;
+    private ArrayAdapter<String> logbuffer;
     public LeDataStore dataStore;
 
 
@@ -80,6 +80,7 @@ public class ScatterRoutingService extends Service {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean updateUiOnDevicesFound(Map<String, LocalPeer> connectedList) {
         if((onDevicesFound != null) && bound) {
             onDevicesFound.run(connectedList);
@@ -89,12 +90,12 @@ public class ScatterRoutingService extends Service {
         return false;
     }
 
-    public void noticeNotify(String title, String text) {
+    public void noticeNotify() {
         NotificationCompat.Builder mBuilder =
                 new  NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon)
-                .setContentTitle(title)
-                .setContentText(text);
+                .setContentTitle("Senpai NOTICED YOU!!")
+                .setContentText("There is a senpai in your area somewhere");
         Intent resultIntent = new Intent(this, NormalActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -115,6 +116,7 @@ public class ScatterRoutingService extends Service {
         mNotificationManager.notify(2,mBuilder.build());
     }
 
+    @SuppressWarnings("EmptyMethod")
     void checkForUpdates() {
 
     }
@@ -158,7 +160,7 @@ public class ScatterRoutingService extends Service {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
         trunk = new NetTrunk(this);
-        this.dataStore = new LeDataStore(this, 100);
+        this.dataStore = new LeDataStore(this);
         dataStore.connect();
     }
 
@@ -189,6 +191,7 @@ public class ScatterRoutingService extends Service {
         return trunk;
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void startMessageActivity() {
      //   Intent startIntent = new Intent(this, NormalActivity.class);
        // startActivity(startIntent);

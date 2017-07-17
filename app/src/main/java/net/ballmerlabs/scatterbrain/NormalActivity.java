@@ -31,9 +31,9 @@ public class NormalActivity extends AppCompatActivity {
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
     public static boolean active = false;
-    public final String TAG = "MessagingActivity";
+    private final String TAG = "MessagingActivity";
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             ScatterRoutingService.ScatterBinder binder =
@@ -43,7 +43,7 @@ public class NormalActivity extends AppCompatActivity {
             mService.registerMessageArrayAdapter(Messages);
 
             //add some previously received messages.
-            for(BlockDataPacket b : mService.dataStore.getTopMessages(90)) {
+            for(BlockDataPacket b : mService.dataStore.getTopMessages()) {
                 Messages.data.add(new DispMessage(new String(b.body),
                         Base64.encodeToString(b.senderluid, Base64.DEFAULT)));
             }
@@ -131,12 +131,14 @@ public class NormalActivity extends AppCompatActivity {
         NormalActivity.active = false;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onResume() {
         // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();

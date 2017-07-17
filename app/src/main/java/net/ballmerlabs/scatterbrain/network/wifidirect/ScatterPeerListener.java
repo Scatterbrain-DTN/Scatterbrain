@@ -14,14 +14,14 @@ import java.util.ArrayList;
  * Listens for new peers when scanning and pushes them onto a queue
  */
 public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
-    public Boolean haspeers;
-    public ArrayList<WifiP2pDeviceList> peerstack;
-    public final int maxsize = 5;
+    private Boolean haspeers;
+    private final ArrayList<WifiP2pDeviceList> peerstack;
+    private final int maxsize = 5;
     private TextView peersView;
-    private WifiManager manager;
+    private final WifiManager manager;
     @SuppressWarnings("FieldCanBeLocal")
-    private GlobalNet globnet;
-    private WifiP2pManager.Channel channel;
+    private final GlobalNet globnet;
+    private final WifiP2pManager.Channel channel;
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "PeerListener";
     public ScatterPeerListener(NetTrunk trunk) {

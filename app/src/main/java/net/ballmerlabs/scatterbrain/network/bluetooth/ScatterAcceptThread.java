@@ -16,8 +16,8 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  */
 public class ScatterAcceptThread extends Thread {
     private BluetoothServerSocket mmServerSocket = null;
-    private NetTrunk trunk;
-    private BluetoothAdapter adapter;
+    private final NetTrunk trunk;
+    private final BluetoothAdapter adapter;
 
     public ScatterAcceptThread(NetTrunk trunk, BluetoothAdapter adapter) {
         this.adapter = adapter;

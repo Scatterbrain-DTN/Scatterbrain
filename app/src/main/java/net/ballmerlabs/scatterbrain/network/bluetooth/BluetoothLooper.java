@@ -11,8 +11,8 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
  */
 public class BluetoothLooper extends Thread {
 
-    public Handler handler;
-    public GlobalNet globnet;
+    private Handler handler;
+    private final GlobalNet globnet;
 
     public BluetoothLooper(GlobalNet globnet) {
         super();

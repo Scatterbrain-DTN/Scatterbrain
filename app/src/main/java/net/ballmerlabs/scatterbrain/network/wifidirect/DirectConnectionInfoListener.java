@@ -13,11 +13,11 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Created by user on 5/25/16.
  */
-public class DirectConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
-    HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
-    public final String TAG = "ConnectionInfoListener";
-    public GlobalNet globnet;
-    public WifiManager manager;
+class DirectConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
+    private final HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
+    private final String TAG = "ConnectionInfoListener";
+    private final GlobalNet globnet;
+    private final WifiManager manager;
 
     public DirectConnectionInfoListener(HashMap<WifiP2pDevice, WifiP2pConfig> connectedList,
                                         WifiManager manager, GlobalNet globnet) {

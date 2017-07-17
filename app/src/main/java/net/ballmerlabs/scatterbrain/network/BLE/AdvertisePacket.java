@@ -5,14 +5,14 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 /**
  * Created by gnu3ra on 3/28/16.
  */
-public class AdvertisePacket extends BLEPacket {
+class AdvertisePacket extends BLEPacket {
 
 
-    public byte devicetype;
-    public byte mobilestatus;
-    public byte protocolversion[];
-    public byte congestion;
-    public byte hwservices;
+    private byte devicetype;
+    private byte mobilestatus;
+    private byte[] protocolversion;
+    private byte congestion;
+    private byte hwservices;
 
     public AdvertisePacket(DeviceProfile dv) {
         super(7);

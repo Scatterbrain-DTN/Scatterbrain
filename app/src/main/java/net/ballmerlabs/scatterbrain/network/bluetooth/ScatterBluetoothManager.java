@@ -46,31 +46,31 @@ public class ScatterBluetoothManager {
     public final java.util.UUID UID = UUID.fromString("cc1f06c5-ce01-4538-bc15-2a1d129c8b28");
 
     public final String NAME = "Scatterbrain";
-    public BluetoothAdapter adapter;
+    private final BluetoothAdapter adapter;
     public final static int REQUEST_ENABLE_BT = 1;
-    public final ArrayList<BluetoothDevice> foundList;
+    private final ArrayList<BluetoothDevice> foundList;
     public final HashMap<String, LocalPeer> connectedList; //discovered devices
-    public ArrayList<BluetoothDevice> scatterList; //devices confirmed to run scatterbrain
-    public NetTrunk trunk;
-    public boolean runScanThread;
-    public Handler bluetoothHan;
-    public BluetoothLooper looper;
-    public IntentFilter filter;
-    public Runnable scanr;
-    public ScatterAcceptThread acceptThread;
-    public boolean isAccepting;
+    private final ArrayList<BluetoothDevice> scatterList; //devices confirmed to run scatterbrain
+    private final NetTrunk trunk;
+    private boolean runScanThread;
+    private Handler bluetoothHan;
+    private final BluetoothLooper looper;
+    private final IntentFilter filter;
+    private Runnable scanr;
+    private ScatterAcceptThread acceptThread;
+    private final boolean isAccepting;
     public boolean acceptThreadRunning;
-    public boolean threadPaused;
-    public int currentUUID; //the device we are currently querying for uuid.
-    public int targetUUID; //the number of devices to stop at
-    public final int PARALLELUUID = 1; //number of devices to scan at a time.
+    private boolean threadPaused;
+    private int currentUUID; //the device we are currently querying for uuid.
+    private int targetUUID; //the number of devices to stop at
+    private final int PARALLELUUID = 1; //number of devices to scan at a time.
     private Method setDuration;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
      * and calls actions for different scenarios.
      */
-    public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
             String action = intent.getAction();
@@ -88,7 +88,7 @@ public class ScatterBluetoothManager {
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 ScatterLogManager.v(TAG, "Device disvovery finished.");
 
-                resetBluetoothDiscoverability(300);
+                resetBluetoothDiscoverability();
                 //stop discovering and attempt to gently fetch UUIDs from devices.
                 //This can fail with an overloaded adapter or saturated channels, so we do it slowly.
                 pauseDiscoverLoopThread();
@@ -151,7 +151,7 @@ public class ScatterBluetoothManager {
 
 
     //this should return a handler object later
-    public void connectToDevice(List<BluetoothDevice> device) {
+    private void connectToDevice(List<BluetoothDevice> device) {
         foundList.clear();
         if (!isAccepting) {
             ScatterConnectThread currentconnection;
@@ -277,7 +277,7 @@ public class ScatterBluetoothManager {
             InputStream i = socket.getInputStream();
             OutputStream o = socket.getOutputStream();
             BluetoothDevice d = socket.getRemoteDevice();
-            trunk.mainService.noticeNotify("Senpai NOTICED YOU!!", "There is a senpai in your area somewhere");
+            trunk.mainService.noticeNotify();
             AdvertisePacket outpacket = new AdvertisePacket(trunk.profile);
             o.write(outpacket.getContents());
             byte[] buffer = new byte[AdvertisePacket.PACKET_SIZE];
@@ -319,16 +319,16 @@ public class ScatterBluetoothManager {
 
 
     //attempt to intelligently transmit a number of packets from datastore to peer nearby
-    public void offloadRandomPacketsToBroadcast(int count) {
+    public void offloadRandomPacketsToBroadcast() {
         synchronized (connectedList) {
             for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                offloadRandomPackets(count, ent.getKey());
+                offloadRandomPackets(500, ent.getKey());
             }
         }
     }
 
     //sends a random set of packets from the datastore to a nearby device
-    public void offloadRandomPackets(int count, final String device) {
+    private void offloadRandomPackets(int count, final String device) {
         final ArrayList<BlockDataPacket> ran = trunk.mainService.dataStore.getTopRandomMessages(count);
         pauseDiscoverLoopThread();
         for (BlockDataPacket p : ran) {
@@ -372,7 +372,7 @@ public class ScatterBluetoothManager {
         synchronized (connectedList) {
            // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
             for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                sendMessageToLocalPeer(ent.getKey(), message, text, false);
+                sendMessageToLocalPeer(ent.getKey(), message, text);
             }
         }
     }
@@ -382,11 +382,11 @@ public class ScatterBluetoothManager {
      * This method also has a function to connect to a local tcp debug
      * server outside of android for unit testing.
      */
-    public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
-                                       final  boolean text, final boolean fake) {
+    private void sendMessageToLocalPeer(final String mactarget, final byte[] message,
+                                        final boolean text) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
         BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
-        sendRaw(mactarget,bd.getContents(), fake);
+        sendRaw(mactarget,bd.getContents(), false);
     }
 
 
@@ -400,7 +400,7 @@ public class ScatterBluetoothManager {
         }
     }
 
-    public void sendRaw(final String mactarget, final byte[] message, final boolean fake) {
+    private void sendRaw(final String mactarget, final byte[] message, final boolean fake) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
 
         final OutputStream ostream;
@@ -463,9 +463,9 @@ public class ScatterBluetoothManager {
         bluetoothHan.post(messageSendThread);
     }
 
-    public void resetBluetoothDiscoverability(final int time) {
+    public void resetBluetoothDiscoverability() {
         try {
-            setDuration.invoke(adapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, time);
+            setDuration.invoke(adapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 300);
         }
         catch(Exception e) {
             ScatterLogManager.e(TAG, e.getMessage());

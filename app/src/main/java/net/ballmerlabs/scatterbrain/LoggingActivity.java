@@ -31,7 +31,7 @@ public class LoggingActivity extends AppCompatActivity {
     private ArrayAdapter<String> listViewArrayAdapter;
     private LogManager logManager;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             ScatterRoutingService.ScatterBinder binder =

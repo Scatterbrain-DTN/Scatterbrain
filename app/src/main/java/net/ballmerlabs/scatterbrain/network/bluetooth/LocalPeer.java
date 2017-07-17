@@ -9,14 +9,14 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  * range at the time
  */
 public class LocalPeer {
-    public DeviceProfile profile;
-    public BluetoothSocket socket;
-    public ScatterReceiveThread receiveThread;
+    private final DeviceProfile profile;
+    public final BluetoothSocket socket;
+    private final ScatterReceiveThread receiveThread;
 
     public LocalPeer(DeviceProfile profile, BluetoothSocket socket) {
         this.profile = profile;
         this.socket = socket;
-        this.receiveThread = new ScatterReceiveThread(socket, false);
+        this.receiveThread = new ScatterReceiveThread(socket);
         receiveThread.start();
     }
 

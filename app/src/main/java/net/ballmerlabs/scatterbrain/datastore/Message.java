@@ -7,17 +7,17 @@ public class Message {
 
 
 
-    public String application;
-    public String body;
-    public int ttl;
-    public String replylink;
-    public String senderluid;
-    public String flags;
-    public String sig;
-    public String uuid;
-    public String receiverluid;
-    public int extbody;
-    public int text;
+    public final String application;
+    public final String body;
+    private final int ttl;
+    private final String replylink;
+    public final String senderluid;
+    private final String flags;
+    private final String sig;
+    private final String uuid;
+    private final String receiverluid;
+    private final int extbody;
+    private final int text;
 
     public Message(String uuid, int extbody,   String body, String application, int text,  int ttl,
                    String replyto, String luid, String receiverLuid,

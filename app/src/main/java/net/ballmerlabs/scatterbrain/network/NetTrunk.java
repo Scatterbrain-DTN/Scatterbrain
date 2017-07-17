@@ -9,11 +9,11 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
  */
 public class NetTrunk {
 
-    public GlobalNet globnet;
-    public ScatterBluetoothManager blman;
-    public DeviceProfile profile;
-    public SettingsManager settings;
-    public ScatterRoutingService mainService;
+    public final GlobalNet globnet;
+    public final ScatterBluetoothManager blman;
+    public final DeviceProfile profile;
+    public final SettingsManager settings;
+    public final ScatterRoutingService mainService;
 
 
     public NetTrunk(ScatterRoutingService mainService) {

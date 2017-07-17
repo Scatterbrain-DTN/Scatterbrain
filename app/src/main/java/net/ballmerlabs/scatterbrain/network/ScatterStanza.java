@@ -8,10 +8,10 @@ public abstract class ScatterStanza {
     public boolean invalid;
     public final int PACKET_SIZE = 0;
 
-    public ScatterStanza() {
+    ScatterStanza() {
         invalid = false;
     }
-    public ScatterStanza(int size) {
+    ScatterStanza(int size) {
         contents = new byte[size];
         invalid = false;
     }

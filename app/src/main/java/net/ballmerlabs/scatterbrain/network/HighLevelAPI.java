@@ -5,21 +5,24 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  * external applications
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class HighLevelAPI {
-    private DeviceProfile MyProfile;
+class HighLevelAPI {
+    private final DeviceProfile MyProfile;
 
     public HighLevelAPI(DeviceProfile profile) {
         this.MyProfile = profile;
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void Advertise() {
 
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void sendData(DeviceProfile target) {
 
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void queryServices(DeviceProfile target) {
 
     }

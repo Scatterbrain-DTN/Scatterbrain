@@ -42,9 +42,9 @@ public class SearchForSenpai extends AppCompatActivity {
     private TextView senpai_notice;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
-    private String TAG = "SenpaiActivity";
-    final Activity main  = this;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final String TAG = "SenpaiActivity";
+    private final Activity main  = this;
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             ScatterRoutingService.ScatterBinder binder =
@@ -122,7 +122,7 @@ public class SearchForSenpai extends AppCompatActivity {
     };
 
     /* This Runnable creates a Dialog and asks the user to open the Market */
-    private Runnable showUpdate = new Runnable() {
+    private final Runnable showUpdate = new Runnable() {
         public void run() {
             new AlertDialog.Builder(main)
                     .setIcon(R.drawable.ic_drawer)
@@ -145,6 +145,7 @@ public class SearchForSenpai extends AppCompatActivity {
     };
 
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onStart() {
         super.onStart();
@@ -153,6 +154,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onStop() {
         super.onStop();
@@ -202,7 +204,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
 
     }
-    public void launchBtDialog() {
+    private void launchBtDialog() {
             ScatterLogManager.v(TAG,"Running bluetooth prompt dialog");
             if(mService.getBluetoothManager().getAdapter() != null) {
                 if (!mService.getBluetoothManager().getAdapter().isEnabled()) {
@@ -247,7 +249,7 @@ public class SearchForSenpai extends AppCompatActivity {
                 @Override
                 public void run() {
                     mService.getBluetoothManager().startDiscoverLoopThread();
-                    mService.getBluetoothManager().resetBluetoothDiscoverability(300);
+                    mService.getBluetoothManager().resetBluetoothDiscoverability();
 
                 }
             }, 5000);
@@ -316,6 +318,7 @@ public class SearchForSenpai extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onResume() {
         super.onResume();
@@ -326,6 +329,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
 
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
@@ -334,6 +338,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onDestroy() {
         super.onDestroy();

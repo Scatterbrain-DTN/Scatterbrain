@@ -22,16 +22,16 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  * Created by gnu3ra on 10/31/15.
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
  */
-public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
+class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     private BluetoothAdapter adapter;
     private BluetoothLeAdvertiser advertiser;
-    public boolean CONNECTED = false;
+    private boolean CONNECTED = false;
     private android.os.Handler threadHandler = new android.os.Handler();
-    public String stagedMsg;
-    public boolean isscanning = false;
-    public String[] used = new String[3];
-    public int ui = 0;
-    public DeviceProfile currentDevice;
+    private String stagedMsg;
+    private boolean isscanning = false;
+    private final String[] used = new String[3];
+    private int ui = 0;
+    private DeviceProfile currentDevice;
 
     /*);
      * Remember to ca);ll this constructor in OnCreate()? maybe?
@@ -134,6 +134,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
     /* fancy parser for parsing a recieved advertise packet */
+    @SuppressWarnings("EmptyMethod")
     public void makeDeviceProfile(String advertiseMessage, String address) {
 
     }
@@ -189,7 +190,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
                         stagedMsg = stagedMsg.substring(8);
                         for(int i=0; i<20;i++) {
                             AdvertiseData ad = BleUtil.makeAdvertiseData(subMesssage);
-                            advertiser.startAdvertising(BleUtil.createAdvSettings(true, 100), ad, adCallback);
+                            advertiser.startAdvertising(BleUtil.createAdvSettings(100), ad, adCallback);
                             advertiser.stopAdvertising(adCallback);
                         }
                     }
@@ -198,7 +199,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
                         stagedMsg = "";
                         for(int i=0;i<5;i++) {
                             AdvertiseData ad = BleUtil.makeAdvertiseData(subMesssage);
-                            advertiser.startAdvertising(BleUtil.createAdvSettings(true, 40) ,ad, adCallback);
+                            advertiser.startAdvertising(BleUtil.createAdvSettings(40) ,ad, adCallback);
                             advertiser.stopAdvertising(adCallback);
 
                         }
@@ -212,7 +213,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
 
-    private AdvertiseCallback adCallback = new AdvertiseCallback() {
+    private final AdvertiseCallback adCallback = new AdvertiseCallback() {
         @Override
         public void onStartFailure(int errorCode) {
             CONNECTED = false;
@@ -224,7 +225,7 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
             CONNECTED = true;
             if(settingsInEffect == null) {
                 String TAG = "BLE_daemon";
-                ScatterLogManager.d(TAG,"onStartSuccess, settingInEffect is null");
+                ScatterLogManager.d(TAG);
             }
             super.onStartSuccess(settingsInEffect);
         }

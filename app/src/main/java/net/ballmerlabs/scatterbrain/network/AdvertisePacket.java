@@ -13,17 +13,17 @@ import java.util.zip.CRC32;
 @SuppressWarnings("ManualArrayCopy")
 public class AdvertisePacket extends ScatterStanza {
 
-    public static String TAG = "AdvertisePacket";
-    public byte devicetype;
-    public byte mobilestatus;
-    public byte protocolversion[];
-    public byte congestion;
-    public byte hwservices;
-    public byte[] luid;
-    public byte[] err;
-    public final int ERR_SIZE = 7;
+    private static final String TAG = "AdvertisePacket";
+    private byte devicetype;
+    private byte mobilestatus;
+    private final byte[] protocolversion;
+    private byte congestion;
+    private byte hwservices;
+    private final byte[] luid;
+    public final byte[] err;
+    private final int ERR_SIZE = 7;
     public static final int PACKET_SIZE = 17;
-    public static final byte MAGIC = -87;
+    private static final byte MAGIC = -87;
 
     public AdvertisePacket(DeviceProfile dv) {
         super(PACKET_SIZE);

@@ -12,10 +12,10 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  * ServerAsyncTask. This is simple and does not break up large messages
  * yet.
  */
-public class ClientAsyncTask extends WifiAsyncTask{
+class ClientAsyncTask extends WifiAsyncTask{
 
-    public final String TAG = "ClientAsyncTask";
-    public Context context;
+    private final String TAG = "ClientAsyncTask";
+    private final Context context;
 
     public ClientAsyncTask(Context context) {
         super(context);

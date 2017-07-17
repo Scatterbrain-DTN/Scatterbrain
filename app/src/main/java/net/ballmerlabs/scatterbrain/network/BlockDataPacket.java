@@ -16,14 +16,14 @@ import java.util.zip.CRC32;
 public class BlockDataPacket extends ScatterStanza {
 
     public byte body[];
-    public boolean text;
-    public byte[] senderluid;
+    private final boolean text;
+    public final byte[] senderluid;
     public byte[] receiverluid;
-    public Integer size;
-    public int[] err;
-    public final int ERRSIZE =10;
+    public final Integer size;
+    public final int[] err;
+    private final int ERRSIZE =10;
     public static final int HEADERSIZE = 22;
-    public static final byte MAGIC = 124;
+    private static final byte MAGIC = 124;
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
         super(HEADERSIZE+body.length);
         this.body = body;
@@ -66,8 +66,8 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
     // http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    public static String bytesToHex( byte[] bytes )
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private static String bytesToHex(byte[] bytes)
     {
         char[] hexChars = new char[ bytes.length * 2 ];
         for( int j = 0; j < bytes.length; j++ )

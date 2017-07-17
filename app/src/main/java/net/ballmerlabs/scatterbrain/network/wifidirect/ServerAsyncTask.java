@@ -12,10 +12,10 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Class to send text/sms messages over scatterbrain wifi p2p
  */
-public class ServerAsyncTask extends WifiAsyncTask {
+class ServerAsyncTask extends WifiAsyncTask {
 
     public final int SERVERPORT = 8222;
-    public final String TAG = "ServerAsyncTask";
+    private final String TAG = "ServerAsyncTask";
 
     public ServerAsyncTask(Context context, ArrayAdapter<String> messageList) {
         super(context);

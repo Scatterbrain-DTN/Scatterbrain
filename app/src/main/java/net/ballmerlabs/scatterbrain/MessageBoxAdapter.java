@@ -14,8 +14,8 @@ import java.util.ArrayList;
  * Adapter for the control of the slightly less horrible message list view.
  */
 public class MessageBoxAdapter extends BaseAdapter {
-    public Context context;
-    public ArrayList<DispMessage> data;
+    private final Context context;
+    public final ArrayList<DispMessage> data;
     private static LayoutInflater inflater = null;
 
     public MessageBoxAdapter(Context context) {

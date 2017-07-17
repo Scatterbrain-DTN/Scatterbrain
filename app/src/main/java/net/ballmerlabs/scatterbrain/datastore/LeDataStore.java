@@ -25,7 +25,7 @@ public class LeDataStore {
     private MsgDbHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";
-    private Service mainService;
+    private final Service mainService;
     private Cursor c;
     public boolean connected;
     public final String[] names = {
@@ -41,8 +41,8 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS};
 
-    public LeDataStore(Service mainService, int trim) {
-        dataTrimLimit = trim;
+    public LeDataStore(Service mainService) {
+        dataTrimLimit = 100;
         this.mainService = mainService;
 
     }
@@ -76,23 +76,23 @@ public class LeDataStore {
     /*
      * sticks a message into the datastore at the front?.
      */
-    public synchronized void enqueueMessage(String uuid, int extbody,   String body, String application, int text,  int ttl,
-                               String replyto, String luid, String receiverLuid,
-                               String sig, String flags) {
+    private synchronized void enqueueMessage(String uuid, String body, int ttl,
+                                             String replyto, String luid,
+                                             String sig) {
 
        // ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_HASH, uuid);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY, extbody);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY, 0);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_BODY, body);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION, application);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TEXT, text);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION, "SenpaiDetector");
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TEXT, 1);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK, replyto);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID, luid);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID, receiverLuid);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID, "none");
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, "none, none");
 
         db.insert(MsgDataDb.MessageQueue.TABLE_NAME,
                 null,
@@ -124,17 +124,17 @@ public class LeDataStore {
     }
 
     /* Very temporary method for writing a blockdata stanza to datastore */
-    public synchronized int enqueueMessage(BlockDataPacket bd) {
+    private synchronized int enqueueMessage(BlockDataPacket bd) {
         try {
             if (connected) {
                 if (bd.isInvalid()) {
                     ScatterLogManager.e(TAG, "Tried to store an invalid packet");
                     return -1;
                 }
-                enqueueMessage(bd.getHash(), 0, Base64.encodeToString(bd.body, Base64.DEFAULT),
-                        "SenpaiDetector", 1, -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
-                        Base64.encodeToString(bd.senderluid, Base64.DEFAULT), "none",
-                        Base64.encodeToString(bd.receiverluid, Base64.DEFAULT), "none, none");
+                enqueueMessage(bd.getHash(), Base64.encodeToString(bd.body, Base64.DEFAULT),
+                        -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                        Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                        Base64.encodeToString(bd.receiverluid, Base64.DEFAULT));
             } else {
                 ScatterLogManager.e(TAG, "Tried to save a packet with datastore disconnected.");
                 return -2;
@@ -333,7 +333,7 @@ public class LeDataStore {
     /*
     * Gets n rows from the datastore 
     */
-    public synchronized ArrayList<BlockDataPacket> getTopMessages(int count) {
+    public synchronized ArrayList<BlockDataPacket> getTopMessages() {
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         try {
             final String SEP = ", ";
@@ -349,7 +349,7 @@ public class LeDataStore {
                     MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS + " FROM " + MsgDataDb.MessageQueue.TABLE_NAME
-                    + " LIMIT " + count, null);
+                    + " LIMIT " + 90, null);
 
 
             // ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");

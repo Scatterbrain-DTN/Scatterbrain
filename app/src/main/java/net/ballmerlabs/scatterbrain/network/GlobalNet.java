@@ -15,10 +15,10 @@ import java.util.ArrayList;
  * easier
  */
 public class GlobalNet {
-    private ArrayList<ScatterStanza> packetqueue;
+    private final ArrayList<ScatterStanza> packetqueue;
     public final String TAG = "GlobNet";
-    public WifiManager directmanager;
-    private NetTrunk trunk;
+    private final WifiManager directmanager;
+    private final NetTrunk trunk;
     public ScatterPeerListener peerlistener;
 
 

@@ -3,14 +3,14 @@ package net.ballmerlabs.scatterbrain.network.BLE;
 /**
  * represents a generic BLE packet. Has byte array for packet contents
  */
-public abstract class BLEPacket {
-    public byte contents[];
-    public boolean invalid;
+abstract class BLEPacket {
+    byte[] contents;
+    boolean invalid;
 
-    public BLEPacket() {
+    BLEPacket() {
         invalid = true;
     }
-    public BLEPacket(int size) {
+    BLEPacket(int size) {
         contents = new byte[size];
         invalid = false;
     }

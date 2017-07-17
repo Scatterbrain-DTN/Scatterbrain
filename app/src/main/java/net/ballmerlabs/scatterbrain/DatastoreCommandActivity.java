@@ -28,7 +28,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
     private boolean dbConnected;
     private TextView dbTextView;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             ScatterRoutingService.ScatterBinder binder =

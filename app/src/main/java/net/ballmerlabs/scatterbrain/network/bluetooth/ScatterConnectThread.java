@@ -14,12 +14,12 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  * Represents a thread used for asychronous connections to bluetooth
  * peers. It calls a callback function on successful connect
  */
-public class ScatterConnectThread extends Thread {
+class ScatterConnectThread extends Thread {
     private  BluetoothSocket mmSocket;
     private final List<BluetoothDevice> devicelist;
-    private ScatterBluetoothManager bleman;
-    private NetTrunk trunk;
-    public boolean success = false;
+    private final ScatterBluetoothManager bleman;
+    private final NetTrunk trunk;
+    private boolean success = false;
     public ScatterConnectThread(final List<BluetoothDevice> devicelist, NetTrunk trunk) {
 
         this.trunk = trunk;
@@ -77,7 +77,7 @@ public class ScatterConnectThread extends Thread {
 
         devicelist.clear();
 
-        trunk.blman.offloadRandomPacketsToBroadcast(500);
+        trunk.blman.offloadRandomPacketsToBroadcast();
         bleman.unpauseDiscoverLoopThread();
 
 

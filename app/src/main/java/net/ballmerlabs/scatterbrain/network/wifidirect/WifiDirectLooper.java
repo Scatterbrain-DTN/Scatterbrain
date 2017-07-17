@@ -9,10 +9,10 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 /**
  * Created by user on 5/29/16.
  */
-public class WifiDirectLooper extends Thread {
+class WifiDirectLooper extends Thread {
 
-    public Handler handler;
-    public GlobalNet globnet;
+    private Handler handler;
+    private final GlobalNet globnet;
 
     public WifiDirectLooper(GlobalNet globnet) {
         super();

@@ -9,12 +9,12 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  * Represents a block data packet
  */
 @SuppressWarnings({"MismatchedReadAndWriteOfArray", "ManualArrayCopy"})
-public class BlockDataPacket extends BLEPacket{
+class BlockDataPacket extends BLEPacket{
 
-    public byte body[];
-    public boolean text;
-    public String sendermac;
-    public String receivermac;
+    private byte[] body;
+    private final boolean text;
+    private String sendermac;
+    private String receivermac;
 
     private DeviceProfile to;
 

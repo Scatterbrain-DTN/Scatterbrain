@@ -6,7 +6,7 @@ package net.ballmerlabs.scatterbrain.network;
  */
 public class DeviceProfile {
 
-    protected byte[] luid;
+    private byte[] luid;
 
     public enum deviceType {
         ANDROID, IOS, LINUX
@@ -22,12 +22,12 @@ public class DeviceProfile {
     }
 
 
-    protected deviceType type;
-    protected MobileStatus status;
-    protected HardwareServices services;
+    private deviceType type;
+    private MobileStatus status;
+    private HardwareServices services;
 
-    public final byte protocolVersion = 2;
-    protected byte congestion;
+    private final byte protocolVersion = 2;
+    private byte congestion;
     public DeviceProfile (deviceType type, MobileStatus status, HardwareServices services, byte[] id) {
         this.type = type;
         this.services = services;

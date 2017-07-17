@@ -28,7 +28,6 @@ public class ClientAsyncTask extends WifiAsyncTask{
         String host = (String) params[0];
         int port = (Integer) params[1];
         byte[] toTransmit = (byte[]) params[2];
-        int len;
         Socket socket = new Socket();
 
         try {

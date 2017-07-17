@@ -98,8 +98,7 @@ public class LeDataStore {
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);
 
-        long newRowId;
-        newRowId = db.insert(MsgDataDb.MessageQueue.TABLE_NAME,
+        db.insert(MsgDataDb.MessageQueue.TABLE_NAME,
                 null,
                 values);
 
@@ -274,6 +273,7 @@ public class LeDataStore {
      * Gets n rows from the datastore in a random order. For use when there is no time to transmit
      * the entire datastore.
      */
+    @SuppressWarnings("UnusedAssignment")
     public synchronized ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         try {

@@ -24,7 +24,6 @@ public class GlobalNet {
 
     public GlobalNet(NetTrunk trunk) {
         packetqueue = new ArrayList<>();
-        DeviceProfile prof = trunk.profile;
         this.trunk = trunk;
         directmanager = new WifiManager(trunk);
         directmanager.stopWifiDirectLoopThread();

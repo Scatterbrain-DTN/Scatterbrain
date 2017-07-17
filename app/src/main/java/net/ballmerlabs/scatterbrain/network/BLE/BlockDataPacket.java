@@ -8,7 +8,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 /**
  * Represents a block data packet
  */
-@SuppressWarnings("MismatchedReadAndWriteOfArray")
+@SuppressWarnings({"MismatchedReadAndWriteOfArray", "ManualArrayCopy"})
 public class BlockDataPacket extends BLEPacket{
 
     public byte body[];

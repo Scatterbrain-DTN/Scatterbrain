@@ -152,7 +152,6 @@ public class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
     private AdvertisePacket encodeAdvertise() {
-        byte result[] = new byte[7];
         return new AdvertisePacket(currentDevice);
     }
 

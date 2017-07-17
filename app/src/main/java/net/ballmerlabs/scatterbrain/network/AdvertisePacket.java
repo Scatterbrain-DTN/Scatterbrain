@@ -11,6 +11,7 @@ import java.util.zip.CRC32;
 /**
  * Created by gnu3ra on 3/28/16.
  */
+@SuppressWarnings("ManualArrayCopy")
 public class AdvertisePacket extends ScatterStanza {
 
     public static String TAG = "AdvertisePacket";

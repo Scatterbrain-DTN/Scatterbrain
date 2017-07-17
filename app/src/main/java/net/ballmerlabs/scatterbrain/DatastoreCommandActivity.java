@@ -90,9 +90,6 @@ public class DatastoreCommandActivity extends AppCompatActivity {
 
         dbDisplay = (TextView) findViewById(R.id.dboverviewtext);
 
-        final Activity main = this;
-
-
         dbDisplay.setText("DISCONNECTED");
         dbDisplay.setTextColor(Color.RED);
 

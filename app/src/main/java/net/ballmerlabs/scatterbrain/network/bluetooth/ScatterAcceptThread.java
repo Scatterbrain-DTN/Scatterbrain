@@ -14,7 +14,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  * Listens for incoming bluetooth connections
  * without paring/security
  */
-public class ScatterAcceptThread extends Thread {
+class ScatterAcceptThread extends Thread {
     private BluetoothServerSocket mmServerSocket = null;
     private final NetTrunk trunk;
     private final BluetoothAdapter adapter;
@@ -66,6 +66,7 @@ public class ScatterAcceptThread extends Thread {
     }
 
 
+    @SuppressWarnings("unused")
     public void cancel() {
         try {
             mmServerSocket.close();

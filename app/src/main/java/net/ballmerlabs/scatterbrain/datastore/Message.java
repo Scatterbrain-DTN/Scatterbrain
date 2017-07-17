@@ -10,14 +10,22 @@ public class Message {
 
     public final String application;
     public final String body;
+    @SuppressWarnings("unused")
     private final int ttl;
+    @SuppressWarnings("unused")
     private final String replylink;
     public final String senderluid;
+    @SuppressWarnings("unused")
     private final String flags;
+    @SuppressWarnings("unused")
     private final String sig;
+    @SuppressWarnings("unused")
     private final String uuid;
+    @SuppressWarnings("unused")
     private final String receiverluid;
+    @SuppressWarnings("unused")
     private final int extbody;
+    @SuppressWarnings("unused")
     private final int text;
 
     public Message(String uuid, int extbody,   String body, String application, int text,  int ttl,

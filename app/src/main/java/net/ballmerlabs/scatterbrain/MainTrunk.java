@@ -11,10 +11,14 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 @SuppressWarnings("FieldCanBeLocal")
 class MainTrunk {
 
+    @SuppressWarnings("unused")
     private final DeviceProfile profile;
+    @SuppressWarnings("unused")
     private final SettingsManager settings;
+    @SuppressWarnings("unused")
     private final Activity mainActivity;
 
+    @SuppressWarnings("unused")
     public MainTrunk(Activity main) {
         byte tmp[] = {0,0,0,0,0};
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,

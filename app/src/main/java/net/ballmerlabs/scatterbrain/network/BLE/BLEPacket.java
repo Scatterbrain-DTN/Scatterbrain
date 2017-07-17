@@ -7,9 +7,11 @@ abstract class BLEPacket {
     byte[] contents;
     boolean invalid;
 
+    @SuppressWarnings("unused")
     BLEPacket() {
         invalid = true;
     }
+    @SuppressWarnings("unused")
     BLEPacket(int size) {
         contents = new byte[size];
         invalid = false;

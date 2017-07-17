@@ -26,8 +26,10 @@ public class LeDataStore {
     private int dataTrimLimit;
     private final String TAG = "DataStore";
     private final Service mainService;
+    @SuppressWarnings("unused")
     private Cursor c;
     public boolean connected;
+    @SuppressWarnings("unused")
     public final String[] names = {
             MsgDataDb.MessageQueue.COLUMN_NAME_HASH,
             MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY,
@@ -57,6 +59,7 @@ public class LeDataStore {
         db = helper.getWritableDatabase();
         connected = true;
     }
+    @SuppressWarnings("unused")
     public synchronized void disconnect() {
         ScatterLogManager.v(TAG, "Disconnected from datastore");
         db.close();
@@ -64,10 +67,12 @@ public class LeDataStore {
     }
 
 
+    @SuppressWarnings("unused")
     public void setDataTrimLimit(int val) {
         dataTrimLimit = val;
     }
 
+    @SuppressWarnings("unused")
     public int getDataTrimLimit() {
         return dataTrimLimit;
     }
@@ -146,6 +151,7 @@ public class LeDataStore {
         return 0;
     }
 
+    @SuppressWarnings("unused")
     public synchronized BlockDataPacket messageToBlockData(Message m) {
         return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
                 Base64.decode(m.senderluid,Base64.DEFAULT));
@@ -217,6 +223,7 @@ public class LeDataStore {
     }
 
 
+    @SuppressWarnings("unused")
     public synchronized ArrayList<Message> getMessageByHash(String compare_hash) {
 
       //  ScatterLogManager.v(TAG, "Retreiving message from hash");

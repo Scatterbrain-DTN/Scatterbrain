@@ -12,8 +12,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 
+@SuppressWarnings("unused")
 public class ProtocolUnitTest {
 
+    @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketFromProfileIsValid() {
         byte[] test = {1,2,3,4,5,6};
@@ -24,6 +26,7 @@ public class ProtocolUnitTest {
         assertThat(ap.isInvalid() , is(false));
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketFromDataAndProfileIsValid() {
         byte[] test = {1,2,3,4,5,6};
@@ -41,6 +44,7 @@ public class ProtocolUnitTest {
         assertThat(newpacket.isInvalid(), is(false));
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketIsValid() {
         byte[] senderluid = {1,2,3,4,5,6};
@@ -50,6 +54,7 @@ public class ProtocolUnitTest {
         assertThat(bd.isInvalid(), is(false));
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketHandlesNullData() {
         byte[] senderluid = {1,2,3,4,5,6};
@@ -58,6 +63,7 @@ public class ProtocolUnitTest {
         assertThat(bd.isInvalid(), is(false));
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketFromDataIsValid() {
         byte[] senderluid = {1,2,3,4,5,6};
@@ -77,6 +83,7 @@ public class ProtocolUnitTest {
     }
 
 
+    @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketHasSameHashWhenReconstructed() {
         byte[] senderluid = {1,2,3,4,5,6};
@@ -88,6 +95,7 @@ public class ProtocolUnitTest {
         assertThat(bd.getHash().equals(ne.getHash()), is(true));
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketIsInvalidWithBogusLUID() {
         byte[] test = {1, 2, 3, 4};
@@ -103,6 +111,7 @@ public class ProtocolUnitTest {
         assertThat(ap.isInvalid() && ap2.isInvalid(), is(true));
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketWithNullDataIsValid() {
         byte[] senderluid = {1,2,3,4,5,6};
@@ -122,6 +131,7 @@ public class ProtocolUnitTest {
         assertThat(bd.getHash().equals(ne.getHash()), is(true));
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void BlockDataSizeOperatorReturnsCorrectSize() {
         byte[] senderluid = {1,2,3,4,5,6};

@@ -41,6 +41,7 @@ public class ScatterRoutingService extends Service {
     private SharedPreferences sharedPreferences;
     public byte[] luid;
     private MessageBoxAdapter Messages;
+    @SuppressWarnings("unused")
     private ArrayAdapter<String> logbuffer;
     public LeDataStore dataStore;
 
@@ -53,6 +54,7 @@ public class ScatterRoutingService extends Service {
         }
     }
 
+    @SuppressWarnings("unused")
     public ScatterRoutingService() {
     }
 
@@ -117,7 +119,7 @@ public class ScatterRoutingService extends Service {
         mNotificationManager.notify(2,mBuilder.build());
     }
 
-    @SuppressWarnings("EmptyMethod")
+    @SuppressWarnings({"EmptyMethod", "unused"})
     void checkForUpdates() {
 
     }
@@ -126,6 +128,7 @@ public class ScatterRoutingService extends Service {
     public ScatterBluetoothManager getBluetoothManager() {
         return trunk.blman;
     }
+    @SuppressWarnings("unused")
     public NetTrunk getTrunk() {
         return trunk;
     }
@@ -165,6 +168,7 @@ public class ScatterRoutingService extends Service {
         dataStore.connect();
     }
 
+    @SuppressWarnings("unused")
     public void registerLoggingArrayAdapter(ArrayAdapter<String> ad) {
         this.logbuffer = ad;
     }

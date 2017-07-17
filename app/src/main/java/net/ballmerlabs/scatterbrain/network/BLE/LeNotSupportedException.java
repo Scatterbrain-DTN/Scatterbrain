@@ -6,6 +6,7 @@ package net.ballmerlabs.scatterbrain.network.BLE;
 class LeNotSupportedException extends Exception {
 
 
+    @SuppressWarnings("unused")
     public LeNotSupportedException() {
 
     }

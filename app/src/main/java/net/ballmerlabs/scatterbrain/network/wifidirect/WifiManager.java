@@ -26,8 +26,10 @@ import java.util.Map;
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
  */
 public class WifiManager extends BroadcastReceiver {
+    @SuppressWarnings("unused")
     public boolean CONNECTED = false;
     private final String TAG = "WiFi_daemon";
+    @SuppressWarnings("unused")
     private android.os.Handler threadHandler = new android.os.Handler();
     private final GlobalNet net;
     private WifiP2pManager manager;
@@ -38,8 +40,10 @@ public class WifiManager extends BroadcastReceiver {
     private final WifiP2pManager.Channel channel;
     private Handler wifiHan;
     private boolean runScanThread;
+    @SuppressWarnings("unused")
     private WifiP2pDnsSdServiceInfo serviceInfo;
     private final WifiDirectLooper looper;
+    @SuppressWarnings("unused")
     private BroadcastReceiver p2preceiver;
     private final NetTrunk trunk;
 
@@ -52,6 +56,7 @@ public class WifiManager extends BroadcastReceiver {
     /*
      * Remember to call this constructor in OnCreate()? maybe?
      */
+    @SuppressWarnings("unused")
     public WifiManager(NetTrunk trunk) {
         this.trunk = trunk;
         net = trunk.globnet;
@@ -101,11 +106,13 @@ public class WifiManager extends BroadcastReceiver {
 
     }
 
+    @SuppressWarnings("unused")
     public BroadcastReceiver getP2preceiver() {
         return p2preceiver;
     }
 
 
+    @SuppressWarnings("unused")
     public void startWifiDirctLoopThread() {
         Log.v(TAG, "Starting wifi direct scan thread");
         runScanThread = true;
@@ -137,12 +144,13 @@ public class WifiManager extends BroadcastReceiver {
     }
 
     /* handling if scan succeeded or failed. Does nothing with peers */
+    @SuppressWarnings("unused")
     public void registerScanActionListener(WifiP2pManager.ActionListener scan) {
         this.scanlistener = scan;
     }
 
     /* registers a listener for action on connect to a peer */
-    @SuppressWarnings("EmptyMethod")
+    @SuppressWarnings({"EmptyMethod", "unused", "UnusedParameters"})
     public void registerConnectActionListener(WifiP2pManager.ActionListener listener) {
     }
 
@@ -156,6 +164,7 @@ public class WifiManager extends BroadcastReceiver {
     }
 
 
+    @SuppressWarnings("unused")
     public ScatterPeerListener getPeerListener() {
         return trunk.globnet.peerlistener;
     }
@@ -204,6 +213,7 @@ public class WifiManager extends BroadcastReceiver {
 
     }
 
+    @SuppressWarnings("unused")
     public void scan() {
         Log.v(TAG, "Scanning for peers");
         manager.discoverPeers(chan, scanlistener);
@@ -213,7 +223,7 @@ public class WifiManager extends BroadcastReceiver {
     /*
     * Registers a service for autodiscovery
     */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "UnusedParameters"})
     private void registerService(DeviceProfile profile) {
 
         HashMap record = new HashMap<>();

@@ -19,14 +19,18 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
-@SuppressWarnings("MismatchedReadAndWriteOfArray")
+@SuppressWarnings({"MismatchedReadAndWriteOfArray", "unused"})
 public class NormalActivity extends AppCompatActivity {
 
     private EditText MsgBox;
     private MessageBoxAdapter Messages;
+    @SuppressWarnings("unused")
     private GlobalNet globnet;
+    @SuppressWarnings("unused")
     private DeviceProfile profile;
+    @SuppressWarnings("unused")
     private TextView peersView;
+    @SuppressWarnings("unused")
     private ScatterRoutingService service;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
@@ -145,6 +149,7 @@ public class NormalActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    @SuppressWarnings("unused")
     public void addMessage(String message, byte[] luid) {
         Messages.data.add(  new DispMessage(message,
                 Base64.encodeToString(luid, Base64.DEFAULT)));

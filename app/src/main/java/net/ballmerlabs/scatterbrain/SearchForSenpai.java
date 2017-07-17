@@ -38,6 +38,7 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 /*
  * Main 'Home screen' activity for the scatterbrain testing phase.
  */
+@SuppressWarnings("unused")
 public class SearchForSenpai extends AppCompatActivity {
     private TextView senpai_notice;
     private boolean scatterBound = false;
@@ -91,6 +92,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
 
     /* This Thread checks for Updates in the Background */
+    @SuppressWarnings("unused")
     private Thread checkUpdate = new Thread() {
         public void run() {
             try {
@@ -256,6 +258,7 @@ public class SearchForSenpai extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     public void setNoticeVisibility() {
         senpai_notice.setVisibility(View.VISIBLE);
     }
@@ -267,20 +270,24 @@ public class SearchForSenpai extends AppCompatActivity {
         return true;
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void launchSettings(MenuItem item) {
         Intent intent = new Intent(this,SettingsActivity.class);
         startActivity(intent);
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void startLogViewer(MenuItem item) {
         Intent intent = new Intent(this, LoggingActivity.class);
         startActivity(intent);
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void startDatastoreCommand(MenuItem item) {
         Intent intent = new Intent(this,DatastoreCommandActivity.class);
         startActivity(intent);
     }
+    @SuppressWarnings("unused")
     public void toggleService(MenuItem item) {
         if(scatterBound) {
             Intent stop = new Intent(this, ScatterRoutingService.class);
@@ -299,6 +306,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void resetText(MenuItem item) {
         senpai_notice.setVisibility(View.INVISIBLE);
     }

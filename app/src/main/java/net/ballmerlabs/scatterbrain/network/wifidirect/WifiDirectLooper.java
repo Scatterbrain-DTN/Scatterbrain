@@ -13,6 +13,7 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 class WifiDirectLooper extends Thread {
 
     private Handler handler;
+    @SuppressWarnings("unused")
     private final GlobalNet globnet;
 
     public WifiDirectLooper(GlobalNet globnet) {

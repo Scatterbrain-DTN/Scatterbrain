@@ -14,8 +14,10 @@ import java.util.ArrayList;
  * Listens for new peers when scanning and pushes them onto a queue
  */
 public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
+    @SuppressWarnings("unused")
     private Boolean haspeers;
     private final ArrayList<WifiP2pDeviceList> peerstack;
+    @SuppressWarnings("unused")
     private TextView peersView;
     private final WifiManager manager;
     @SuppressWarnings("FieldCanBeLocal")
@@ -23,6 +25,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     private final WifiP2pManager.Channel channel;
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "PeerListener";
+    @SuppressWarnings("unused")
     public ScatterPeerListener(NetTrunk trunk) {
         this.manager = trunk.globnet.getWifiManager();
         this.globnet = trunk.globnet;

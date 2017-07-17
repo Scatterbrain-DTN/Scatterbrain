@@ -21,10 +21,12 @@ public class LocalPeer {
         receiveThread.start();
     }
 
+    @SuppressWarnings("unused")
     public DeviceProfile getProfile() {
         return profile;
     }
 
+    @SuppressWarnings("unused")
     public BluetoothSocket getSocket() {
         return socket;
     }

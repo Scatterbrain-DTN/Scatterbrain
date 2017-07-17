@@ -19,16 +19,20 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import java.util.logging.LogManager;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
+@SuppressWarnings("unused")
 public class LoggingActivity extends AppCompatActivity {
 
-    @SuppressWarnings("FieldCanBeLocal")
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private ScatterRoutingService mService;
+    @SuppressWarnings("unused")
     private boolean scatterBound;
     private final String TAG = "LoggingActivity";
     @SuppressWarnings("FieldCanBeLocal")
     private Spinner sp;
+    @SuppressWarnings("unused")
     private ListViewAutoScrollHelper autoScroll;
     private ArrayAdapter<String> listViewArrayAdapter;
+    @SuppressWarnings("unused")
     private LogManager logManager;
 
     private final ServiceConnection mConnection = new ServiceConnection() {

@@ -6,8 +6,10 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  */
 @SuppressWarnings("FieldCanBeLocal")
 class HighLevelAPI {
+    @SuppressWarnings("unused")
     private final DeviceProfile MyProfile;
 
+    @SuppressWarnings("unused")
     public HighLevelAPI(DeviceProfile profile) {
         this.MyProfile = profile;
     }
@@ -17,12 +19,12 @@ class HighLevelAPI {
 
     }
 
-    @SuppressWarnings("EmptyMethod")
+    @SuppressWarnings({"EmptyMethod", "UnusedParameters"})
     public void sendData(DeviceProfile target) {
 
     }
 
-    @SuppressWarnings("EmptyMethod")
+    @SuppressWarnings({"EmptyMethod", "UnusedParameters"})
     public void queryServices(DeviceProfile target) {
 
     }

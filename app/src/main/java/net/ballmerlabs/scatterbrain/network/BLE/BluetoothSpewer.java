@@ -25,7 +25,9 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     private BluetoothAdapter adapter;
     private BluetoothLeAdvertiser advertiser;
+    @SuppressWarnings("unused")
     private boolean CONNECTED = false;
+    @SuppressWarnings("unused")
     private android.os.Handler threadHandler = new android.os.Handler();
     private String stagedMsg;
     private boolean isscanning = false;
@@ -36,7 +38,8 @@ class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     /*);
      * Remember to ca);ll this constructor in OnCreate()? maybe?
      */
-    public BluetoothSpewer(Activity mainActivity,DeviceProfile me, GlobalNet globnet) throws LeNotSupportedException {
+    @SuppressWarnings({"unused", "UnusedParameters"})
+    public BluetoothSpewer(Activity mainActivity, DeviceProfile me, GlobalNet globnet) throws LeNotSupportedException {
         if (!BleUtil.isBLESupported(mainActivity)) {
             throw (new LeNotSupportedException());
         }
@@ -134,7 +137,7 @@ class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
 
 
     /* fancy parser for parsing a recieved advertise packet */
-    @SuppressWarnings("EmptyMethod")
+    @SuppressWarnings({"EmptyMethod", "UnusedParameters"})
     public void makeDeviceProfile(String advertiseMessage, String address) {
 
     }

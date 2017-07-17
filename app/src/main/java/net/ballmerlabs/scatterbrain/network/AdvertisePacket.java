@@ -17,6 +17,7 @@ public class AdvertisePacket extends ScatterStanza {
     private byte devicetype;
     private byte mobilestatus;
     private final byte[] protocolversion;
+    @SuppressWarnings("unused")
     private byte congestion;
     private byte hwservices;
     private final byte[] luid;

@@ -8,12 +8,17 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 class AdvertisePacket extends BLEPacket {
 
 
+    @SuppressWarnings("unused")
     private byte devicetype;
+    @SuppressWarnings("unused")
     private byte mobilestatus;
     private byte[] protocolversion;
+    @SuppressWarnings("unused")
     private byte congestion;
+    @SuppressWarnings("unused")
     private byte hwservices;
 
+    @SuppressWarnings("unused")
     public AdvertisePacket(DeviceProfile dv) {
         super(7);
         protocolversion = new byte[2];
@@ -22,6 +27,7 @@ class AdvertisePacket extends BLEPacket {
     }
 
 
+    @SuppressWarnings("unused")
     public AdvertisePacket(byte raw[]) {
         super(7);
         if(raw.length != 7)

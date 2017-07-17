@@ -8,6 +8,7 @@ import android.os.AsyncTask;
  */
 abstract class WifiAsyncTask extends AsyncTask {
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     WifiAsyncTask(Context context) {
 
     }

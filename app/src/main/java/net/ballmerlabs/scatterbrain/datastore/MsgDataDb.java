@@ -7,6 +7,7 @@ import android.provider.BaseColumns;
  */
 final class MsgDataDb {
 
+    @SuppressWarnings("unused")
     public MsgDataDb() {}
 
     public static abstract class MessageQueue implements BaseColumns {

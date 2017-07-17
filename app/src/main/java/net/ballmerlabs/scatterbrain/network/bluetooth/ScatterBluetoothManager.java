@@ -327,6 +327,7 @@ public class ScatterBluetoothManager {
     }
 
     //sends a random set of packets from the datastore to a nearby device
+    @SuppressWarnings("SameParameterValue")
     private void offloadRandomPackets(int count, final String device) {
         final ArrayList<BlockDataPacket> ran = trunk.mainService.dataStore.getTopRandomMessages(count);
         pauseDiscoverLoopThread();
@@ -367,6 +368,7 @@ public class ScatterBluetoothManager {
 
 
     //sends a BlockDataPacket to all connected peers
+    @SuppressWarnings("unused")
     public void sendMessageToBroadcast(byte[] message, boolean text) {
         synchronized (connectedList) {
            // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
@@ -399,6 +401,7 @@ public class ScatterBluetoothManager {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void sendRaw(final String mactarget, final byte[] message, final boolean fake) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
 

@@ -13,13 +13,16 @@ class BlockDataPacket extends BLEPacket{
 
     private byte[] body;
     private final boolean text;
+    @SuppressWarnings("unused")
     private String sendermac;
+    @SuppressWarnings("unused")
     private String receivermac;
 
     private DeviceProfile to;
 
 
 
+    @SuppressWarnings("unused")
     public BlockDataPacket(byte body[], boolean text, DeviceProfile to) {
             super(27+body.length);
             this.body = body;
@@ -31,6 +34,7 @@ class BlockDataPacket extends BLEPacket{
     }
 
 
+    @SuppressWarnings("unused")
     public BlockDataPacket(byte raw[]) {
         super(26+raw.length);
         contents = raw;

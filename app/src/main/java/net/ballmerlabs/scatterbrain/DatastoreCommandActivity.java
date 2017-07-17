@@ -20,6 +20,7 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class DatastoreCommandActivity extends AppCompatActivity {
     private ScatterRoutingService mService;
     private TextView dbDisplay;

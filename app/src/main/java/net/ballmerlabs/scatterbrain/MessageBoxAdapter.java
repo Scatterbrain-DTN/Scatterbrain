@@ -15,6 +15,7 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class MessageBoxAdapter extends BaseAdapter {
+    @SuppressWarnings("unused")
     private final Context context;
     public final ArrayList<DispMessage> data;
     private static LayoutInflater inflater = null;

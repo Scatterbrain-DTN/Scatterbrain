@@ -15,9 +15,11 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 @SuppressWarnings("FieldCanBeLocal")
 class ServerAsyncTask extends WifiAsyncTask {
 
+    @SuppressWarnings("unused")
     public final int SERVERPORT = 8222;
     private final String TAG = "ServerAsyncTask";
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public ServerAsyncTask(Context context, ArrayAdapter<String> messageList) {
         super(context);
     }

@@ -6,6 +6,7 @@ package net.ballmerlabs.scatterbrain.network;
 public abstract class ScatterStanza {
     public byte contents[];
     public boolean invalid;
+    @SuppressWarnings("unused")
     public final int PACKET_SIZE = 0;
 
     ScatterStanza() {
@@ -16,6 +17,7 @@ public abstract class ScatterStanza {
         invalid = false;
     }
 
+    @SuppressWarnings("unused")
     public byte getHeader() { return contents[0];}
 
     public boolean isInvalid() {

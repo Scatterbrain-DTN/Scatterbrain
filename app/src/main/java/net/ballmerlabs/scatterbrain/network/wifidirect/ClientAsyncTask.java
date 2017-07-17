@@ -17,6 +17,7 @@ class ClientAsyncTask extends WifiAsyncTask{
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ClientAsyncTask";
 
+    @SuppressWarnings("unused")
     public ClientAsyncTask(Context context) {
         super(context);
     }

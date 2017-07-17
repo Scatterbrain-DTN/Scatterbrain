@@ -32,6 +32,7 @@ import android.app.AlertDialog;
 import net.ballmerlabs.scatterbrain.network.PeersChangedCallback;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
+import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 import org.w3c.dom.Text;
 
@@ -210,7 +211,7 @@ public class SearchForSenpai extends AppCompatActivity {
                         @Override
                         public void run() {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                            startActivityForResult(enableBtIntent, mService.getBluetoothManager().REQUEST_ENABLE_BT);
+                            startActivityForResult(enableBtIntent, ScatterBluetoothManager.REQUEST_ENABLE_BT);
                         }
                     });
                 } else {
@@ -237,7 +238,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestcode, int resultcode, Intent intenet) {
-        if(requestcode == mService.getBluetoothManager().REQUEST_ENABLE_BT) {
+        if(requestcode ==  ScatterBluetoothManager.REQUEST_ENABLE_BT) {
             Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(enableAndDiscoverBtIntent);

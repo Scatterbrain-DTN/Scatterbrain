@@ -67,10 +67,10 @@ public class WifiManager extends BroadcastReceiver {
         this.manager = (WifiP2pManager) trunk.mainService.getSystemService(Context.WIFI_P2P_SERVICE);
         this.chan = manager.initialize(trunk.mainService, trunk.mainService.getMainLooper(), null);
         p2pIntenetFilter = new IntentFilter();
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_STATE_CHANGED_ACTION);
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        p2pIntenetFilter.addAction(manager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        p2pIntenetFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        p2pIntenetFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        p2pIntenetFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        p2pIntenetFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         channel = getChannel();
         manager = getManager();
         runScanThread = false;

@@ -155,10 +155,9 @@ public class BlockDataPacket extends ScatterStanza {
             err[3] = 1;
             return null;
         }
-        byte senderluidbytes[] = senderluid;
 
         for(int x=1;x<7;x++) {
-            contents[x] = senderluidbytes[x-1];
+            contents[x] = senderluid[x-1];
         }
         byte[] receiverluid = {0,0,0,0,0,0}; //not implemented yet
 

@@ -172,7 +172,6 @@ public class ScatterBluetoothManager {
         connectedList = new HashMap<>();
         scatterList = new ArrayList<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        IntentFilter filter1 = filter;
         currentUUID = 0;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothDevice.ACTION_UUID);

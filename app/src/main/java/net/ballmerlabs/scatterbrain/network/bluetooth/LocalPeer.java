@@ -8,6 +8,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  * Represents a local bluetooth device believed to be within
  * range at the time
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class LocalPeer {
     private final DeviceProfile profile;
     public final BluetoothSocket socket;

@@ -15,7 +15,6 @@ public class BluetoothLooper extends Thread {
 
     public BluetoothLooper(GlobalNet globnet) {
         super();
-        GlobalNet globnet1 = globnet;
         handler = new Handler();
     }
 

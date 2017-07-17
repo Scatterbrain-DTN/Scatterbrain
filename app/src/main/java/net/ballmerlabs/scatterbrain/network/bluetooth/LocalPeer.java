@@ -20,4 +20,12 @@ public class LocalPeer {
         receiveThread.start();
     }
 
+    public DeviceProfile getProfile() {
+        return profile;
+    }
+
+    public BluetoothSocket getSocket() {
+        return socket;
+    }
+
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 /**
  * Adapter for the control of the slightly less horrible message list view.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class MessageBoxAdapter extends BaseAdapter {
     private final Context context;
     public final ArrayList<DispMessage> data;

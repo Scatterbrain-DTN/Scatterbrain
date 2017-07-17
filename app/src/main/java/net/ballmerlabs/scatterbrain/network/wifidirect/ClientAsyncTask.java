@@ -14,12 +14,11 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  */
 class ClientAsyncTask extends WifiAsyncTask{
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ClientAsyncTask";
-    private final Context context;
 
     public ClientAsyncTask(Context context) {
         super(context);
-        this.context = context;
     }
 
     @Override

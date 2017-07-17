@@ -19,7 +19,7 @@ class ScatterConnectThread extends Thread {
     private final List<BluetoothDevice> devicelist;
     private final ScatterBluetoothManager bleman;
     private final NetTrunk trunk;
-    private boolean success = false;
+
     public ScatterConnectThread(final List<BluetoothDevice> devicelist, NetTrunk trunk) {
 
         this.trunk = trunk;
@@ -35,7 +35,7 @@ class ScatterConnectThread extends Thread {
         for(BluetoothDevice mmDevice : devicelist) {
             synchronized (trunk.blman.connectedList) {
                 if (!trunk.blman.connectedList.containsKey(mmDevice.getAddress())) {
-                    success = false;
+                    boolean success = false;
                     BluetoothSocket tmp = null;
                     try {
                         tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(this.bleman.UID);

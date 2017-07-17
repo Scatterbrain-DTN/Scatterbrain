@@ -28,6 +28,15 @@ public class ScatterReceiveThread extends Thread{
     }
 
 
+    public boolean getFake() {
+        return fake;
+    }
+
+    public int getErrcount() {
+        return errcount;
+    }
+
+
     @Override
     public void run() {
         int errorcount = 0;

@@ -13,6 +13,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Created by user on 5/25/16.
  */
+@SuppressWarnings("FieldCanBeLocal")
 class DirectConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
     private final HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
     private final String TAG = "ConnectionInfoListener";

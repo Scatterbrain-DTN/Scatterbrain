@@ -9,6 +9,7 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 /**
  * Created by user on 5/29/16.
  */
+@SuppressWarnings("FieldCanBeLocal")
 class WifiDirectLooper extends Thread {
 
     private Handler handler;

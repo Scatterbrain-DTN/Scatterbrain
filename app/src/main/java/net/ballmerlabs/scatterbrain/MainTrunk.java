@@ -8,6 +8,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
  * holds most of the objects needed to keep clutter off of
  * the main activity
  */
+@SuppressWarnings("FieldCanBeLocal")
 class MainTrunk {
 
     private final DeviceProfile profile;

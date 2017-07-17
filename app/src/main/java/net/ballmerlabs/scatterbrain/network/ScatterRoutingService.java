@@ -30,6 +30,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  * Represents a background service for routing packets
  * for the scatterbrain protocol.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ScatterRoutingService extends Service {
 
     private final IBinder mBinder = new ScatterBinder();

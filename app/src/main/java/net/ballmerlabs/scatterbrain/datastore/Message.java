@@ -3,6 +3,7 @@ package net.ballmerlabs.scatterbrain.datastore;
 /**
  * Basic data unit for a single message. 
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class Message {
 
 

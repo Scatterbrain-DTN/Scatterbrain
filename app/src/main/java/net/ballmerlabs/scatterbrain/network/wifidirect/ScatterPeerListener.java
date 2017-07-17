@@ -16,7 +16,6 @@ import java.util.ArrayList;
 public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     private Boolean haspeers;
     private final ArrayList<WifiP2pDeviceList> peerstack;
-    private final int maxsize = 5;
     private TextView peersView;
     private final WifiManager manager;
     @SuppressWarnings("FieldCanBeLocal")
@@ -41,9 +40,10 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
         peerstack.add(peers);
         peersView.setText(dumpStack());
         //trim so we don't get too big
+        int maxsize = 5;
         if(peerstack.size() > maxsize) {
             int size = peerstack.size();
-            for(int x=0;x<size-maxsize;x++) {
+            for(int x = 0; x<size- maxsize; x++) {
                     peerstack.remove(0);
             }
         }

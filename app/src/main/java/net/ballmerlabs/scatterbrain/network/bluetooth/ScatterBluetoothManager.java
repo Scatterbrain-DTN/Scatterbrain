@@ -55,14 +55,13 @@ public class ScatterBluetoothManager {
     private boolean runScanThread;
     private Handler bluetoothHan;
     private final BluetoothLooper looper;
-    private final IntentFilter filter;
     private Runnable scanr;
-    private ScatterAcceptThread acceptThread;
     private final boolean isAccepting;
     public boolean acceptThreadRunning;
     private boolean threadPaused;
     private int currentUUID; //the device we are currently querying for uuid.
     private int targetUUID; //the number of devices to stop at
+    @SuppressWarnings("FieldCanBeLocal")
     private final int PARALLELUUID = 1; //number of devices to scan at a time.
     private Method setDuration;
 
@@ -70,6 +69,7 @@ public class ScatterBluetoothManager {
     /* listens for events thrown by bluetooth adapter when scanning for devices
      * and calls actions for different scenarios.
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
@@ -172,7 +172,7 @@ public class ScatterBluetoothManager {
         connectedList = new HashMap<>();
         scatterList = new ArrayList<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.filter = filter;
+        IntentFilter filter1 = filter;
         currentUUID = 0;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothDevice.ACTION_UUID);
@@ -207,7 +207,7 @@ public class ScatterBluetoothManager {
     //some initialization routines that can't be called at the same time as constructur.
     public void init() {
         if (!acceptThreadRunning) {
-            acceptThread = new ScatterAcceptThread(trunk, adapter);
+            ScatterAcceptThread acceptThread = new ScatterAcceptThread(trunk, adapter);
             acceptThread.start();
         }
     }

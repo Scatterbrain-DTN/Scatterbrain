@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.widget.Advanceable;
 import android.widget.ArrayAdapter;
 
 
@@ -289,29 +290,31 @@ public class ScatterBluetoothManager {
             AdvertisePacket outpacket = new AdvertisePacket(trunk.profile);
             o.write(outpacket.getContents());
             byte[] buffer = new byte[AdvertisePacket.PACKET_SIZE];
-            i.read(buffer);
-            AdvertisePacket inpacket= null;
+            if(i.read(buffer) == AdvertisePacket.PACKET_SIZE) {
+                AdvertisePacket inpacket = null;
                 inpacket = new AdvertisePacket(buffer);
-                if(!inpacket.isInvalid()) {
+                if (!inpacket.isInvalid()) {
 
                     ScatterLogManager.v(TAG, "Adding new device " + Arrays.toString(inpacket.convertToProfile().getLUID()));
                     synchronized (connectedList) {
                         connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
 
-                     //   ScatterLogManager.v(TAG, "List size = " + connectedList.size());
+                        //   ScatterLogManager.v(TAG, "List size = " + connectedList.size());
                     }
 
                     synchronized (connectedList) {
                         trunk.mainService.updateUiOnDevicesFound(connectedList);
                     }
 
-                }
-                else {
+                } else {
                     byte b = inpacket.getContents()[0];
                     ScatterLogManager.e(TAG, "Received an advertise stanza, but it is invalid (" + b + ")");
                     socket.close();
                 }
-
+            }
+            else {
+                ScatterLogManager.e(TAG, "Received an advertisePacket with a wrong size");
+            }
 
         }
         catch(IOException c) {

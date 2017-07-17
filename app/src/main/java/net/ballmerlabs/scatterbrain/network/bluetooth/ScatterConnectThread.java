@@ -59,7 +59,7 @@ public class ScatterConnectThread extends Thread {
 
                         if(mmSocket != null)
                             mmSocket.connect();
-                        if (mmSocket.isConnected()) {
+                        if (mmSocket != null && mmSocket.isConnected()) {
                             success = true;
 
                             //call this function in the context of the bluetoothManager
@@ -78,6 +78,7 @@ public class ScatterConnectThread extends Thread {
                         }
 
                     }
+                    //noinspection StatementWithEmptyBody
                     if (!success) {
                         //   trunk.blman.blackList.add(mmDevice.getAddress());
                     }

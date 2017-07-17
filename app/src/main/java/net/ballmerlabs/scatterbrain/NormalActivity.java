@@ -112,7 +112,6 @@ public class NormalActivity extends AppCompatActivity {
                     if (mService.getBluetoothManager() != null) {
                         mService.getBluetoothManager().sendRawToBroadcast(bd.getContents());
                     }
-
             }
 
             else {

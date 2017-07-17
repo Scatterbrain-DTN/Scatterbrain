@@ -465,7 +465,6 @@ public class ScatterBluetoothManager {
 
                         ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
                     }
-                } else {
                 }
             }
         };

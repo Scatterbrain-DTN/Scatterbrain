@@ -25,6 +25,7 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
+@SuppressWarnings("MismatchedReadAndWriteOfArray")
 public class NormalActivity extends AppCompatActivity {
 
     private EditText MsgBox;

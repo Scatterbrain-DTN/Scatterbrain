@@ -1,39 +1,26 @@
 <resources>
     <string name="app_name">Senpai Detector</string>
-    <string name="notice_text">Senpai noticed you! </string>
-    <string name="notice_title">You lucky dog!</string>
     <string name="buttonlaunch_text">Cast!</string>
     <string name="db_refresh">refresh datastore view</string>
     <string name="db_clear_str">clear</string>
     <string name="dbtrim_str">trim</string>
     <string name="db_rand_str">rand</string>
-    <string name="connect_text">connect</string>
-    <string name="disconnect_text">disconnect</string>
-    <string name="notice_body">After so long an agonizing wait, senpai has finally noticed you!</string>
     <string name="scatter_preference_key">net.ballmerlabs.scatterbrain.routingServiceSharedPrefs</string>
     <string name="uuid_not_present">nothing</string>
     <string name="scatter_uuid">scatterUUID</string>
     <string name="service_ticker">Senpai detector</string>
     <string name="service_title">Senpai Detector</string>
-    <string name="service_body">Background detection service is running...</string>
-    <string name="title_section1">Full Nuclear Strike</string>
-    <string name="title_section2">Launch Entomological Weapons</string>
-    <string name="title_section3">Failsafe Omega</string>
-
+    <string name="service_body">Background detection service is running</string>
+    <string name="nothing">nothing</string>
     <string name="scramble_pref">scramblePref</string>
     <string name="pref_luid_display">prefuuiddisplay</string>
     <string name="queue_pref">pref_queue_length</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_example">Find Senpai</string>
 
     <string name="action_settings">Settings</string>
 
-    <string name="scanning">Scanning: </string>
 
-    <string name="title_activity_search_for_senpai">Search For Senpai</string>
 
     <string name="hello_world">Will Senpai notice you today?</string>
     <string name="title_activity_settings">Settings</string>
@@ -43,12 +30,7 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
-    <string name="pref_title_social_recommendations">Placeholder switch</string>
-    <string name="pref_description_social_recommendations">Add more stuff here
-    </string>
 
-    <string name="pref_title_display_name">Placeholder text field</string>
-    <string name="pref_default_display_name">...</string>
 
     <string name="pref_title_add_friends_to_messages">Placeholder radio button</string>
     <string name="backgroundservice">Background Service</string>
@@ -81,16 +63,10 @@
         <item>40</item>
         <item>50</item>
     </string-array>
-
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
 
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
 
-    <string name="pref_title_vibrate">Vibrate</string>
 </resources>

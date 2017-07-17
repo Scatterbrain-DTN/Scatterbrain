@@ -1,11 +1,10 @@
 package net.ballmerlabs.scatterbrain;
 
-import android.content.ContentResolver;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -14,9 +13,11 @@ import java.util.ArrayList;
 /**
  * Adapter for the control of the slightly less horrible message list view.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class MessageBoxAdapter extends BaseAdapter {
-    public Context context;
-    public ArrayList<DispMessage> data;
+    @SuppressWarnings("unused")
+    private final Context context;
+    public final ArrayList<DispMessage> data;
     private static LayoutInflater inflater = null;
 
     public MessageBoxAdapter(Context context) {
@@ -40,6 +41,7 @@ public class MessageBoxAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;

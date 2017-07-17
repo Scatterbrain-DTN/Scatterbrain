@@ -7,19 +7,17 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".NormalActivity"
-    android:background="@color/background_material_dark">
+    tools:context=".NormalActivity">
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
         android:layout_gravity="bottom"
-        android:layout_weight="0.38"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/send"
         android:layout_toStartOf="@+id/send"
-        android:background="@color/button_material_dark" />
+        android:background="@color/button_material_dark"
+        tools:ignore="LabelFor,TextFields" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -29,7 +27,6 @@
         android:id="@+id/send"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:background="@color/button_material_dark" />
 
@@ -37,13 +34,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/PeersView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="163dp"
         android:layout_alignEnd="@+id/timeline"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="163dp"
-        android:layout_alignRight="@+id/timeline"/>
+        />
 
     <ListView
         android:layout_width="fill_parent"

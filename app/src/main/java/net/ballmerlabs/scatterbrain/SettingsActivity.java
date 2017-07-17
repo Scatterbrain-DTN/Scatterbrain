@@ -16,7 +16,6 @@ import android.os.IBinder;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceGroup;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -24,11 +23,8 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
-import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
 
 import java.util.List;
 
@@ -43,12 +39,13 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
+@SuppressWarnings("unused")
 public class SettingsActivity extends AppCompatPreferenceActivity {
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -181,7 +178,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private boolean scatterBound = false;
 
-        private ServiceConnection mConnection = new ServiceConnection() {
+        private final ServiceConnection mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 ScatterRoutingService.ScatterBinder binder =
@@ -243,7 +240,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     try {
-                        int result = Integer.parseInt((String)newValue);
+                        //noinspection ResultOfMethodCallIgnored
+                        Integer.parseInt((String)newValue);
                     }
                     catch(Exception e) {
                         return false;

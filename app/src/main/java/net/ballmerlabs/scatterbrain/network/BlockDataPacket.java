@@ -1,32 +1,29 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import android.util.Base64;
-
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.zip.CRC32;
 
 /**
  * Represents a block data packet
  */
+@SuppressWarnings("ManualArrayCopy")
 public class BlockDataPacket extends ScatterStanza {
 
     public byte body[];
-    public boolean text;
-    public byte[] senderluid;
+    private final boolean text;
+    public final byte[] senderluid;
     public byte[] receiverluid;
-    public Integer size;
-    public int[] err;
-    public final int ERRSIZE =10;
+    public final Integer size;
+    public final int[] err;
+    private final int ERRSIZE =10;
     public static final int HEADERSIZE = 22;
-    public static final byte MAGIC = 124;
+    private static final byte MAGIC = 124;
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
         super(HEADERSIZE+body.length);
         this.body = body;
@@ -35,6 +32,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.size = body.length;
         this.err = new int[ERRSIZE];
         invalid = false;
+        //noinspection RedundantIfStatement
         if(init() == null)
             invalid = true;
 
@@ -68,8 +66,8 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
     // http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    public static String bytesToHex( byte[] bytes )
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private static String bytesToHex(byte[] bytes)
     {
         char[] hexChars = new char[ bytes.length * 2 ];
         for( int j = 0; j < bytes.length; j++ )
@@ -100,18 +98,19 @@ public class BlockDataPacket extends ScatterStanza {
         byte recieverluid[] = new byte[6];
         byte senderluid[] = new byte[6];
 
-        int counter3 = 0;
         for(int x = 1;x<7;x++) {
             senderluid[x-1] = contents[x];
         }
-        counter3 = 0;
+
         for(int x=7;x<13;x++) {
             recieverluid[x-7] = contents[x];
         }
 
+        //noinspection UnusedAssignment
         this.senderluid = senderluid;
         this.receiverluid = recieverluid;
 
+        //noinspection RedundantIfStatement
         if(contents[13] == 1)
             text = true;
         else
@@ -156,15 +155,13 @@ public class BlockDataPacket extends ScatterStanza {
             err[3] = 1;
             return null;
         }
-        byte senderluidbytes[] = senderluid;
-        int counter1 = 0;
+
         for(int x=1;x<7;x++) {
-            contents[x] = senderluidbytes[x-1];
+            contents[x] = senderluid[x-1];
         }
         byte[] receiverluid = {0,0,0,0,0,0}; //not implemented yet
 
         this.receiverluid = receiverluid;
-        byte receiverluidbytes[] = receiverluid;
         if(receiverluid.length != 6) {
             err[4] = 1;
             invalid = true;
@@ -172,9 +169,8 @@ public class BlockDataPacket extends ScatterStanza {
             return null;
         }
 
-        int counter = 0;
-        for(int x=0;x<receiverluidbytes.length;x++) {
-            contents[x+7] = receiverluidbytes[x];
+        for(int x = 0; x< receiverluid.length; x++) {
+            contents[x+7] = receiverluid[x];
         }
 
         if(text)

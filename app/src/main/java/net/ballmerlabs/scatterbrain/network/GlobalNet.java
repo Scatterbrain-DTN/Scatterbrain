@@ -15,17 +15,17 @@ import java.util.ArrayList;
  * easier
  */
 public class GlobalNet {
-    private ArrayList<ScatterStanza> packetqueue;
-    private DeviceProfile prof;
+    private final ArrayList<ScatterStanza> packetqueue;
+    @SuppressWarnings("unused")
     public final String TAG = "GlobNet";
-    public WifiManager directmanager;
-    private NetTrunk trunk;
+    private final WifiManager directmanager;
+    private final NetTrunk trunk;
+    @SuppressWarnings("unused")
     public ScatterPeerListener peerlistener;
 
 
     public GlobalNet(NetTrunk trunk) {
         packetqueue = new ArrayList<>();
-        prof = trunk.profile;
         this.trunk = trunk;
         directmanager = new WifiManager(trunk);
         directmanager.stopWifiDirectLoopThread();
@@ -33,10 +33,12 @@ public class GlobalNet {
 
 
     /* appends a packet to the queue */
+    @SuppressWarnings("unused")
     public void appendPacket(ScatterStanza p) {
         packetqueue.add(p);
     }
 
+    @SuppressWarnings("unused")
     public ScatterStanza dequeuePacket() {
         if (packetqueue.size() > 0) {
             ScatterStanza result = packetqueue.get(0);
@@ -52,12 +54,13 @@ public class GlobalNet {
      * Takes a message object and parameters for routing over bluetooth and generates
      * a string for transmit over Scatterbrain protocol
      */
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
-        BlockDataPacket bdpacket = new BlockDataPacket(body, text, trunk.mainService.luid);
-        return bdpacket;
+        return new BlockDataPacket(body, text, trunk.mainService.luid);
     }
 
 
+    @SuppressWarnings("unused")
     public IntentFilter getP2pIntentFilter() {
         return directmanager.getP2pIntenetFilter();
     }
@@ -69,11 +72,13 @@ public class GlobalNet {
     }
 
 
+    @SuppressWarnings("unused")
     public BlockDataPacket decodeBlockData(byte in[]) {
         return new BlockDataPacket(in);
     }
 
 
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public boolean broadcastData() {
         return false;
     }

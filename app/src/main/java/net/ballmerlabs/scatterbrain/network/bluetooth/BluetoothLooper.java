@@ -4,19 +4,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import net.ballmerlabs.scatterbrain.network.GlobalNet;
-
 /**
  * handles delayed tasks for periodic bluetooth scanning
  */
-public class BluetoothLooper extends Thread {
+class BluetoothLooper extends Thread {
 
-    public Handler handler;
-    public GlobalNet globnet;
+    private Handler handler;
 
-    public BluetoothLooper(GlobalNet globnet) {
+    public BluetoothLooper() {
         super();
-        this.globnet = globnet;
         handler = new Handler();
     }
 
@@ -27,15 +23,14 @@ public class BluetoothLooper extends Thread {
     @Override
     public void run() {
         Looper.prepare();
-        handler = new Handler() {
-
+        handler = new Handler(new Handler.Callback() {
             @Override
-            public void handleMessage(Message msg)  {
-
+            public boolean handleMessage(Message msg) {
+                return true;
             }
-        };
+        });
 
-        Looper.loop();
+                Looper.loop();
 
 
     }

@@ -4,22 +4,21 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.util.Log;
 
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.HashMap;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
-/**
- * Created by user on 5/25/16.
- */
-public class DirectConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
-    HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
-    public final String TAG = "ConnectionInfoListener";
-    public GlobalNet globnet;
-    public WifiManager manager;
+@SuppressWarnings("FieldCanBeLocal")
+class DirectConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
+    @SuppressWarnings("unused")
+    private final HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
+    private final String TAG = "ConnectionInfoListener";
+    @SuppressWarnings("unused")
+    private final GlobalNet globnet;
+    @SuppressWarnings("unused")
+    private final WifiManager manager;
 
     public DirectConnectionInfoListener(HashMap<WifiP2pDevice, WifiP2pConfig> connectedList,
                                         WifiManager manager, GlobalNet globnet) {

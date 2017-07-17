@@ -34,10 +34,10 @@ public class BleUtil {
         return sb.toString();
     }
 
-    public static AdvertiseSettings createAdvSettings(boolean connectable, int timeoutMillis) {
+    public static AdvertiseSettings createAdvSettings(int timeoutMillis) {
         AdvertiseSettings.Builder builder = new AdvertiseSettings.Builder();
         builder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED);
-        builder.setConnectable(connectable);
+        builder.setConnectable(true);
         builder.setTimeout(timeoutMillis);
         builder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH);
         return builder.build();

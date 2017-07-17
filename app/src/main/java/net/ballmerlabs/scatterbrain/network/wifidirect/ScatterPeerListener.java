@@ -1,15 +1,10 @@
 package net.ballmerlabs.scatterbrain.network.wifidirect;
 
-import android.app.Activity;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.provider.Settings;
-import android.util.Log;
 import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.MainTrunk;
-import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
@@ -18,15 +13,20 @@ import java.util.ArrayList;
 /**
  * Listens for new peers when scanning and pushes them onto a queue
  */
+@SuppressWarnings("unused")
 public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
-    public Boolean haspeers;
-    public ArrayList<WifiP2pDeviceList> peerstack;
-    public final int maxsize = 5;
+    @SuppressWarnings("unused")
+    private Boolean haspeers;
+    private final ArrayList<WifiP2pDeviceList> peerstack;
+    @SuppressWarnings("unused")
     private TextView peersView;
-    private WifiManager manager;
-    private GlobalNet globnet;
-    private WifiP2pManager.Channel channel;
+    private final WifiManager manager;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final GlobalNet globnet;
+    private final WifiP2pManager.Channel channel;
+    @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "PeerListener";
+    @SuppressWarnings("unused")
     public ScatterPeerListener(NetTrunk trunk) {
         this.manager = trunk.globnet.getWifiManager();
         this.globnet = trunk.globnet;
@@ -44,9 +44,10 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
         peerstack.add(peers);
         peersView.setText(dumpStack());
         //trim so we don't get too big
+        int maxsize = 5;
         if(peerstack.size() > maxsize) {
             int size = peerstack.size();
-            for(int x=0;x<size-maxsize;x++) {
+            for(int x = 0; x<size- maxsize; x++) {
                     peerstack.remove(0);
             }
         }
@@ -59,7 +60,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     private String dumpStack () {
         String result = "";
         for(WifiP2pDeviceList dev : peerstack) {
-            result.concat(dev.toString() + "\n");
+            result = result + dev.toString() + "\n";
         }
         return result;
     }
@@ -72,8 +73,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
             return tmp;
         }
         else {
-            WifiP2pDeviceList tmp = new WifiP2pDeviceList();
-            return tmp;
+            return new WifiP2pDeviceList();
         }
     }
 }

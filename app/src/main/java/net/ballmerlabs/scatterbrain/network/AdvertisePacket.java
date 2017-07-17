@@ -1,6 +1,5 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import android.util.Log;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
 import java.nio.ByteBuffer;
@@ -9,21 +8,23 @@ import java.util.Arrays;
 import java.util.zip.CRC32;
 
 /**
- * Created by gnu3ra on 3/28/16.
+ * AdvertisePacket. Represents an Advertise stanza
  */
+@SuppressWarnings("ManualArrayCopy")
 public class AdvertisePacket extends ScatterStanza {
 
-    public static String TAG = "AdvertisePacket";
-    public byte devicetype;
-    public byte mobilestatus;
-    public byte protocolversion[];
-    public byte congestion;
-    public byte hwservices;
-    public byte[] luid;
-    public byte[] err;
-    public final int ERR_SIZE = 7;
+    private static final String TAG = "AdvertisePacket";
+    private byte devicetype;
+    private byte mobilestatus;
+    private final byte[] protocolversion;
+    @SuppressWarnings("unused")
+    private byte congestion;
+    private byte hwservices;
+    private final byte[] luid;
+    public final byte[] err;
+    private final int ERR_SIZE = 7;
     public static final int PACKET_SIZE = 17;
-    public static final byte MAGIC = -87;
+    private static final byte MAGIC = -87;
 
     public AdvertisePacket(DeviceProfile dv) {
         super(PACKET_SIZE);
@@ -45,7 +46,6 @@ public class AdvertisePacket extends ScatterStanza {
         if(raw.length < PACKET_SIZE) {
             invalid = true;
             err[0] = 1;
-            return;
         }
         else {
             contents = raw;
@@ -137,7 +137,7 @@ public class AdvertisePacket extends ScatterStanza {
         DeviceProfile.HardwareServices serv = dv.getServices();
 
         if(serv == DeviceProfile.HardwareServices.WIFIP2P)
-            contents[6] |= (1<<0);
+            contents[6] |= (1);
         if(serv == DeviceProfile.HardwareServices.WIFICLIENT)
             contents[6] |= (1<<1);
         if(serv == DeviceProfile.HardwareServices.WIFIAP)
@@ -183,15 +183,15 @@ public class AdvertisePacket extends ScatterStanza {
 
         DeviceProfile.HardwareServices serv = null;
 
-        if((hwservices & (1<<0)) == 1)
+        if((hwservices & 1) == 1)
             serv = DeviceProfile.HardwareServices.WIFIP2P;
-        else if((hwservices & (1<<1)) == 1)
+        else if((hwservices & (1<<1)) == (1<<1))
             serv = DeviceProfile.HardwareServices.WIFICLIENT;
-        else if((hwservices & (1<<2)) == 1)
+        else if((hwservices & (1<<2)) == (1<<2))
             serv = DeviceProfile.HardwareServices.WIFIAP;
-        else if((hwservices & (1<<3)) == 1)
+        else if((hwservices & (1<<3)) == (1<<3))
             serv = DeviceProfile.HardwareServices.BLUETOOTH;
-        else if((hwservices & (1<<4)) == 1)
+        else if((hwservices & (1<<4)) == (1<<4))
             serv = DeviceProfile.HardwareServices.INTERNET;
 
 
@@ -201,4 +201,3 @@ public class AdvertisePacket extends ScatterStanza {
         return new DeviceProfile(type, mob, serv, this.luid);
     }
 }
-

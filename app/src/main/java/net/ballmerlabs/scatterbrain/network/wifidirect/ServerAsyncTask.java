@@ -1,11 +1,8 @@
 package net.ballmerlabs.scatterbrain.network.wifidirect;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 
-import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
@@ -15,11 +12,14 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Class to send text/sms messages over scatterbrain wifi p2p
  */
-public class ServerAsyncTask extends WifiAsyncTask {
+@SuppressWarnings("FieldCanBeLocal")
+class ServerAsyncTask extends WifiAsyncTask {
 
+    @SuppressWarnings("unused")
     public final int SERVERPORT = 8222;
-    public final String TAG = "ServerAsyncTask";
+    private final String TAG = "ServerAsyncTask";
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public ServerAsyncTask(Context context, ArrayAdapter<String> messageList) {
         super(context);
     }
@@ -27,7 +27,7 @@ public class ServerAsyncTask extends WifiAsyncTask {
     @Override
     protected Object[] doInBackground(Object[] params) {
         ArrayList<Byte> received = new ArrayList<>();
-        InputStream inputStream = null;
+        InputStream inputStream;
         try {
             ServerSocket serverSocket = new ServerSocket(8222);
             Socket client = serverSocket.accept();

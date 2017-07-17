@@ -9,10 +9,12 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 /**
  * Created by user on 5/29/16.
  */
-public class WifiDirectLooper extends Thread {
+@SuppressWarnings({"FieldCanBeLocal", "DefaultFileTemplate"})
+class WifiDirectLooper extends Thread {
 
-    public Handler handler;
-    public GlobalNet globnet;
+    private Handler handler;
+    @SuppressWarnings("unused")
+    private final GlobalNet globnet;
 
     public WifiDirectLooper(GlobalNet globnet) {
         super();
@@ -27,15 +29,14 @@ public class WifiDirectLooper extends Thread {
     @Override
     public void run() {
         Looper.prepare();
-        handler = new Handler() {
-
+        handler = new Handler(new Handler.Callback() {
             @Override
-            public void handleMessage(Message msg)  {
-
+            public boolean handleMessage(Message msg) {
+                return true;
             }
-        };
+        });
 
-        Looper.loop();
+                Looper.loop();
 
 
     }

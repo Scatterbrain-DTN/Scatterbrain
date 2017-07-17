@@ -6,9 +6,10 @@ import android.os.AsyncTask;
 /**
  * Template for AsyncTasks to transfer objects over wifi p2p
  */
-public abstract class WifiAsyncTask extends AsyncTask {
+abstract class WifiAsyncTask extends AsyncTask {
 
-    public WifiAsyncTask(Context context) {
+    @SuppressWarnings({"unused", "UnusedParameters"})
+    WifiAsyncTask(Context context) {
 
     }
 

@@ -5,42 +5,39 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.v4.view.NestedScrollingChild;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import net.ballmerlabs.scatterbrain.datastore.Message;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
-import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
+@SuppressWarnings({"MismatchedReadAndWriteOfArray", "unused"})
 public class NormalActivity extends AppCompatActivity {
 
     private EditText MsgBox;
-    private ListView messageTimeline;
     private MessageBoxAdapter Messages;
-    private Button sendButton;
+    @SuppressWarnings("unused")
     private GlobalNet globnet;
+    @SuppressWarnings("unused")
     private DeviceProfile profile;
+    @SuppressWarnings("unused")
     private TextView peersView;
+    @SuppressWarnings("unused")
     private ScatterRoutingService service;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
     public static boolean active = false;
-    public final String TAG = "MessagingActivity";
+    private final String TAG = "MessagingActivity";
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             ScatterRoutingService.ScatterBinder binder =
@@ -50,7 +47,7 @@ public class NormalActivity extends AppCompatActivity {
             mService.registerMessageArrayAdapter(Messages);
 
             //add some previously received messages.
-            for(BlockDataPacket b : mService.dataStore.getTopMessages(90)) {
+            for(BlockDataPacket b : mService.dataStore.getTopMessages()) {
                 Messages.data.add(new DispMessage(new String(b.body),
                         Base64.encodeToString(b.senderluid, Base64.DEFAULT)));
             }
@@ -73,7 +70,7 @@ public class NormalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_normal);
 
-        messageTimeline = (ListView) this.findViewById(R.id.timeline);
+        ListView messageTimeline = (ListView) this.findViewById(R.id.timeline);
 
         MsgBox = (EditText) this.findViewById(R.id.editText);
         Messages = new MessageBoxAdapter(this);
@@ -83,7 +80,7 @@ public class NormalActivity extends AppCompatActivity {
         messageTimeline.setAdapter(Messages);
 
         //messagebox handeling
-        sendButton = (Button) this.findViewById(R.id.send);
+        Button sendButton = (Button) this.findViewById(R.id.send);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,10 +98,9 @@ public class NormalActivity extends AppCompatActivity {
     private void updateList() {
 
         if(scatterBound) {
-            byte[] tmp = {5, 5, 5, 5, 5, 5};
             BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true, mService.luid);
             Messages.data.add(new DispMessage(new String(bd.body),
-                   new String(Base64.encodeToString(bd.senderluid, Base64.DEFAULT))));
+                    Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
             // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);
 
             if(!bd.isInvalid()) {
@@ -113,7 +109,6 @@ public class NormalActivity extends AppCompatActivity {
                     if (mService.getBluetoothManager() != null) {
                         mService.getBluetoothManager().sendRawToBroadcast(bd.getContents());
                     }
-
             }
 
             else {
@@ -139,20 +134,23 @@ public class NormalActivity extends AppCompatActivity {
         NormalActivity.active = false;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onResume() {
         // trunk.globnet.startWifiDirectLoopThread();
         super.onResume();
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
     }
 
+    @SuppressWarnings("unused")
     public void addMessage(String message, byte[] luid) {
         Messages.data.add(  new DispMessage(message,
-                new  String(Base64.encodeToString(luid,Base64.DEFAULT))));
+                Base64.encodeToString(luid, Base64.DEFAULT)));
     }
 }

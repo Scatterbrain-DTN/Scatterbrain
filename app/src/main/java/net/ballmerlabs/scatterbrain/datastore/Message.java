@@ -3,21 +3,30 @@ package net.ballmerlabs.scatterbrain.datastore;
 /**
  * Basic data unit for a single message. 
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class Message {
 
 
 
-    public String application;
-    public String body;
-    public int ttl;
-    public String replylink;
-    public String senderluid;
-    public String flags;
-    public String sig;
-    public String uuid;
-    public String receiverluid;
-    public int extbody;
-    public int text;
+    public final String application;
+    public final String body;
+    @SuppressWarnings("unused")
+    private final int ttl;
+    @SuppressWarnings("unused")
+    private final String replylink;
+    public final String senderluid;
+    @SuppressWarnings("unused")
+    private final String flags;
+    @SuppressWarnings("unused")
+    private final String sig;
+    @SuppressWarnings("unused")
+    private final String uuid;
+    @SuppressWarnings("unused")
+    private final String receiverluid;
+    @SuppressWarnings("unused")
+    private final int extbody;
+    @SuppressWarnings("unused")
+    private final int text;
 
     public Message(String uuid, int extbody,   String body, String application, int text,  int ttl,
                    String replyto, String luid, String receiverLuid,

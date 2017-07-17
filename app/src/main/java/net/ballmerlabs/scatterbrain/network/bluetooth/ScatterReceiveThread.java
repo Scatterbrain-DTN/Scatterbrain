@@ -1,34 +1,41 @@
 package net.ballmerlabs.scatterbrain.network.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
-import android.util.Log;
 
-import net.ballmerlabs.scatterbrain.MainTrunk;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Exchanger;
+import java.util.Arrays;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Thread started to wait for messages sent by peers
  */
-public class ScatterReceiveThread extends Thread{
-    BluetoothSocket socket;
-    NetTrunk trunk;
-    int errcount;
-    public boolean fake;
-    public boolean go;
-    public ScatterReceiveThread(BluetoothSocket socket, boolean fake) {
-        this.fake = fake;
+class ScatterReceiveThread extends Thread{
+    private final BluetoothSocket socket;
+    private final NetTrunk trunk;
+    private int errcount;
+    private final boolean fake;
+    private boolean go;
+    public ScatterReceiveThread(BluetoothSocket socket) {
+        this.fake = false;
         this.socket = socket;
         this.trunk = ScatterRoutingService.getNetTrunk();
         go = true;
         errcount = 0;
+    }
+
+
+    @SuppressWarnings("unused")
+    public boolean getFake() {
+        return fake;
+    }
+
+    @SuppressWarnings("unused")
+    public int getErrcount() {
+        return errcount;
     }
 
 
@@ -38,7 +45,6 @@ public class ScatterReceiveThread extends Thread{
         while(go) {
             try {
                 errorcount = 0;
-                int pos = 0;
 
                 byte[] header = new byte[BlockDataPacket.HEADERSIZE];
 
@@ -58,9 +64,7 @@ public class ScatterReceiveThread extends Thread{
                 byte[] buffer = new byte[size+
                         BlockDataPacket.HEADERSIZE];
 
-                for(int i=0;i<header.length; i++) {
-                    buffer[i] = header[i];
-                }
+                System.arraycopy(header, 0, buffer, 0, header.length);
 
                 byte[] block = new byte[100];
                 int counter = BlockDataPacket.HEADERSIZE;
@@ -91,7 +95,7 @@ public class ScatterReceiveThread extends Thread{
 
                 ScatterLogManager.e(trunk.blman.TAG, "IOException when receiving stanza");
                 errcount++;
-                if(errorcount > 20) {
+                if(errcount > 20) {
                     synchronized (trunk.blman.connectedList) {
                         trunk.blman.connectedList.remove(socket.getRemoteDevice().getAddress());
                     }
@@ -100,15 +104,16 @@ public class ScatterReceiveThread extends Thread{
                         socket.close();
                     }
                     catch(IOException c) {
-                        
+                        ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(c.getStackTrace()));
                     }
+
                     break;
                 }
 
             }
             catch(Exception e) {
                 ScatterLogManager.e(trunk.blman.TAG, "Generic exception in ScatterReciveThread:\n" +
-                        e.getStackTrace());
+                        Arrays.toString(e.getStackTrace()));
             }
         }
     }

@@ -1,23 +1,24 @@
 package net.ballmerlabs.scatterbrain;
 
 import android.app.Activity;
-import android.net.wifi.p2p.WifiP2pManager;
 
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
-import net.ballmerlabs.scatterbrain.network.GlobalNet;
-import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterAcceptThread;
-import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /**
  * holds most of the objects needed to keep clutter off of
  * the main activity
  */
-public class MainTrunk {
+@SuppressWarnings("FieldCanBeLocal")
+class MainTrunk {
 
-    public DeviceProfile profile;
-    public SettingsManager settings;
-    public Activity mainActivity;
+    @SuppressWarnings("unused")
+    private final DeviceProfile profile;
+    @SuppressWarnings("unused")
+    private final SettingsManager settings;
+    @SuppressWarnings("unused")
+    private final Activity mainActivity;
 
+    @SuppressWarnings("unused")
     public MainTrunk(Activity main) {
         byte tmp[] = {0,0,0,0,0};
         profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,

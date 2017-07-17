@@ -1,19 +1,16 @@
 package net.ballmerlabs.scatterbrain.datastore;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
-import android.util.Log;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
-import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
-import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 
 /**
  * Created by gnu3ra on 11/3/15.
@@ -22,14 +19,18 @@ import java.util.HashMap;
  * retrieved all at once for burst transmission. Mesages are deleted when older than a certain
  * age.
  */
+@SuppressWarnings("UnusedAssignment")
 public class LeDataStore {
     private SQLiteDatabase db;
+    @SuppressWarnings("FieldCanBeLocal")
     private MsgDbHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";
-    private Service mainService;
+    private final Service mainService;
+    @SuppressWarnings("unused")
     private Cursor c;
     public boolean connected;
+    @SuppressWarnings("unused")
     public final String[] names = {
             MsgDataDb.MessageQueue.COLUMN_NAME_HASH,
             MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY,
@@ -43,8 +44,8 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS};
 
-    public LeDataStore(Service mainService, int trim) {
-        dataTrimLimit = trim;
+    public LeDataStore(Service mainService) {
+        dataTrimLimit = 100;
         this.mainService = mainService;
 
     }
@@ -59,6 +60,7 @@ public class LeDataStore {
         db = helper.getWritableDatabase();
         connected = true;
     }
+    @SuppressWarnings("unused")
     public synchronized void disconnect() {
         ScatterLogManager.v(TAG, "Disconnected from datastore");
         db.close();
@@ -66,10 +68,12 @@ public class LeDataStore {
     }
 
 
+    @SuppressWarnings("unused")
     public void setDataTrimLimit(int val) {
         dataTrimLimit = val;
     }
 
+    @SuppressWarnings("unused")
     public int getDataTrimLimit() {
         return dataTrimLimit;
     }
@@ -78,26 +82,25 @@ public class LeDataStore {
     /*
      * sticks a message into the datastore at the front?.
      */
-    public synchronized void enqueueMessage(String uuid, int extbody,   String body, String application, int text,  int ttl,
-                               String replyto, String luid, String receiverLuid,
-                               String sig, String flags) {
+    private synchronized void enqueueMessage(String uuid, String body, int ttl,
+                                             String replyto, String luid,
+                                             String sig) {
 
        // ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_HASH, uuid);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY, extbody);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY, 0);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_BODY, body);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION, application);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TEXT, text);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION, "SenpaiDetector");
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TEXT, 1);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK, replyto);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID, luid);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID, receiverLuid);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID, "none");
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SIG, sig);
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, flags);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS, "none, none");
 
-        long newRowId;
-        newRowId = db.insert(MsgDataDb.MessageQueue.TABLE_NAME,
+        db.insert(MsgDataDb.MessageQueue.TABLE_NAME,
                 null,
                 values);
 
@@ -114,42 +117,45 @@ public class LeDataStore {
                 new String[] {bd.getHash()});
 
         if(cu.getCount() == 0){
+            cu.close();
            // ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash() +"  "+  bd.size + "  " + bd.senderluid.length);
             return enqueueMessage(bd);
         }
         else {
            // ScatterLogManager.e(TAG, "Attempted to insert duplicate data to datastore");
+            cu.close();
             return 1;
         }
+
     }
 
     /* Very temporary method for writing a blockdata stanza to datastore */
-    public synchronized int enqueueMessage(BlockDataPacket bd) {
+    private synchronized int enqueueMessage(BlockDataPacket bd) {
         try {
             if (connected) {
                 if (bd.isInvalid()) {
                     ScatterLogManager.e(TAG, "Tried to store an invalid packet");
                     return -1;
                 }
-                enqueueMessage(bd.getHash(), 0, Base64.encodeToString(bd.body, Base64.DEFAULT),
-                        "SenpaiDetector", 1, -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
-                        Base64.encodeToString(bd.senderluid, Base64.DEFAULT), "none",
-                        Base64.encodeToString(bd.receiverluid, Base64.DEFAULT), "none, none");
+                enqueueMessage(bd.getHash(), Base64.encodeToString(bd.body, Base64.DEFAULT),
+                        -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                        Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                        Base64.encodeToString(bd.receiverluid, Base64.DEFAULT));
             } else {
                 ScatterLogManager.e(TAG, "Tried to save a packet with datastore disconnected.");
                 return -2;
             }
         }
         catch(Exception e) {
-            ScatterLogManager.e(TAG, "Exception in enqueueMessage:\n" + e.getStackTrace());
+            ScatterLogManager.e(TAG, "Exception in enqueueMessage:\n" + Arrays.toString(e.getStackTrace()));
         }
         return 0;
     }
 
+    @SuppressWarnings("unused")
     public synchronized BlockDataPacket messageToBlockData(Message m) {
-        BlockDataPacket result = new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
+        return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
                 Base64.decode(m.senderluid,Base64.DEFAULT));
-        return result;
     }
 
 
@@ -172,6 +178,7 @@ public class LeDataStore {
      * (Hopefully) returns an array list of Message objects with all the data
      * in the datastore in it.
      */
+    @SuppressWarnings("Convert2Diamond")
     public synchronized ArrayList<Message> getMessages() {
 
     //    ScatterLogManager.v(TAG, "Mass dumping all messages from datastore");
@@ -218,6 +225,7 @@ public class LeDataStore {
     }
 
 
+    @SuppressWarnings({"unused", "Convert2Diamond"})
     public synchronized ArrayList<Message> getMessageByHash(String compare_hash) {
 
       //  ScatterLogManager.v(TAG, "Retreiving message from hash");
@@ -270,6 +278,7 @@ public class LeDataStore {
      * Gets n rows from the datastore in a random order. For use when there is no time to transmit
      * the entire datastore.
      */
+    @SuppressWarnings({"UnusedAssignment", "Convert2Diamond"})
     public synchronized ArrayList<BlockDataPacket> getTopRandomMessages(int count) {
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         try {
@@ -308,6 +317,7 @@ public class LeDataStore {
 
                 cu.moveToNext();
                 boolean t;
+                //noinspection RedundantIfStatement
                 if (text == 0) {
                     t = false;
                 } else {
@@ -322,7 +332,7 @@ public class LeDataStore {
             cu.close();
         }
         catch(Exception e) {
-            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + e.getStackTrace());
+            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + Arrays.toString(e.getStackTrace()));
         }
         return finalresult;
 
@@ -332,7 +342,8 @@ public class LeDataStore {
     /*
     * Gets n rows from the datastore 
     */
-    public synchronized ArrayList<BlockDataPacket> getTopMessages(int count) {
+    @SuppressWarnings("Convert2Diamond")
+    public synchronized ArrayList<BlockDataPacket> getTopMessages() {
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         try {
             final String SEP = ", ";
@@ -348,7 +359,7 @@ public class LeDataStore {
                     MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS + " FROM " + MsgDataDb.MessageQueue.TABLE_NAME
-                    + " LIMIT " + count, null);
+                    + " LIMIT " + 90, null);
 
 
             // ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");
@@ -370,6 +381,7 @@ public class LeDataStore {
 
                 cu.moveToNext();
                 boolean t;
+                //noinspection RedundantIfStatement
                 if (text == 0) {
                     t = false;
                 } else {
@@ -384,7 +396,7 @@ public class LeDataStore {
             cu.close();
         }
         catch(Exception e) {
-            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + e.getStackTrace());
+            ScatterLogManager.e(TAG,"Uncaught exception in random:\n" + Arrays.toString(e.getStackTrace()));
         }
         return finalresult;
 

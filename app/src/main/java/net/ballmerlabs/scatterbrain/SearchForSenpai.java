@@ -24,6 +24,7 @@ import java.net.URL;
 import java.io.BufferedReader;
 import android.content.pm.PackageInfo;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -32,24 +33,19 @@ import android.app.AlertDialog;
 import net.ballmerlabs.scatterbrain.network.PeersChangedCallback;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
-
-import org.w3c.dom.Text;
+import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 /*
  * Main 'Home screen' activity for the scatterbrain testing phase.
  */
+@SuppressWarnings("unused")
 public class SearchForSenpai extends AppCompatActivity {
-    private ProgressBar progress;
     private TextView senpai_notice;
-    private ScatterRoutingService service;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
-    private Button castButton;
-    private TextView peerDisplay;
-    private TextView peersText;
-    private String TAG = "SenpaiActivity";
-    final Activity main  = this;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final String TAG = "SenpaiActivity";
+    private final Activity main  = this;
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             ScatterRoutingService.ScatterBinder binder =
@@ -96,6 +92,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
 
     /* This Thread checks for Updates in the Background */
+    @SuppressWarnings("unused")
     private Thread checkUpdate = new Thread() {
         public void run() {
             try {
@@ -120,13 +117,14 @@ public class SearchForSenpai extends AppCompatActivity {
                 }
                 in.close();
             } catch (Exception e) {
+                ScatterLogManager.e(TAG, Arrays.toString(e.getStackTrace()));
             }
         }
 
     };
 
     /* This Runnable creates a Dialog and asks the user to open the Market */
-    private Runnable showUpdate = new Runnable() {
+    private final Runnable showUpdate = new Runnable() {
         public void run() {
             new AlertDialog.Builder(main)
                     .setIcon(R.drawable.ic_drawer)
@@ -149,6 +147,7 @@ public class SearchForSenpai extends AppCompatActivity {
     };
 
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onStart() {
         super.onStart();
@@ -157,6 +156,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onStop() {
         super.onStop();
@@ -168,13 +168,13 @@ public class SearchForSenpai extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_for_senpai);
-        progress = (ProgressBar) findViewById(R.id.progressBar);
+        ProgressBar progress = (ProgressBar) findViewById(R.id.progressBar);
         progress.setProgress(0);
 
-        peersText = (TextView) findViewById(R.id.peersText);
+        TextView peersText = (TextView) findViewById(R.id.peersText);
         peersText.setText("peers: 0");
         peersText.setTextColor(Color.RED);
-        castButton = (Button) findViewById(R.id.castbutton);
+        Button castButton = (Button) findViewById(R.id.castbutton);
         final Intent launchMessagingIntent = new Intent(this,NormalActivity.class);
 
         castButton.setOnClickListener(new View.OnClickListener() {
@@ -192,11 +192,8 @@ public class SearchForSenpai extends AppCompatActivity {
         senpai_notice = (TextView) findViewById(R.id.notice_text);
         senpai_notice.setVisibility(View.INVISIBLE);
 
-        peerDisplay = (TextView) findViewById(R.id.peerdisplay);
+        TextView peerDisplay = (TextView) findViewById(R.id.peerdisplay);
         peerDisplay.setText("");
-
-
-        service = new ScatterRoutingService();
 
         ScatterLogManager.v(TAG, "Initial Initialization");
         Intent srs = new Intent(this,ScatterRoutingService.class);
@@ -206,7 +203,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
 
     }
-    public void launchBtDialog() {
+    private void launchBtDialog() {
             ScatterLogManager.v(TAG,"Running bluetooth prompt dialog");
             if(mService.getBluetoothManager().getAdapter() != null) {
                 if (!mService.getBluetoothManager().getAdapter().isEnabled()) {
@@ -214,7 +211,7 @@ public class SearchForSenpai extends AppCompatActivity {
                         @Override
                         public void run() {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                            startActivityForResult(enableBtIntent, mService.getBluetoothManager().REQUEST_ENABLE_BT);
+                            startActivityForResult(enableBtIntent, ScatterBluetoothManager.REQUEST_ENABLE_BT);
                         }
                     });
                 } else {
@@ -241,7 +238,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestcode, int resultcode, Intent intenet) {
-        if(requestcode == mService.getBluetoothManager().REQUEST_ENABLE_BT) {
+        if(requestcode ==  ScatterBluetoothManager.REQUEST_ENABLE_BT) {
             Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(enableAndDiscoverBtIntent);
@@ -251,13 +248,14 @@ public class SearchForSenpai extends AppCompatActivity {
                 @Override
                 public void run() {
                     mService.getBluetoothManager().startDiscoverLoopThread();
-                    mService.getBluetoothManager().resetBluetoothDiscoverability(300);
+                    mService.getBluetoothManager().resetBluetoothDiscoverability();
 
                 }
             }, 5000);
         }
     }
 
+    @SuppressWarnings("unused")
     public void setNoticeVisibility() {
         senpai_notice.setVisibility(View.VISIBLE);
     }
@@ -269,20 +267,24 @@ public class SearchForSenpai extends AppCompatActivity {
         return true;
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void launchSettings(MenuItem item) {
         Intent intent = new Intent(this,SettingsActivity.class);
         startActivity(intent);
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void startLogViewer(MenuItem item) {
         Intent intent = new Intent(this, LoggingActivity.class);
         startActivity(intent);
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void startDatastoreCommand(MenuItem item) {
         Intent intent = new Intent(this,DatastoreCommandActivity.class);
         startActivity(intent);
     }
+    @SuppressWarnings("unused")
     public void toggleService(MenuItem item) {
         if(scatterBound) {
             Intent stop = new Intent(this, ScatterRoutingService.class);
@@ -301,6 +303,7 @@ public class SearchForSenpai extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void resetText(MenuItem item) {
         senpai_notice.setVisibility(View.INVISIBLE);
     }
@@ -320,30 +323,27 @@ public class SearchForSenpai extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onResume() {
         super.onResume();
         // trunk.globnet.startWifiDirectLoopThread();
-        if(scatterBound && false) {
-            if (mService.getBluetoothManager().mReceiver != null )
-                mService.registerReceiver(mService.getBluetoothManager().mReceiver, mService.getBluetoothManager().filter);
-            mService.getBluetoothManager().startDiscoverLoopThread();
-        }
+        //noinspection PointlessBooleanExpression
+
     }
 
 
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onPause() {
         //trunk.trunk.globnet.stopWifiDirectLoopThread();
         super.onPause();
-        if(scatterBound && false) {
-            if (mService.getBluetoothManager().mReceiver != null)
-                mService.unregisterReceiver(mService.getBluetoothManager().mReceiver);
-            mService.getBluetoothManager().stopDiscoverLoopThread();
-        }
+        //noinspection PointlessBooleanExpression
+
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain.network;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,7 +13,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Base64;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
@@ -22,28 +22,27 @@ import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.UUID;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Represents a background service for routing packets
  * for the scatterbrain protocol.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ScatterRoutingService extends Service {
 
     private final IBinder mBinder = new ScatterBinder();
     private static NetTrunk trunk;
-    private Service me;
     private boolean bound = false;
-    public final String TAG = "ScatterRoutingService";
+    private final String TAG = "ScatterRoutingService";
     private  PeersChangedCallback onDevicesFound;
-    public SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     public byte[] luid;
     private MessageBoxAdapter Messages;
-    public ArrayAdapter<String> logbuffer;
+    @SuppressWarnings("unused")
+    private ArrayAdapter<String> logbuffer;
     public LeDataStore dataStore;
 
 
@@ -55,15 +54,17 @@ public class ScatterRoutingService extends Service {
         }
     }
 
+    @SuppressWarnings("unused")
     public ScatterRoutingService() {
     }
 
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
-        Notification notification = new Notification(R.drawable.icon, getText(R.string.service_ticker),
+        @SuppressWarnings("deprecation") @SuppressLint("IconColors") Notification notification = new Notification(R.drawable.icon, getText(R.string.service_ticker),
                 System.currentTimeMillis());
         Intent notificationIntent = new Intent(this, ScatterRoutingService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,notificationIntent,0);
+        //noinspection deprecation
         notification.setLatestEventInfo(this, getText(R.string.service_title),
                 getText(R.string.service_body), pendingIntent);
         startForeground(1, notification);
@@ -82,6 +83,7 @@ public class ScatterRoutingService extends Service {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean updateUiOnDevicesFound(Map<String, LocalPeer> connectedList) {
         if((onDevicesFound != null) && bound) {
             onDevicesFound.run(connectedList);
@@ -91,12 +93,12 @@ public class ScatterRoutingService extends Service {
         return false;
     }
 
-    public void noticeNotify(String title, String text) {
+    public void noticeNotify() {
         NotificationCompat.Builder mBuilder =
                 new  NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon)
-                .setContentTitle(title)
-                .setContentText(text);
+                .setContentTitle("Senpai NOTICED YOU!!")
+                .setContentText("There is a senpai in your area somewhere");
         Intent resultIntent = new Intent(this, NormalActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -117,6 +119,7 @@ public class ScatterRoutingService extends Service {
         mNotificationManager.notify(2,mBuilder.build());
     }
 
+    @SuppressWarnings({"EmptyMethod", "unused"})
     void checkForUpdates() {
 
     }
@@ -125,6 +128,7 @@ public class ScatterRoutingService extends Service {
     public ScatterBluetoothManager getBluetoothManager() {
         return trunk.blman;
     }
+    @SuppressWarnings("unused")
     public NetTrunk getTrunk() {
         return trunk;
     }
@@ -144,7 +148,6 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public void onCreate() {
-        me = this;
         Context context = this.getApplicationContext();
         sharedPreferences = context.getSharedPreferences(getString(R.string.scatter_preference_key),
                 Context.MODE_PRIVATE);
@@ -153,17 +156,18 @@ public class ScatterRoutingService extends Service {
         if(uuid.equals(getString(R.string.uuid_not_present))) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             this.luid = genLUID();
-            editor.putString(getString(R.string.scatter_uuid),new String(Base64.encodeToString(this.luid,Base64.DEFAULT) ));
-            editor.commit();
+            editor.putString(getString(R.string.scatter_uuid), Base64.encodeToString(this.luid, Base64.DEFAULT));
+            editor.apply();
         }
         else {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
         trunk = new NetTrunk(this);
-        this.dataStore = new LeDataStore(this, 100);
+        this.dataStore = new LeDataStore(this);
         dataStore.connect();
     }
 
+    @SuppressWarnings("unused")
     public void registerLoggingArrayAdapter(ArrayAdapter<String> ad) {
         this.logbuffer = ad;
     }
@@ -177,7 +181,7 @@ public class ScatterRoutingService extends Service {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         this.luid = genLUID();
         editor.putString(getString(R.string.scatter_uuid),new String(this.luid) );
-        editor.commit();
+        editor.apply();
     }
 
     private byte[] genLUID() {
@@ -191,6 +195,7 @@ public class ScatterRoutingService extends Service {
         return trunk;
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void startMessageActivity() {
      //   Intent startIntent = new Intent(this, NormalActivity.class);
        // startActivity(startIntent);

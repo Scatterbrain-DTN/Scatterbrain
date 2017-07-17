@@ -4,30 +4,34 @@ package net.ballmerlabs.scatterbrain.network;
  * General device information and settings storage.
  * Used to refer to a device
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class DeviceProfile {
 
-    protected byte[] luid;
+    private byte[] luid;
 
-    public static enum deviceType {
+    @SuppressWarnings("unused")
+    public enum deviceType {
         ANDROID, IOS, LINUX
-    };
+    }
 
-    public static enum MobileStatus {
+    @SuppressWarnings("unused")
+    public enum MobileStatus {
       STATIONARY, MOBILE, VERYMOBILE
-    };
+    }
 
-    public static enum HardwareServices {
+    @SuppressWarnings("unused")
+    public enum HardwareServices {
         WIFIP2P, WIFICLIENT, WIFIAP, BLUETOOTH,
         BLUETOOTHLE, INTERNET
-    };
+    }
 
 
-    protected deviceType type;
-    protected MobileStatus status;
-    protected HardwareServices services;
+    private deviceType type;
+    private MobileStatus status;
+    private HardwareServices services;
 
-    public final byte protocolVersion = 2;
-    protected byte congestion;
+    private final byte protocolVersion = 2;
+    private byte congestion;
     public DeviceProfile (deviceType type, MobileStatus status, HardwareServices services, byte[] id) {
         this.type = type;
         this.services = services;
@@ -36,6 +40,7 @@ public class DeviceProfile {
         this.luid = id;
     }
 
+    @SuppressWarnings("unused")
     public void  update(deviceType type, MobileStatus status, HardwareServices services) {
         this.type = type;
         this.services = services;
@@ -60,8 +65,10 @@ public class DeviceProfile {
 
     public byte getCongestion() { return congestion; }
 
+    @SuppressWarnings("unused")
     public void setCongestion(byte congestion) { this.congestion = congestion; }
     public byte[] getLUID(){ return this.luid;}
 
+    @SuppressWarnings("unused")
     public void setLUID(byte[] id){this.luid = id;}
 }

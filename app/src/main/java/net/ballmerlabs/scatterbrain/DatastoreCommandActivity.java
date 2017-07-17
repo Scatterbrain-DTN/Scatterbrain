@@ -1,6 +1,5 @@
 package net.ballmerlabs.scatterbrain;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -21,20 +20,16 @@ import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class DatastoreCommandActivity extends AppCompatActivity {
     private ScatterRoutingService mService;
-    private String TAG = "DatastoreCommand";
     private TextView dbDisplay;
     private LeDataStore ds;
     private boolean scatterBound;
     private boolean dbConnected;
-    private Button refresh_button;
     private TextView dbTextView;
-    private Button clearButton;
-    private Button trimButton;
-    private Button randButton;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             ScatterRoutingService.ScatterBinder binder =
@@ -47,6 +42,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
             ds = mService.dataStore;
 
             dbConnected = mService.dataStore.connected;
+            String TAG = "DatastoreCommand";
             if (dbConnected) {
                 ScatterLogManager.v(TAG, "DatastoreCommandActivity connected");
                 dbDisplay.setText("CONNECTED");
@@ -94,17 +90,14 @@ public class DatastoreCommandActivity extends AppCompatActivity {
 
         dbDisplay = (TextView) findViewById(R.id.dboverviewtext);
 
-        final Activity main = this;
-
-
         dbDisplay.setText("DISCONNECTED");
         dbDisplay.setTextColor(Color.RED);
 
-        refresh_button = (Button) findViewById(R.id.refreshdb_button);
+        Button refresh_button = (Button) findViewById(R.id.refreshdb_button);
         dbTextView = (TextView) findViewById(R.id.db_textview2);
-        clearButton = (Button) findViewById(R.id.clear_button);
-        trimButton = (Button) findViewById(R.id.button_trim);
-        randButton = (Button) findViewById(R.id.db_rand_button);
+        Button clearButton = (Button) findViewById(R.id.clear_button);
+        Button trimButton = (Button) findViewById(R.id.button_trim);
+        Button randButton = (Button) findViewById(R.id.db_rand_button);
 
 
 
@@ -134,7 +127,7 @@ public class DatastoreCommandActivity extends AppCompatActivity {
                     String result = "";
                     for(Message m : res) {
                         result = result.concat(m.application +" luid: " +
-                                new String(m.senderluid) + " >> "  +
+                                m.senderluid + " >> "  +
                                 new String(Base64.decode(m.body,Base64.DEFAULT)) + "\n");
                     }
                     dbTextView.setText(result);

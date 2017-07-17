@@ -60,7 +60,9 @@ public class AdvertisePacket extends ScatterStanza {
             protocolversion[1] = contents[4];
             congestion = contents[5];
             hwservices = contents[6];
-            System.arraycopy(contents, 7, luid, 0, luid.length);
+            for(int i=1;i<=luid.length;i++) {
+                luid[i-1] = contents[6+i];
+            }
 
             //check stored CRC against calculated one.
             CRC32 crc = new CRC32();
@@ -68,7 +70,9 @@ public class AdvertisePacket extends ScatterStanza {
             byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int)crc.getValue()).array();
             byte[] current = new byte[4];
 
-            System.arraycopy(contents, 13, current, 0, current.length);
+            for(int x=0;x<current.length;x++) {
+                current[x] = contents[13+x];
+            }
 
             if(!Arrays.equals(check, current)) {
                 invalid = true;
@@ -144,13 +148,17 @@ public class AdvertisePacket extends ScatterStanza {
 
         hwservices = contents[6];
 
-        System.arraycopy(dv.getLUID(), 0, contents, 7, 6);
+        for(int i=1;i<=6;i++) {
+            contents[6+i] = dv.getLUID()[i-1];
+        }
 
         //CRC for integrity check
         CRC32 crc = new CRC32();
         crc.update(contents,0, contents.length - 4);
         byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
-        System.arraycopy(c, 0, contents, 13, c.length);
+        for(int x=0;x<c.length;x++) {
+            contents[13+x] = c[x];
+        }
 
         return contents;
     }

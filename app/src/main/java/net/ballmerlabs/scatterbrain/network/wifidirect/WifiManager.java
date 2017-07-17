@@ -113,7 +113,7 @@ public class WifiManager extends BroadcastReceiver {
     }
 
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "UnusedAssignment"})
     public void startWifiDirctLoopThread() {
         Log.v(TAG, "Starting wifi direct scan thread");
         runScanThread = true;

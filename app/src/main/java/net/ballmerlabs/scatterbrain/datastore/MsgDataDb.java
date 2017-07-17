@@ -5,6 +5,7 @@ import android.provider.BaseColumns;
 /**
  * Created by gnu3ra on 11/3/15.
  */
+@SuppressWarnings("DefaultFileTemplate")
 final class MsgDataDb {
 
     @SuppressWarnings("unused")

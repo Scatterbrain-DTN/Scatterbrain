@@ -13,6 +13,7 @@ import java.util.ArrayList;
 /**
  * Listens for new peers when scanning and pushes them onto a queue
  */
+@SuppressWarnings("unused")
 public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     @SuppressWarnings("unused")
     private Boolean haspeers;

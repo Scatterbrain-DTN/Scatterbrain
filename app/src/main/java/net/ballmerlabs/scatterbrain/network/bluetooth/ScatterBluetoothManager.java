@@ -166,7 +166,7 @@ public class ScatterBluetoothManager {
     //constructor
     public ScatterBluetoothManager(NetTrunk trunk) {
         this.trunk = trunk;
-        looper = new BluetoothLooper(trunk.globnet);
+        looper = new BluetoothLooper();
         bluetoothHan = new Handler();
         foundList = new ArrayList<>();
         connectedList = new HashMap<>();

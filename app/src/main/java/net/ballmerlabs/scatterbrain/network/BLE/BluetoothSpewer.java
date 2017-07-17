@@ -22,6 +22,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
  * Created by gnu3ra on 10/31/15.
  * interface for the BLEMingle library for iOS / Android bluetooth communication.
  */
+@SuppressWarnings("unused")
 class BluetoothSpewer implements BluetoothAdapter.LeScanCallback {
     private BluetoothAdapter adapter;
     private BluetoothLeAdvertiser advertiser;

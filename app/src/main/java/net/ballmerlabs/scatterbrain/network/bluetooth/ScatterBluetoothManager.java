@@ -227,9 +227,10 @@ public class ScatterBluetoothManager {
             public void run() {
                 ScatterLogManager.v(TAG, "Scanning...");
 
-                if(!threadPaused)
-                    if(adapter != null)
+                if(!threadPaused) {
+                    if (adapter != null)
                         adapter.startDiscovery();
+                }
                 else if(runScanThread){
                     int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
                //     ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");

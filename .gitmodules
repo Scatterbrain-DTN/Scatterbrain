@@ -1,0 +1,3 @@
+[submodule "android-file-chooser"]
+	path = android-file-chooser
+	url = https://github.com/Arjun-sna/android-file-chooser.git

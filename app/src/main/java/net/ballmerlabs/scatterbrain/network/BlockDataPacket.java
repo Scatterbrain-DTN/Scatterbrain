@@ -22,15 +22,17 @@ public class BlockDataPacket extends ScatterStanza {
     public final Integer size;
     public final int[] err;
     private final int ERRSIZE =10;
-    public static final int HEADERSIZE = 22;
+    private boolean isfile;
+    public static final int HEADERSIZE = 23;
     private static final byte MAGIC = 124;
-    public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
+    public BlockDataPacket(byte body[], boolean text, boolean file,  byte[] senderluid) {
         super(HEADERSIZE+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
         this.size = body.length;
         this.err = new int[ERRSIZE];
+        this.isfile = file;
         invalid = false;
         //noinspection RedundantIfStatement
         if(init() == null)
@@ -83,9 +85,9 @@ public class BlockDataPacket extends ScatterStanza {
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
         this.err = new int[ERRSIZE];
-        if(raw.length >= 22)
+        if(raw.length >= HEADERSIZE)
             contents = raw.clone();
-        else if (raw.length < 22) {
+        else if (raw.length < HEADERSIZE) {
             err[0] = 1;
             invalid = true;
         }
@@ -116,10 +118,15 @@ public class BlockDataPacket extends ScatterStanza {
         else
             text = false;
 
+        if(contents[14] == 1)
+            isfile = true;
+        else
+            isfile = false;
+
         byte[] sizearr = new byte[4];
 
         for(int i=0;i<4;i++) {
-            sizearr[i] = contents[i+14];
+            sizearr[i] = contents[i+15];
         }
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
@@ -128,7 +135,7 @@ public class BlockDataPacket extends ScatterStanza {
         if(size > 0) {
             body = new byte[size];
             for (int x = 0; x < size; x++) {
-                body[x] = contents[x + 18];
+                body[x] = contents[x + 19];
             }
 
 
@@ -178,14 +185,19 @@ public class BlockDataPacket extends ScatterStanza {
         else
             contents[13] = 0;
 
+        if(isfile)
+            contents[14] = 1;
+        else
+            contents[14] = 0;
+
         byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(body.length).array();
 
         for(int i=0;i<4;i++) {
-            contents[i+14] = sizebytes[i];
+            contents[i+15] = sizebytes[i];
         }
 
         for(int x=0;x<body.length;x++) {
-            contents[x+18] = body[x];
+            contents[x+19] = body[x];
         }
         //basic crc for integrity check
         CRC32 crc = new CRC32();
@@ -202,7 +214,7 @@ public class BlockDataPacket extends ScatterStanza {
     public static int getSizeFromData(byte[] data) {
         byte[] sizearr = new byte[4];
 
-        if (data.length < 22) {
+        if (data.length < HEADERSIZE) {
             return -1;
         }
 
@@ -211,7 +223,7 @@ public class BlockDataPacket extends ScatterStanza {
         }
 
         for(int i=0;i<4;i++) {
-            sizearr[i] = data[i+14];
+            sizearr[i] = data[i+15];
         }
 
         int size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();

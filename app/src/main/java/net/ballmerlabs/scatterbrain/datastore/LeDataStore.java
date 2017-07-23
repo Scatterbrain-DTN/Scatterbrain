@@ -152,9 +152,11 @@ public class LeDataStore {
         return 0;
     }
 
+
+    //TODO: remove default values for text and file parameters
     @SuppressWarnings("unused")
     public synchronized BlockDataPacket messageToBlockData(Message m) {
-        return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
+        return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,true,
                 Base64.decode(m.senderluid,Base64.DEFAULT));
     }
 
@@ -207,16 +209,17 @@ public class LeDataStore {
             String body = cu.getString(2);
             String application = cu.getString(3);
             int text = cu.getInt(4);
-            int ttl = cu.getInt(5);
-            String replylink = cu.getString(6);
-            String senderluid = cu.getString(7);
-            String receiverluid = cu.getString(8);
-            String sig = cu.getString(9);
-            String flags = cu.getString(10);
+            int file = cu.getInt(5);
+            int ttl = cu.getInt(6);
+            String replylink = cu.getString(7);
+            String senderluid = cu.getString(8);
+            String receiverluid = cu.getString(9);
+            String sig = cu.getString(10);
+            String flags = cu.getString(11);
 
             cu.moveToNext();
             finalresult.add(new Message(hash, extbody, body, application,
-                    text, ttl, replylink, senderluid, receiverluid, sig, flags));
+                    text, file, ttl, replylink, senderluid, receiverluid, sig, flags));
         }
         cu.close();
 
@@ -256,16 +259,17 @@ public class LeDataStore {
             String body = cu.getString(2);
             String application = cu.getString(3);
             int text = cu.getInt(4);
-            int ttl = cu.getInt(5);
-            String replylink = cu.getString(6);
-            String senderluid = cu.getString(7);
-            String receiverluid = cu.getString(8);
-            String sig = cu.getString(9);
-            String flags = cu.getString(10);
+            int file = cu.getInt(5);
+            int ttl = cu.getInt(6);
+            String replylink = cu.getString(7);
+            String senderluid = cu.getString(8);
+            String receiverluid = cu.getString(9);
+            String sig = cu.getString(10);
+            String flags = cu.getString(11);
 
             cu.moveToNext();
             finalresult.add(new Message(hash, extbody, body, application,
-                    text, ttl, replylink, senderluid, receiverluid, sig, flags));
+                    text,file,  ttl, replylink, senderluid, receiverluid, sig, flags));
         }
 
         cu.close();
@@ -308,24 +312,32 @@ public class LeDataStore {
                 String body = cu.getString(2);
                 String application = cu.getString(3);
                 int text = cu.getInt(4);
-                int ttl = cu.getInt(5);
-                String replylink = cu.getString(6);
-                String senderluid = cu.getString(7);
-                String receiverluid = cu.getString(8);
-                String sig = cu.getString(9);
-                String flags = cu.getString(10);
+                int file = cu.getInt(5);
+                int ttl = cu.getInt(6);
+                String replylink = cu.getString(7);
+                String senderluid = cu.getString(8);
+                String receiverluid = cu.getString(9);
+                String sig = cu.getString(10);
+                String flags = cu.getString(11);
 
                 cu.moveToNext();
                 boolean t;
+                boolean f;
                 //noinspection RedundantIfStatement
                 if (text == 0) {
                     t = false;
                 } else {
                     t = true;
                 }
+
+                if(file == 0) {
+                    f = false;
+                } else {
+                    f = true;
+                }
                 //ScatterLogManager.e(TAG, body);
                 if (body.length() > 0) {
-                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
+                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t,f, Base64.decode(senderluid, Base64.DEFAULT)));
                 }
             }
 
@@ -372,24 +384,32 @@ public class LeDataStore {
                 String body = cu.getString(2);
                 String application = cu.getString(3);
                 int text = cu.getInt(4);
-                int ttl = cu.getInt(5);
-                String replylink = cu.getString(6);
-                String senderluid = cu.getString(7);
-                String receiverluid = cu.getString(8);
-                String sig = cu.getString(9);
-                String flags = cu.getString(10);
+                int file = cu.getInt(5);
+                int ttl = cu.getInt(6);
+                String replylink = cu.getString(7);
+                String senderluid = cu.getString(8);
+                String receiverluid = cu.getString(9);
+                String sig = cu.getString(10);
+                String flags = cu.getString(11);
 
                 cu.moveToNext();
                 boolean t;
+                boolean f;
                 //noinspection RedundantIfStatement
                 if (text == 0) {
                     t = false;
                 } else {
                     t = true;
                 }
+
+                if(file == 0) {
+                    f = false;
+                } else {
+                    f = true;
+                }
                 //ScatterLogManager.e(TAG, body);
                 if (body.length() > 0) {
-                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
+                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t,f, Base64.decode(senderluid, Base64.DEFAULT)));
                 }
             }
 

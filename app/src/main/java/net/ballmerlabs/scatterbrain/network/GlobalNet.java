@@ -55,8 +55,8 @@ public class GlobalNet {
      * a string for transmit over Scatterbrain protocol
      */
     @SuppressWarnings({"unused", "UnusedParameters"})
-    public BlockDataPacket encodeBlockData(byte body[], boolean text, DeviceProfile to) {
-        return new BlockDataPacket(body, text, trunk.mainService.luid);
+    public BlockDataPacket encodeBlockData(byte body[], boolean text, boolean file,  DeviceProfile to) {
+        return new BlockDataPacket(body, text, file,  trunk.mainService.luid);
     }
 
 

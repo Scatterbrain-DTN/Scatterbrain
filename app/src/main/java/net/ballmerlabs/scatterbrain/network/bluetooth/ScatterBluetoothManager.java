@@ -369,11 +369,11 @@ public class ScatterBluetoothManager {
 
     //sends a BlockDataPacket to all connected peers
     @SuppressWarnings("unused")
-    public void sendMessageToBroadcast(byte[] message, boolean text) {
+    public void sendMessageToBroadcast(byte[] message, boolean text, boolean file) {
         synchronized (connectedList) {
            // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
             for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                sendMessageToLocalPeer(ent.getKey(), message, text);
+                sendMessageToLocalPeer(ent.getKey(), message, text, file);
             }
         }
     }
@@ -384,9 +384,9 @@ public class ScatterBluetoothManager {
      * server outside of android for unit testing.
      */
     private void sendMessageToLocalPeer(final String mactarget, final byte[] message,
-                                        final boolean text) {
+                                        final boolean text, final boolean file) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-        BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
+        BlockDataPacket bd = new BlockDataPacket(message,text, file,  trunk.mainService.luid );
         sendRaw(mactarget,bd.getContents(), false);
     }
 

@@ -98,7 +98,7 @@ public class NormalActivity extends AppCompatActivity {
     private void updateList() {
 
         if(scatterBound) {
-            BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true, mService.luid);
+            BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,false,  mService.luid);
             Messages.data.add(new DispMessage(new String(bd.body),
                     Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
             // BlockDataPacket bd = new BlockDataPacket(MsgBox.getText().toString().getBytes(), true,profile);

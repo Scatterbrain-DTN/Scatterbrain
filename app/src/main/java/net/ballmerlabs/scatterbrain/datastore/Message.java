@@ -28,7 +28,9 @@ public class Message {
     @SuppressWarnings("unused")
     private final int text;
 
-    public Message(String uuid, int extbody,   String body, String application, int text,  int ttl,
+    private final int file;
+
+    public Message(String uuid, int extbody,   String body, String application, int text, int file,  int ttl,
                    String replyto, String luid, String receiverLuid,
                    String sig, String flags){
         this.application = application;
@@ -42,6 +44,7 @@ public class Message {
         this.receiverluid = receiverLuid;
         this.extbody = extbody;
         this.text = text;
+        this.file = file;
     }
 
 

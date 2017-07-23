@@ -17,8 +17,8 @@ final class MsgDataDb {
         public static final String COLUMN_NAME_EXTBODY = "extbody";
         public static final String COLUMN_NAME_BODY = "body";
         public static final String COLUMN_NAME_APPLICATION = "application";
-        public static final String COLUMN_NAME_TEXT = "istext";
-        public static final String COLUMN_NAME_FILE = "file";
+        public static final String COLUMN_NAME_TEXT = "text";
+        public static final String COLUMN_NAME_FILE = "isfile";
         public static final String COLUMN_NAME_TTL = "ttl";
         public static final String COLUMN_NAME_REPLYLINK = "replylink";
         public static final String COLUMN_NAME_SENDERLUID = "senderluid";

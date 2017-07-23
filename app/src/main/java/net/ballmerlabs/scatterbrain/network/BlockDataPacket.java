@@ -16,13 +16,13 @@ import java.util.zip.CRC32;
 public class BlockDataPacket extends ScatterStanza {
 
     public byte body[];
-    private final boolean text;
+    public final boolean text;
     public final byte[] senderluid;
     public byte[] receiverluid;
     public final Integer size;
     public final int[] err;
     private final int ERRSIZE =10;
-    private boolean isfile;
+    public boolean isfile;
     public static final int HEADERSIZE = 23;
     private static final byte MAGIC = 124;
     public BlockDataPacket(byte body[], boolean text, boolean file,  byte[] senderluid) {

@@ -37,6 +37,7 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_BODY,
             MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION,
             MsgDataDb.MessageQueue.COLUMN_NAME_TEXT,
+            MsgDataDb.MessageQueue.COLUMN_NAME_FILE,
             MsgDataDb.MessageQueue.COLUMN_NAME_TTL,
             MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK,
             MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID,
@@ -82,7 +83,7 @@ public class LeDataStore {
     /*
      * sticks a message into the datastore at the front?.
      */
-    private synchronized void enqueueMessage(String uuid, String body, int ttl,
+    private synchronized void enqueueMessage(String uuid, String body, int ttl,boolean text, boolean file,
                                              String replyto, String luid,
                                              String sig) {
 
@@ -92,7 +93,18 @@ public class LeDataStore {
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY, 0);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_BODY, body);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION, "SenpaiDetector");
-        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TEXT, 1);
+        int t;
+        if(text)
+            t = 1;
+        else
+            t = 0;
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TEXT, t);
+        int f;
+        if(file)
+            f = 1;
+        else
+            f = 0;
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FILE, f);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK, replyto);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID, luid);
@@ -138,7 +150,7 @@ public class LeDataStore {
                     return -1;
                 }
                 enqueueMessage(bd.getHash(), Base64.encodeToString(bd.body, Base64.DEFAULT),
-                        -1, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                        -1, bd.text, bd.isfile, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
                         Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
                         Base64.encodeToString(bd.receiverluid, Base64.DEFAULT));
             } else {
@@ -192,6 +204,7 @@ public class LeDataStore {
                         MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_FILE + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
@@ -293,6 +306,7 @@ public class LeDataStore {
                     MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_FILE + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
@@ -365,6 +379,7 @@ public class LeDataStore {
                     MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_FILE + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +

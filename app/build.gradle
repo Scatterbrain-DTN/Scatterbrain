@@ -42,10 +42,9 @@ idea {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleDependency
-    compile 'com.android.support:appcompat-v7:25'
+    compile 'com.android.support:appcompat-v7:25.0.0'
     //noinspection GradleDependency
-    compile 'com.android.support:support-v4:25'
-    compile project(':filechooser')
+    compile 'com.android.support:support-v4:25.0.0'
 }
 
 dependencies {

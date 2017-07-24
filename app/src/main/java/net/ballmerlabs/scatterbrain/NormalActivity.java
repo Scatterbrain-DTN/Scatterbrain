@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,6 @@ import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
-
 @SuppressWarnings({"MismatchedReadAndWriteOfArray", "unused"})
 public class NormalActivity extends AppCompatActivity {
 
@@ -32,6 +32,7 @@ public class NormalActivity extends AppCompatActivity {
     private TextView peersView;
     @SuppressWarnings("unused")
     private ScatterRoutingService service;
+    private Button fileChooseButton;
     private boolean scatterBound = false;
     private ScatterRoutingService mService;
     public static boolean active = false;
@@ -71,6 +72,16 @@ public class NormalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_normal);
 
         ListView messageTimeline = (ListView) this.findViewById(R.id.timeline);
+
+        fileChooseButton = (Button) this.findViewById(R.id.filebutton);
+
+        final Activity  current = this;
+        fileChooseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         MsgBox = (EditText) this.findViewById(R.id.editText);
         Messages = new MessageBoxAdapter(this);

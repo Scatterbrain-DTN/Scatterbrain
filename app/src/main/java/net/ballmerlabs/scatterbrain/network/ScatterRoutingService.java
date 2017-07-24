@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
+import net.ballmerlabs.scatterbrain.SearchForSenpai;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
@@ -60,12 +61,27 @@ public class ScatterRoutingService extends Service {
 
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
-        @SuppressWarnings("deprecation") @SuppressLint("IconColors") Notification notification = new Notification(R.drawable.icon, getText(R.string.service_ticker),
-                System.currentTimeMillis());
-        Intent notificationIntent = new Intent(this, ScatterRoutingService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,notificationIntent,0);
-        //noinspection deprecation
-        startForeground(1, notification);
+
+        NotificationCompat.Builder not = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.icon)
+                .setContentTitle("Scatterbrain")
+                .setContentText("Discoverting Peers...");
+
+        Intent result = new Intent(this, SearchForSenpai.class);
+
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        result,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        not.setContentIntent(resultPendingIntent);
+
+        int notificationId = 001;
+        NotificationManager man = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        man.notify(notificationId, not.build());
 
         trunk.blman.startDiscoverLoopThread();
         return Service.START_STICKY_COMPATIBILITY;

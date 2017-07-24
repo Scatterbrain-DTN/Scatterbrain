@@ -39,12 +39,17 @@ idea {
     }
 }
 
+
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleDependency
     compile 'com.android.support:appcompat-v7:25.0.0'
     //noinspection GradleDependency
     compile 'com.android.support:support-v4:25.0.0'
+
+    compile 'com.github.angads25:filepicker:1.1.1'
+
 }
 
 dependencies {

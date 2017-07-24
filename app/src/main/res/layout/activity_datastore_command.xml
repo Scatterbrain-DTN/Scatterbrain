@@ -34,8 +34,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/button_trim"
-        android:text="TextView"
-        android:textColor="@color/link_text_material_light" />
+        android:text="TextView" />
 
     <Button
         android:text="@string/dbtrim_str"

@@ -1,1 +1,2 @@
-include ':app', ':blelib', ':totallynormal'
+include ':app', ':blelib', ':totallynormal', ':filechooser'
+project(':filechooser').projectDir = new File('android-file-chooser/filechooser')

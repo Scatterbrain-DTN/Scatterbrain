@@ -65,8 +65,6 @@ public class ScatterRoutingService extends Service {
         Intent notificationIntent = new Intent(this, ScatterRoutingService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,notificationIntent,0);
         //noinspection deprecation
-        notification.setLatestEventInfo(this, getText(R.string.service_title),
-                getText(R.string.service_body), pendingIntent);
         startForeground(1, notification);
 
         trunk.blman.startDiscoverLoopThread();

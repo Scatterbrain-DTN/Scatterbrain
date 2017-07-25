@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DialogTitle;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
@@ -15,10 +16,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
+
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
+
+import java.io.File;
+
 @SuppressWarnings({"MismatchedReadAndWriteOfArray", "unused"})
 public class NormalActivity extends AppCompatActivity {
 
@@ -75,11 +83,21 @@ public class NormalActivity extends AppCompatActivity {
 
         fileChooseButton = (Button) this.findViewById(R.id.filebutton);
 
+        final DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = null;
+
+        final FilePickerDialog dialog = new FilePickerDialog(NormalActivity.this, properties);
+        dialog.setTitle("File to send");
+
         final Activity  current = this;
         fileChooseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                    dialog.show();
             }
         });
 

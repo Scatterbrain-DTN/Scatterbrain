@@ -57,7 +57,7 @@ public class ScatterBluetoothManager {
     private final BluetoothLooper looper;
     private Runnable scanr;
     public boolean acceptThreadRunning;
-    private boolean threadPaused;
+    private Boolean threadPaused;
     private int currentUUID; //the device we are currently querying for uuid.
     private int targetUUID; //the number of devices to stop at
     @SuppressWarnings("FieldCanBeLocal")
@@ -346,19 +346,23 @@ public class ScatterBluetoothManager {
 
     //temporarilly stops the discovery thread with the option to quickly resume without loss of data
     public synchronized void pauseDiscoverLoopThread() {
-        if(!threadPaused) {
-            ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
-            threadPaused = true;
-            if(adapter != null)
-                adapter.cancelDiscovery();
+        synchronized (threadPaused) {
+            if (!threadPaused) {
+                ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
+                threadPaused = true;
+                if (adapter != null)
+                    adapter.cancelDiscovery();
+            }
         }
     }
 
     //resumes after calling pauseDiscoverLoopThread()
-    public void unpauseDiscoverLoopThread() {
-        if(threadPaused) {
-            ScatterLogManager.v(TAG, "Resuming bluetooth discovery thread");
-            threadPaused = false;
+    public synchronized void unpauseDiscoverLoopThread() {
+        synchronized (threadPaused) {
+            if (threadPaused) {
+                ScatterLogManager.v(TAG, "Resuming bluetooth discovery thread");
+                threadPaused = false;
+            }
         }
     }
 

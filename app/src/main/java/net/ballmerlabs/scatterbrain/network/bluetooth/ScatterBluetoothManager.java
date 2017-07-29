@@ -201,6 +201,7 @@ public class ScatterBluetoothManager {
         if (!acceptThreadRunning) {
             ScatterAcceptThread acceptThread = new ScatterAcceptThread(trunk, adapter);
             acceptThread.start();
+            acceptThreadRunning = true;
         }
     }
 

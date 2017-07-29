@@ -49,7 +49,7 @@ public class ScatterBluetoothManager {
     private final BluetoothAdapter adapter;
     public final static int REQUEST_ENABLE_BT = 1;
     private final ArrayList<BluetoothDevice> foundList;
-    public final HashMap<String, LocalPeer> connectedList; //discovered devices
+    public final HashMap<String, LocalPeer> connectedList; //devices that run scatterbrain and are connected
     private final ArrayList<BluetoothDevice> scatterList; //devices confirmed to run scatterbrain
     private final NetTrunk trunk;
     private boolean runScanThread;

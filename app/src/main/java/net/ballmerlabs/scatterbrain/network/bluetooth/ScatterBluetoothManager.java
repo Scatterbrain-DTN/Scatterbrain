@@ -329,7 +329,9 @@ public class ScatterBluetoothManager {
             if (p.isInvalid()) {
                 ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
             }
-            sendRaw(device, p.contents, false);
+            else {
+                sendRaw(device, p.contents, false);
+            }
         }
         unpauseDiscoverLoopThread();
     }

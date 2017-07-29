@@ -56,7 +56,6 @@ public class ScatterBluetoothManager {
     private Handler bluetoothHan;
     private final BluetoothLooper looper;
     private Runnable scanr;
-    private final boolean isAccepting;
     public boolean acceptThreadRunning;
     private boolean threadPaused;
     private int currentUUID; //the device we are currently querying for uuid.
@@ -153,14 +152,9 @@ public class ScatterBluetoothManager {
     //this should return a handler object later
     private void connectToDevice(List<BluetoothDevice> device) {
         foundList.clear();
-        if (!isAccepting) {
-            ScatterConnectThread currentconnection;
-            currentconnection = new ScatterConnectThread(device, trunk);
-            bluetoothHan.post(currentconnection);
-        }
-        else {
-            ScatterLogManager.e(TAG, "Tried to connect, but accept thread is dead for some reason");
-        }
+        ScatterConnectThread currentconnection;
+        currentconnection = new ScatterConnectThread(device, trunk);
+        bluetoothHan.post(currentconnection);
     }
 
     //constructor
@@ -180,7 +174,6 @@ public class ScatterBluetoothManager {
         if (adapter !=  null) {
             ScatterLogManager.e(TAG, "ERROR, bluetooth not supported");
         }
-        isAccepting = false;
         acceptThreadRunning = false;
         threadPaused = false;
         try {

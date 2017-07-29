@@ -30,7 +30,6 @@ class ScatterConnectThread extends Thread {
     }
 
     public void run() {
-        bleman.pauseDiscoverLoopThread();
         ScatterLogManager.v(trunk.blman.TAG, "Attempting to connect to " +devicelist.size() + " devices");
         for(BluetoothDevice mmDevice : devicelist) {
             synchronized (trunk.blman.connectedList) {
@@ -78,8 +77,6 @@ class ScatterConnectThread extends Thread {
         devicelist.clear();
 
         trunk.blman.offloadRandomPacketsToBroadcast();
-        bleman.unpauseDiscoverLoopThread();
-
 
     }
 

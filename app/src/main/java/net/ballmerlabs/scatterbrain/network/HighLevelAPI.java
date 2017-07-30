@@ -1,4 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
+
+import android.content.SharedPreferences;
+
 /**
  * basic interface to the Scatterbrain protocol, to be used by
  * external applications
@@ -9,8 +12,8 @@ interface HighLevelAPI {
     //system
     void startService();
     void stopService();
-    Object getPref();
-    void setPref(Object pref);
+    SharedPreferences getPref();
+    void setPref(SharedPreferences pref);
     DeviceProfile getProfile();
     void setProfile(DeviceProfile prof);
 
@@ -18,7 +21,6 @@ interface HighLevelAPI {
     void scanOn();
     void scanOff();
     DeviceProfile[] getPeers();
-    Object queryServices(DeviceProfile target);
 
     //communications
     void sendDataDirected(DeviceProfile target, byte[] data);

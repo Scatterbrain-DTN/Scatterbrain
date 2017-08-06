@@ -29,7 +29,7 @@ interface HighLevelAPI {
     void sendDataMulticast(byte[] data);
     void sendFile(InputStream file);
     void registerOnRecieveCallback(OnRecieveCallback callback);
-    void postMessagesRecievedHandler(Runnable run); //TODO: make a handler that accepts messages
+    void postMessagesRecievedHandler(Runnable run);
     BlockDataPacket[] getTopMessages(int num);
     BlockDataPacket[] getRandomMessages(int num);
     BlockDataPacket[] getTopMessages();

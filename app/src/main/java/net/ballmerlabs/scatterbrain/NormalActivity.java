@@ -116,9 +116,16 @@ public class NormalActivity extends AppCompatActivity {
         dialog.setDialogSelectionListener(new DialogSelectionListener() {
             @Override
             public void onSelectedFilePaths(String[] files) {
-
-                Messages.data.add(new DispMessage(files[0] ,"Sent file"));
-                Messages.notifyDataSetChanged();
+                if(isExternalStorageReadable() && isExternalStorageWritable()) {
+                    if(files.length == 1) {
+                        File f = new File(files[0]);
+                        Messages.data.add(new DispMessage(files[0], "Sent file"));
+                        Messages.notifyDataSetChanged();
+                    } else {
+                        //TODO: handle user selecting more than one filexrdfrdxszre2q11fhygtre      gy6rewq qwer6ue4r5f6joiutrewa   q
+                    }
+                    
+                }
             }
         });
         dialog.setTitle("File to send");

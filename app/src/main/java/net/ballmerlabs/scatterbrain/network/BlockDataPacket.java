@@ -26,7 +26,7 @@ public class BlockDataPacket extends ScatterStanza {
     public final int[] err;
     private final int ERRSIZE =10;
     public boolean isfile;
-    public int streamlen;
+    public long streamlen;
     public InputStream source;
     public boolean sent;
     public static final int HEADERSIZE = 23;
@@ -47,10 +47,10 @@ public class BlockDataPacket extends ScatterStanza {
 
     }
 
-    public BlockDataPacket(InputStream source, int len, byte[] senderluid) {
+    public BlockDataPacket(InputStream source, long len, byte[] senderluid) {
         super(HEADERSIZE);
+        this.size = HEADERSIZE;
         this.streamlen = len;
-        this.size = HEADERSIZE + this.streamlen;
         this.err = new int[ERRSIZE];
         this.body = null;
         this.senderluid = senderluid;
@@ -66,27 +66,55 @@ public class BlockDataPacket extends ScatterStanza {
 
     public String getHash() {
 
-        String hash = null;
-        try {
-            byte[] combined = new byte[size+ senderluid.length];
-            for(int i=0;i<size;i++) {
-                combined[i] = body[i];
+        if(isfile) {
+            String hash = null;
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+
+                byte[] buf = new byte[1024];
+                int bytesread = 0;
+                int offset = 0;
+                try {
+                    while((bytesread = this.source.read(buf)) != -1) {
+                        digest.update(buf,offset, bytesread);
+                        offset += bytesread;
+                    }
+                   // this.source.reset();
+                } catch(IOException e) {
+                    return null;
+                }
+
+                digest.update(senderluid, 0, senderluid.length);
+                byte[] res= digest.digest();
+                hash = bytesToHex(res);
+
+
+            } catch (NoSuchAlgorithmException nsa) {
+                ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");
             }
+            return hash;
+        } else {
+            String hash = null;
+            try {
+                byte[] combined = new byte[size + senderluid.length];
+                for (int i = 0; i < size; i++) {
+                    combined[i] = body[i];
+                }
 
-            for(int i=size;i<senderluid.length;i++) {
-                combined[i] = senderluid[i-size];
+                for (int i = size; i < senderluid.length; i++) {
+                    combined[i] = senderluid[i - size];
+                }
+                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+                digest.update(combined, 0, combined.length);
+                combined = digest.digest();
+                hash = bytesToHex(combined);
+
+
+            } catch (NoSuchAlgorithmException nsa) {
+                ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");
             }
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            digest.update(combined, 0, combined.length);
-            combined = digest.digest();
-            hash = bytesToHex(combined);
-
-
+            return hash;
         }
-        catch(NoSuchAlgorithmException nsa) {
-            ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");
-        }
-        return hash;
     }
 
     // http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java

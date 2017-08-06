@@ -94,6 +94,34 @@ public class ProtocolUnitTest {
 
     @SuppressWarnings("unused")
     @Test
+    public void BlockDataPacketHasSameHashWhenReconstructedFromFile() {
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        final String filename = "/tmp/77246out";
+        File out = new File(filename);
+        File in = new File(filename);
+        String hash = null;
+        boolean works;
+        try {
+            FileOutputStream os = new FileOutputStream(out);
+            FileInputStream is = new FileInputStream(in);
+            os.write(randomdata);
+            BlockDataPacket bd = new BlockDataPacket(is, randomdata.length, senderluid);
+            hash = bd.getHash();
+            System.out.println(hash);
+            works = true;
+
+        } catch(IOException e) {
+            works = false;
+        }
+
+        assertThat(works, is(true));
+        assertThat(hash != null, is(true));
+    }
+
+    @SuppressWarnings("unused")
+    @Test
     public void BlockDataPacketHandlesStreamingIO() {
         byte[] senderluid = {1,2,3,4,5,6};
         File sourcefile = new File("/dev/zero");

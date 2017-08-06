@@ -87,7 +87,7 @@ class ScatterReceiveThread extends Thread{
                     trunk.blman.onSuccessfulReceive(buffer);
                 }
                 else if(file == 1) {
-                    //TODO: handle recieved file
+
                 }
 
             }

@@ -59,6 +59,8 @@ public class BlockDataPacket extends ScatterStanza {
         this.invalid = false;
         this.text = false;
         this.sent = false;
+        if(len > Integer.MAX_VALUE)
+            invalid = true; 
         if(init() == null)
             invalid = true;
     }
@@ -203,10 +205,6 @@ public class BlockDataPacket extends ScatterStanza {
                     err[2] = 1;
                     invalid = true;
                 }
-            }
-        } else {
-            if(size > 0) {
-
             }
         }
     }

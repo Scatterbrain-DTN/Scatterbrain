@@ -87,7 +87,12 @@ class ScatterReceiveThread extends Thread{
                     trunk.blman.onSuccessfulReceive(buffer);
                 }
                 else if(file == 1) {
-                    BlockDataPacket bd = new BlockDataPacket(header);
+                    BlockDataPacket bd = new BlockDataPacket(header, socket.getInputStream());
+                    if(bd.isInvalid()) {
+                        ScatterLogManager.e(trunk.blman.TAG, "Recieved corrupt filepacket");
+                        continue;
+                    }
+                    //TODO: save random file 
                 }
 
             }

@@ -9,6 +9,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,6 +68,28 @@ public class ProtocolUnitTest {
         byte[] randomdata = {};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         assertThat(bd.isInvalid(), is(false));
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    public void BlockDataPacketHandlesFileBit() {
+        byte[] senderluid = {1,2,3,4,5,6};
+        boolean works = false;
+        File testfile = new File("/dev/null");
+        File infile = new File("/dev/zero");
+        try {
+            FileOutputStream out = new FileOutputStream(testfile);
+            FileInputStream in = new FileInputStream(infile);
+            BlockDataPacket bd = new BlockDataPacket(in, 4096, senderluid);
+            int fileStatusFromData = BlockDataPacket.getFileStatusFromData(bd.getContents());
+            if(fileStatusFromData == 1) {
+                works = true;
+            }
+        } catch(IOException e) {
+            works = false;
+        }
+
+        assertThat(works, is(true));
     }
 
     @SuppressWarnings("unused")

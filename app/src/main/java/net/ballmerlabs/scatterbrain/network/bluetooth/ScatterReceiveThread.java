@@ -56,8 +56,15 @@ class ScatterReceiveThread extends Thread{
                 int size = BlockDataPacket.getSizeFromData(header);
                // ScatterLogManager.v("Receive", "Got header with size " +size);
 
+                int file =  BlockDataPacket.getFileStatusFromData(header);
 
-                //temporary 15mb filesize limit. Sorry. TODO: remove this
+
+                if(file < 0)
+                    continue;
+
+                //TODO: handle file bit
+
+                //temporary 15mb filesize limit. Sorry.
                 if(size < 0 || size > 15728640)
                     continue;
                 //TODO: stop doing stuff in memory so we can receive something huge

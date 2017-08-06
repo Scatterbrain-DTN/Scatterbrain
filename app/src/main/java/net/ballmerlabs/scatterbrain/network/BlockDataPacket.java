@@ -246,6 +246,21 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
 
+    public static int getFileStatusFromData(byte[] data) {
+        if(data.length < HEADERSIZE) {
+            return -1;
+        }
+
+        if(data[0] != BlockDataPacket.MAGIC) {
+            return -2;
+        }
+
+        if(data[14] == 1)
+            return 1;
+        else
+            return 0;
+    }
+
     public static int getSizeFromData(byte[] data) {
         byte[] sizearr = new byte[4];
 

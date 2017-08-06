@@ -28,6 +28,7 @@ interface HighLevelAPI {
     void sendDataDirected(DeviceProfile target, byte[] data);
     void sendDataMulticast(byte[] data);
     void sendFile(InputStream file);
+    void registerOnRecieveCallback(OnRecieveCallback callback);
     void postMessagesRecievedHandler(Runnable run); //TODO: make a handler that accepts messages
     BlockDataPacket[] getTopMessages(int num);
     BlockDataPacket[] getRandomMessages(int num);

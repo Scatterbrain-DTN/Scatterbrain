@@ -50,7 +50,7 @@ public class ProtocolUnitTest {
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false,false, senderluid);
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false,senderluid);
         assertThat(bd.isInvalid(), is(false));
     }
 
@@ -59,7 +59,7 @@ public class ProtocolUnitTest {
     public void BlockDataPacketHandlesNullData() {
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false, true, senderluid);
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         assertThat(bd.isInvalid(), is(false));
     }
 
@@ -69,7 +69,7 @@ public class ProtocolUnitTest {
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false, false, senderluid);
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         BlockDataPacket ne = new BlockDataPacket(bd.getContents());
 
         System.out.println("BlockDataPacketFromDataIsValid() err");
@@ -89,7 +89,7 @@ public class ProtocolUnitTest {
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false,false, senderluid);
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         BlockDataPacket ne = new BlockDataPacket(bd.getContents());
 
         assertThat(bd.getHash().equals(ne.getHash()), is(true));
@@ -116,7 +116,7 @@ public class ProtocolUnitTest {
     public void BlockDataPacketWithNullDataIsValid() {
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false, false,  senderluid);
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         BlockDataPacket ne = new BlockDataPacket(bd.getContents());
         if(bd.getContents().length == BlockDataPacket.HEADERSIZE) {
             System.out.println("HEADERSIZE");
@@ -136,14 +136,14 @@ public class ProtocolUnitTest {
     public void BlockDataSizeOperatorReturnsCorrectSize() {
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false, false, senderluid);
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
 
         assertThat(bd.size == BlockDataPacket.getSizeFromData(bd.getContents()), is(true));
 
         byte[] senderluid2 = {1,2,3,4,5,6};
         byte[] randomdata2 = {3,3,65,34,6,3,52,52,5,2,5};
 
-        BlockDataPacket bd2 = new BlockDataPacket(randomdata2, false, false,  senderluid2);
+        BlockDataPacket bd2 = new BlockDataPacket(randomdata2, false, senderluid2);
 
         assertThat(bd2.size == BlockDataPacket.getSizeFromData(bd2.getContents()), is(true));
     }

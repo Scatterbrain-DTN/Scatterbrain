@@ -386,8 +386,13 @@ public class ScatterBluetoothManager {
     private void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                         final boolean text, final boolean file) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-        BlockDataPacket bd = new BlockDataPacket(message,text, file,  trunk.mainService.luid );
+        BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
         sendRaw(mactarget,bd.getContents(), false);
+    }
+
+    private void sendStreamToLocalPeer(final String mactarget, final byte[] message,
+                                       final boolean text, final boolean file) {
+
     }
 
 

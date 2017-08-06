@@ -56,7 +56,7 @@ public class GlobalNet {
      */
     @SuppressWarnings({"unused", "UnusedParameters"})
     public BlockDataPacket encodeBlockData(byte body[], boolean text, boolean file,  DeviceProfile to) {
-        return new BlockDataPacket(body, text, file,  trunk.mainService.luid);
+        return new BlockDataPacket(body, text, trunk.mainService.luid);
     }
 
 

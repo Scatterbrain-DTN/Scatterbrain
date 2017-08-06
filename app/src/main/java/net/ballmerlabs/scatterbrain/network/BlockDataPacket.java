@@ -2,6 +2,9 @@ package net.ballmerlabs.scatterbrain.network;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
@@ -23,22 +26,43 @@ public class BlockDataPacket extends ScatterStanza {
     public final int[] err;
     private final int ERRSIZE =10;
     public boolean isfile;
+    public String[] filepath;
+    public int streamlen;
+    public InputStream source;
+    public boolean isinput;
+    public boolean sent;
     public static final int HEADERSIZE = 23;
     private static final byte MAGIC = 124;
-    public BlockDataPacket(byte body[], boolean text, boolean file,  byte[] senderluid) {
+    public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
         super(HEADERSIZE+body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
         this.size = body.length;
         this.err = new int[ERRSIZE];
-        this.isfile = file;
-        invalid = false;
+        this.isfile = false;
+        this.invalid = false;
         //noinspection RedundantIfStatement
         if(init() == null)
             invalid = true;
 
 
+    }
+
+    public BlockDataPacket(InputStream source, int len, byte[] senderluid) {
+        super(HEADERSIZE);
+        this.streamlen = len;
+        this.size = HEADERSIZE + len;
+        this.err = new int[ERRSIZE];
+        this.body = null;
+        this.senderluid = senderluid;
+        this.source = source;
+        this.isfile = true;
+        this.invalid = false;
+        this.text = false;
+        this.sent = false;
+        if(init() == null)
+            invalid = true;
     }
 
 
@@ -132,25 +156,31 @@ public class BlockDataPacket extends ScatterStanza {
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
 
-        if(size > 0) {
-            body = new byte[size];
-            for (int x = 0; x < size; x++) {
-                body[x] = contents[x + 19];
+        if(!this.isfile) {
+            if (size > 0) {
+                body = new byte[size];
+                for (int x = 0; x < size; x++) {
+                    body[x] = contents[x + 19];
+                }
+
+
+                //verify crc with stored copy
+                CRC32 crc = new CRC32();
+                crc.update(contents, 0, contents.length - 4);
+                byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
+                byte[] real = new byte[4];
+                for (int x = 0; x < real.length; x++) {
+                    real[x] = contents[(contents.length - 4) + x];
+                }
+
+                if (!Arrays.equals(real, check)) {
+                    err[2] = 1;
+                    invalid = true;
+                }
             }
+        } else {
+            if(size > 0) {
 
-
-            //verify crc with stored copy
-            CRC32 crc = new CRC32();
-            crc.update(contents, 0, contents.length - 4);
-            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
-            byte[] real = new byte[4];
-            for (int x = 0; x < real.length; x++) {
-                real[x] = contents[(contents.length - 4) + x];
-            }
-
-            if (!Arrays.equals(real, check)) {
-                err[2] = 1;
-                invalid = true;
             }
         }
     }
@@ -232,4 +262,27 @@ public class BlockDataPacket extends ScatterStanza {
         else
             return size;
     }
+
+    public void catBody(OutputStream destination) {
+        if(isfile) {
+            final int bodysize = this.size - HEADERSIZE;
+            byte[] byteblock = new byte[1024];
+            int bytesread = 0;
+            try {
+                while ((bytesread = source.read(byteblock, bytesread, 1024)) > 0) {
+                    destination.write(byteblock, bytesread, 1024);
+                    if (bytesread > bodysize) {
+                        this.invalid = true;
+                    }
+                }
+            } catch (IOException e) {
+                ScatterLogManager.e("Packet", "IOEXception when reading from filestream");
+                this.invalid = true;
+            }
+            this.sent = true;
+        } else {
+            this.invalid = true;
+        }
+    }
 }
+

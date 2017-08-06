@@ -168,7 +168,7 @@ public class LeDataStore {
     //TODO: remove default values for text and file parameters
     @SuppressWarnings("unused")
     public synchronized BlockDataPacket messageToBlockData(Message m) {
-        return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,true,
+        return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
                 Base64.decode(m.senderluid,Base64.DEFAULT));
     }
 
@@ -351,7 +351,7 @@ public class LeDataStore {
                 }
                 //ScatterLogManager.e(TAG, body);
                 if (body.length() > 0) {
-                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t,f, Base64.decode(senderluid, Base64.DEFAULT)));
+                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
                 }
             }
 
@@ -424,7 +424,7 @@ public class LeDataStore {
                 }
                 //ScatterLogManager.e(TAG, body);
                 if (body.length() > 0) {
-                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t,f, Base64.decode(senderluid, Base64.DEFAULT)));
+                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
                 }
             }
 

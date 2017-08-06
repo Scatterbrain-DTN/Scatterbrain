@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
 import com.github.angads25.filepicker.model.DialogConfigs;
 import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
@@ -90,7 +91,15 @@ public class NormalActivity extends AppCompatActivity {
         properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
         properties.extensions = null;
 
+        final Activity t = this;
         final FilePickerDialog dialog = new FilePickerDialog(NormalActivity.this, properties);
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                Messages.data.add(new DispMessage(files[0] ,"Sent file"));
+                Messages.notifyDataSetChanged();
+            }
+        });
         dialog.setTitle("File to send");
 
         final Activity  current = this;

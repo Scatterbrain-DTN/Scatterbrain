@@ -26,10 +26,8 @@ public class BlockDataPacket extends ScatterStanza {
     public final int[] err;
     private final int ERRSIZE =10;
     public boolean isfile;
-    public String[] filepath;
     public int streamlen;
     public InputStream source;
-    public boolean isinput;
     public boolean sent;
     public static final int HEADERSIZE = 23;
     private static final byte MAGIC = 124;

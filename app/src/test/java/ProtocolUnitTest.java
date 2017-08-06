@@ -8,6 +8,12 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -61,6 +67,29 @@ public class ProtocolUnitTest {
         byte[] randomdata = {};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         assertThat(bd.isInvalid(), is(false));
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    public void BlockDataPacketHandlesStreamingIO() {
+        byte[] senderluid = {1,2,3,4,5,6};
+        File sourcefile = new File("/dev/zero");
+        boolean sent = false;
+        boolean valid = true;
+        try {
+            FileInputStream fstream = new FileInputStream(sourcefile);
+            BlockDataPacket bd = new BlockDataPacket(fstream, 4096, senderluid);
+            File out = new File("/dev/null");
+            FileOutputStream outstream = new FileOutputStream(out);
+            bd.catBody(outstream);
+            valid =!bd.isInvalid();
+            sent = bd.sent;
+        } catch(IOException e) {
+            valid = false;
+        }
+
+        assertThat(valid, is(true));
+        assertThat(sent, is(true));
     }
 
     @SuppressWarnings("unused")

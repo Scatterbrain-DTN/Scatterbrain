@@ -52,7 +52,7 @@ public class BlockDataPacket extends ScatterStanza {
     public BlockDataPacket(InputStream source, int len, byte[] senderluid) {
         super(HEADERSIZE);
         this.streamlen = len;
-        this.size = HEADERSIZE + len;
+        this.size = HEADERSIZE + this.streamlen;
         this.err = new int[ERRSIZE];
         this.body = null;
         this.senderluid = senderluid;
@@ -220,21 +220,28 @@ public class BlockDataPacket extends ScatterStanza {
         else
             contents[14] = 0;
 
-        byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(body.length).array();
+        if(!isfile) {
+            byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(body.length).array();
 
-        for(int i=0;i<4;i++) {
-            contents[i+15] = sizebytes[i];
-        }
+            for (int i = 0; i < 4; i++) {
+                contents[i + 15] = sizebytes[i];
+            }
 
-        for(int x=0;x<body.length;x++) {
-            contents[x+19] = body[x];
-        }
-        //basic crc for integrity check
-        CRC32 crc = new CRC32();
-        crc.update(contents,0, contents.length - 4);
-        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int)crc.getValue()).array();
-        for(int x=0;x<c.length;x++) {
-            contents[(contents.length - 4) + x] = c[x];
+            for (int x = 0; x < body.length; x++) {
+                contents[x + 19] = body[x];
+            }
+            //basic crc for integrity check
+            CRC32 crc = new CRC32();
+            crc.update(contents, 0, contents.length - 4);
+            byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
+            for (int x = 0; x < c.length; x++) {
+                contents[(contents.length - 4) + x] = c[x];
+            }
+        } else {
+            byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(this.size - HEADERSIZE).array();
+            for (int i = 0; i < 4; i++) {
+                contents[i + 15] = sizebytes[i];
+            }
         }
 
         return contents;
@@ -265,15 +272,18 @@ public class BlockDataPacket extends ScatterStanza {
 
     public void catBody(OutputStream destination) {
         if(isfile) {
-            final int bodysize = this.size - HEADERSIZE;
             byte[] byteblock = new byte[1024];
             int bytesread = 0;
+            int bytestotal = 0;
             try {
-                while ((bytesread = source.read(byteblock, bytesread, 1024)) > 0) {
-                    destination.write(byteblock, bytesread, 1024);
-                    if (bytesread > bodysize) {
+                while ((bytesread= source.read(byteblock)) != -1 && (bytestotal < streamlen)) {
+                    System.out.println("read " + bytesread);
+                    destination.write(byteblock);
+                    if (bytestotal > streamlen) {
                         this.invalid = true;
+                        break;
                     }
+                    bytestotal += bytesread;
                 }
             } catch (IOException e) {
                 ScatterLogManager.e("Packet", "IOEXception when reading from filestream");

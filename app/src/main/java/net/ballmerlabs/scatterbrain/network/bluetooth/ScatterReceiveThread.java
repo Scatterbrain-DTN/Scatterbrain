@@ -61,31 +61,34 @@ class ScatterReceiveThread extends Thread{
 
                 if(file < 0)
                     continue;
+                else if(file == 0) {
 
-                //TODO: handle file bit
+                    //temporary 15mb filesize limit. Sorry.
+                    if (size < 0 || size > 15728640)
+                        continue;
 
-                //temporary 15mb filesize limit. Sorry.
-                if(size < 0 || size > 15728640)
-                    continue;
-                //TODO: stop doing stuff in memory so we can receive something huge
-                byte[] buffer = new byte[size+
-                        BlockDataPacket.HEADERSIZE];
+                    byte[] buffer = new byte[size +
+                            BlockDataPacket.HEADERSIZE];
 
-                System.arraycopy(header, 0, buffer, 0, header.length);
+                    System.arraycopy(header, 0, buffer, 0, header.length);
 
-                byte[] block = new byte[100];
-                int counter = BlockDataPacket.HEADERSIZE;
-                while(socket.getInputStream().read(block) != -1) {
-                    for(int x=0;(x<block.length) && (counter < buffer.length);x++) {
-                        buffer[counter] = block[x];
-                        counter++;
+                    byte[] block = new byte[100];
+                    int counter = BlockDataPacket.HEADERSIZE;
+                    while (socket.getInputStream().read(block) != -1) {
+                        for (int x = 0; (x < block.length) && (counter < buffer.length); x++) {
+                            buffer[counter] = block[x];
+                            counter++;
+                        }
+                        if (counter >= buffer.length)
+                            break;
                     }
-                    if(counter >= buffer.length)
-                        break;
-                }
-               // ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
+                    // ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
 
-                trunk.blman.onSuccessfulReceive(buffer);
+                    trunk.blman.onSuccessfulReceive(buffer);
+                }
+                else if(file == 1) {
+                    //TODO: handle recieved file
+                }
 
             }
             catch (IOException e) {

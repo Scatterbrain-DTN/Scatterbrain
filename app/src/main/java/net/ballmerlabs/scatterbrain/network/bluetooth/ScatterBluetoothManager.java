@@ -238,6 +238,33 @@ public class ScatterBluetoothManager {
     }
 
 
+    //function called when a packet with an accompanying file stream is recieved.
+    public void onSuccessfulFileRecieve(BlockDataPacket in) {
+        if(!NormalActivity.active)
+            trunk.mainService.startMessageActivity();
+
+        if(in.isInvalid()) {
+            ScatterLogManager.e(TAG, "Recieved corrupt blockdatafilepacket");
+            return;
+        }
+
+        if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (NormalActivity.active) {
+                        trunk.mainService.getMessageAdapter().data.add(
+                                new DispMessage("New file recieved","FILE:"));
+                        trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                        //    ScatterLogManager.e(TAG, "Appended message to message list");
+                    }
+                }
+            });
+        }
+    }
+
+
     //function called when a packet is received from a connected device
     public void onSuccessfulReceive(byte[] incoming) {
       //  ScatterLogManager.v(TAG, "Called onSuccessfulReceive for incoming message");

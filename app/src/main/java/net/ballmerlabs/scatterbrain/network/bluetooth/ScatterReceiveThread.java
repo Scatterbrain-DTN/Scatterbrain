@@ -92,7 +92,7 @@ class ScatterReceiveThread extends Thread{
                         ScatterLogManager.e(trunk.blman.TAG, "Recieved corrupt filepacket");
                         continue;
                     }
-                    //TODO: save random file 
+                    //TODO: save random file
                 }
 
             }

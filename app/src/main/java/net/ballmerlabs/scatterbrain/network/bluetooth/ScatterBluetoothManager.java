@@ -28,6 +28,8 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -239,7 +241,7 @@ public class ScatterBluetoothManager {
 
 
     //function called when a packet with an accompanying file stream is recieved.
-    public void onSuccessfulFileRecieve(BlockDataPacket in) {
+    public void onSuccessfulFileRecieve(final BlockDataPacket in) {
         if(!NormalActivity.active)
             trunk.mainService.startMessageActivity();
 
@@ -254,9 +256,27 @@ public class ScatterBluetoothManager {
                 @Override
                 public void run() {
                     if (NormalActivity.active) {
-                        trunk.mainService.getMessageAdapter().data.add(
-                                new DispMessage("New file recieved","FILE:"));
-                        trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                        byte[] hash = null;
+                        try {
+                            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+                            byte[] buffer = new byte[1024];
+                            int bytes_recieved;
+                            int offset = 0;
+                            while((bytes_recieved = in.source.read(buffer)) != -1) {
+                                digest.update(buffer, offset, bytes_recieved);
+                                offset += bytes_recieved;
+                            }
+                            hash = digest.digest();
+                        } catch(NoSuchAlgorithmException s) {
+                            ScatterLogManager.e(TAG, "No such algorithm hashing incoming message");
+                        } catch(IOException e) {
+                            ScatterLogManager.e(TAG, "IOException when making test hash");
+                        }
+                        if(hash != null) {
+                            trunk.mainService.getMessageAdapter().data.add(
+                                    new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE:"));
+                            trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                        }
                         //    ScatterLogManager.e(TAG, "Appended message to message list");
                     }
                 }
@@ -417,8 +437,85 @@ public class ScatterBluetoothManager {
         sendRaw(mactarget,bd.getContents(), false);
     }
 
-    private void sendStreamToLocalPeer(final String mactarget, final byte[] message,
-                                       final boolean text, final boolean file) {
+    private void sendStreamToLocalPeer(final String mactarget, final byte[] message, final InputStream stream, long len) {
+        BlockDataPacket bd = new BlockDataPacket(stream, len, trunk.mainService.luid);
+
+    }
+
+    private void sendRawStream(final String mactarget, final byte[] message,
+                               final InputStream istream, long len, final boolean fake) {
+        //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
+
+        final OutputStream ostream;
+        final Socket sock;
+        final boolean isConnected;
+        if(!fake) {
+            LocalPeer target;
+            synchronized (connectedList) {
+                target = connectedList.get(mactarget);
+            }
+            target.socket.isConnected();
+            try {
+                ostream = target.socket.getOutputStream();
+                isConnected = true;
+            }
+            catch(IOException e) {
+                ScatterLogManager.e(TAG, "IOException on sending packet to " + mactarget);
+                return;
+            }
+        }
+        else {
+            try {
+                sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
+                ostream = sock.getOutputStream();
+                isConnected = true;
+            }
+            catch(UnknownHostException u) {
+                System.out.println("Cannot connect to local debug server");
+                return;
+            }
+            catch(IOException e) {
+                System.out.println("IOException when connecting to local debug server");
+                return;
+            }
+
+        }
+        final BlockDataPacket blockDataPacket = new BlockDataPacket(istream, len, message);
+        Runnable messageSendThread = new Runnable() {
+            @Override
+            public void run() {
+                if (!fake)
+                    trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
+                //noinspection ConstantConditions
+                if (isConnected) {
+                    try {
+                        if (blockDataPacket.invalid) {
+                            ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                            return;
+                        }
+                        ostream.write(blockDataPacket.getContents());
+
+                        byte[] buf = new byte[1024];
+                        int bytes_read;
+                        int offset = 0;
+                        while((bytes_read = blockDataPacket.source.read(buf)) != -1) {
+                            ostream.write(buf);
+                            offset += bytes_read;
+                        }
+
+                        if(offset > blockDataPacket.streamlen) {
+                            ScatterLogManager.e(TAG, "sent a file of invalid length");
+                        }
+                        //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+                    } catch (IOException e) {
+
+                        ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
+                    }
+                }
+            }
+        };
+
+        bluetoothHan.post(messageSendThread);
 
     }
 

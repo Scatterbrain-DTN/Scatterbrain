@@ -23,6 +23,8 @@ import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
+import java.io.InputStream;
+import java.security.MessageDigest;
 import java.util.Map;
 import java.util.Random;
 
@@ -136,6 +138,26 @@ public class ScatterRoutingService extends Service {
     @SuppressWarnings({"EmptyMethod", "unused"})
     void checkForUpdates() {
 
+    }
+
+    public static byte[] getHashForStream(InputStream i) {
+        byte[] hash;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            byte[] buffer = new byte[1024];
+            int bytes_recieved;
+            int offset = 0;
+            while ((bytes_recieved = i.read(buffer)) != -1) {
+                digest.update(buffer, offset, bytes_recieved);
+                offset += bytes_recieved;
+            }
+            hash = digest.digest();
+            return hash;
+
+        } catch(Exception e) {
+            ScatterLogManager.e("Static hashing", e.getMessage());
+            return null;
+        }
     }
 
 

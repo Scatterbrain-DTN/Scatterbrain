@@ -126,29 +126,21 @@ public class NormalActivity extends AppCompatActivity {
 
 
                         byte[] hash = null;
-                        if(service != null) {
+                        if(mService != null) {
                             try {
                                 FileInputStream i = new FileInputStream(f);
-                                MessageDigest digest = MessageDigest.getInstance("SHA-1");
-                                byte[] buffer = new byte[1024];
-                                int bytes_recieved;
-                                int offset = 0;
-                                while((bytes_recieved = i.read(buffer)) != -1) {
-                                    digest.update(buffer, offset, bytes_recieved);
-                                    offset += bytes_recieved;
-                                }
-                                hash = digest.digest();
-                                i.skip(0);
-                                BlockDataPacket bd = new BlockDataPacket(i,f.length(),service.luid);
-                                service.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
-                                        i, f.length());
+
+                               // BlockDataPacket bd = new BlockDataPacket(i,f.length(),service.luid);
+                               // service.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
+                      //                  i, f.length());
+                                hash = ScatterRoutingService.getHashForStream(i);
                                 if(hash != null) {
                                     Messages.data.add(new DispMessage(BlockDataPacket.bytesToHex(hash),
                                             "Sent file"));
                                     Messages.notifyDataSetChanged();
                                 }
                             } catch (Exception e) {
-
+                                    ScatterLogManager.e(TAG, e.getLocalizedMessage() + " test");
                             }
 
                         }

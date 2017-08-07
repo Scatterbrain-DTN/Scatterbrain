@@ -78,7 +78,7 @@ public class BlockDataPacket extends ScatterStanza {
                 int offset = 0;
                 try {
                     while((bytesread = this.source.read(buf)) != -1) {
-                        digest.update(buf,offset, bytesread);
+                        digest.update(buf,0, bytesread);
                         offset += bytesread;
                     }
                    // this.source.reset();

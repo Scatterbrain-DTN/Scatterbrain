@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DialogTitle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -125,22 +126,19 @@ public class NormalActivity extends AppCompatActivity {
                         File f = new File(files[0]);
 
 
-                        byte[] hash = null;
                         if(mService != null) {
                             try {
                                 FileInputStream i = new FileInputStream(f);
 
-                               // BlockDataPacket bd = new BlockDataPacket(i,f.length(),service.luid);
-                               // service.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
-                      //                  i, f.length());
-                                hash = ScatterRoutingService.getHashForStream(i);
-                                if(hash != null) {
-                                    Messages.data.add(new DispMessage(BlockDataPacket.bytesToHex(hash),
+                               BlockDataPacket bd = new BlockDataPacket(i,f.length(),mService.luid);
+                                mService.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
+                                        i, f.length());
+                                String hash2 = bd.getHash();
+                                    Messages.data.add(new DispMessage(hash2,
                                             "Sent file"));
                                     Messages.notifyDataSetChanged();
-                                }
                             } catch (Exception e) {
-                                    ScatterLogManager.e(TAG, e.getLocalizedMessage() + " test");
+                                    ScatterLogManager.e(TAG, Log.getStackTraceString(e) + " test");
                             }
 
                         }

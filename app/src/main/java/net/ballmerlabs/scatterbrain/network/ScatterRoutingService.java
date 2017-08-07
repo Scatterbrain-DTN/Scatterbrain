@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
@@ -148,14 +149,14 @@ public class ScatterRoutingService extends Service {
             int bytes_recieved;
             int offset = 0;
             while ((bytes_recieved = i.read(buffer)) != -1) {
-                digest.update(buffer, offset, bytes_recieved);
+                digest.update(buffer, 0, bytes_recieved);
                 offset += bytes_recieved;
             }
             hash = digest.digest();
             return hash;
 
         } catch(Exception e) {
-            ScatterLogManager.e("Static hashing", e.getMessage());
+            ScatterLogManager.e("Static hashing", Log.getStackTraceString(e));
             return null;
         }
     }

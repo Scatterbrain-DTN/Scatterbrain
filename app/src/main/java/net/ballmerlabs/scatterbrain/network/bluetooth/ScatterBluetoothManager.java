@@ -491,7 +491,7 @@ public class ScatterBluetoothManager {
             }
 
         }
-        final BlockDataPacket blockDataPacket = new BlockDataPacket(istream, len, message);
+        final BlockDataPacket blockDataPacket = new BlockDataPacket(istream, len, trunk.mainService.luid);
         Runnable messageSendThread = new Runnable() {
             @Override
             public void run() {

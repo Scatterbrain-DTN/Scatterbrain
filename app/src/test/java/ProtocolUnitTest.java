@@ -94,6 +94,21 @@ public class ProtocolUnitTest {
 
     @SuppressWarnings("unused")
     @Test
+    public void BlockDataFilePacketHasStableContects() {
+        byte[] senderluid = {1,2,3,4,5,6};
+        boolean works;
+        File f = new File("/dev/urandom");
+        try {
+            FileInputStream i = new FileInputStream(f);
+            BlockDataPacket bd = new BlockDataPacket(i, 4096 , senderluid);
+        } catch (IOException e) {
+
+        }
+
+    }
+
+    @SuppressWarnings("unused")
+    @Test
     public void BlockDataPacketHasSameHashWhenReconstructedFromFile() {
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,

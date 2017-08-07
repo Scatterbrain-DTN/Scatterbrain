@@ -131,9 +131,13 @@ public class NormalActivity extends AppCompatActivity {
                                 FileInputStream i = new FileInputStream(f);
 
                                BlockDataPacket bd = new BlockDataPacket(i,f.length(),mService.luid);
+                                if(bd.isInvalid()) {
+                                    ScatterLogManager.e(TAG, "Invalid file blockdata packet");
+                                }
                                 mService.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
                                         i, f.length());
-                                String hash2 = bd.getHash();
+                                FileInputStream n = new FileInputStream(f);
+                                String hash2 = BlockDataPacket.bytesToHex(ScatterRoutingService.getHashForStream(n));
                                     Messages.data.add(new DispMessage(hash2,
                                             "Sent file"));
                                     Messages.notifyDataSetChanged();

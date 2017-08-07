@@ -250,7 +250,7 @@ public class ScatterBluetoothManager {
             return;
         }
 
-        if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
+        //if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
@@ -281,7 +281,7 @@ public class ScatterBluetoothManager {
                     }
                 }
             });
-        }
+       // }
     }
 
 
@@ -495,8 +495,8 @@ public class ScatterBluetoothManager {
         Runnable messageSendThread = new Runnable() {
             @Override
             public void run() {
-                if (!fake)
-                    trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
+              //  if (!fake)
+               //     trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
                 //noinspection ConstantConditions
                 if (isConnected) {
                     try {

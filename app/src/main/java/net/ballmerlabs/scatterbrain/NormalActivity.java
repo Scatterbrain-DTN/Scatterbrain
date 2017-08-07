@@ -28,6 +28,9 @@ import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @SuppressWarnings({"MismatchedReadAndWriteOfArray", "unused"})
 public class NormalActivity extends AppCompatActivity {
@@ -121,6 +124,17 @@ public class NormalActivity extends AppCompatActivity {
                         File f = new File(files[0]);
                         Messages.data.add(new DispMessage(files[0], "Sent file"));
                         Messages.notifyDataSetChanged();
+                        if(service != null) {
+                            try {
+                                FileInputStream i = new FileInputStream(f);
+                                BlockDataPacket bd = new BlockDataPacket(i,f.length(),service.luid);
+                                service.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
+                                        i, f.length());
+                            } catch (IOException e) {
+
+                            }
+
+                        }
                     } else {
                         //TODO: handle user selecting more than one filexrdfrdxszre2q11fhygtre      gy6rewq qwer6ue4r5f6joiutrewa   q
                     }

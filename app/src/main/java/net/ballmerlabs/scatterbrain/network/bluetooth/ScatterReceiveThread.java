@@ -88,6 +88,7 @@ class ScatterReceiveThread extends Thread{
                 }
                 else if(file == 1) {
                     BlockDataPacket bd = new BlockDataPacket(header, socket.getInputStream());
+                    ScatterLogManager.v(trunk.blman.TAG, "Recieved packet len " + size + " streamlen " + bd.streamlen);
                     if(bd.isInvalid()) {
                         ScatterLogManager.e(trunk.blman.TAG, "Recieved corrupt filepacket");
                         continue;

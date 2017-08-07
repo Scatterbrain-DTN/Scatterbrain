@@ -256,16 +256,23 @@ public class ScatterBluetoothManager {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    long offset = 0;
                     if (NormalActivity.active) {
                         byte[] hash = null;
                         try {
                             MessageDigest digest = MessageDigest.getInstance("SHA-1");
                             byte[] buffer = new byte[1024];
                             int bytes_recieved;
-                            int offset = 0;
-                            while((bytes_recieved = in.source.read(buffer)) != -1) {
+                            int toread = 1024;
+                            long bytes_left = in.streamlen;
+                            if(bytes_left < 1024)
+                                toread = (int) bytes_left;
+                            while((bytes_recieved = in.source.read(buffer, 0, toread)) != -1) {
+                                if(bytes_left < 1024)
+                                    toread = (int) bytes_left;
                                 digest.update(buffer, 0, bytes_recieved);
                                 offset += bytes_recieved;
+                                bytes_left -= bytes_recieved;
                                 if(offset >= in.streamlen)
                                     break;
                             }
@@ -277,7 +284,7 @@ public class ScatterBluetoothManager {
                         }
                         if(hash != null) {
                             trunk.mainService.getMessageAdapter().data.add(
-                                    new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE:"));
+                                    new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + offset ));
                             trunk.mainService.getMessageAdapter().notifyDataSetChanged();
                         }
                         //    ScatterLogManager.e(TAG, "Appended message to message list");

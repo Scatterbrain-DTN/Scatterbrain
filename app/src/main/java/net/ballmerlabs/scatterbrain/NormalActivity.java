@@ -139,7 +139,7 @@ public class NormalActivity extends AppCompatActivity {
                                 FileInputStream n = new FileInputStream(f);
                                 String hash2 = BlockDataPacket.bytesToHex(ScatterRoutingService.getHashForStream(n));
                                     Messages.data.add(new DispMessage(hash2,
-                                            "Sent file"));
+                                            "Sent file len " + f.length()));
                                     Messages.notifyDataSetChanged();
                             } catch (Exception e) {
                                     ScatterLogManager.e(TAG, Log.getStackTraceString(e) + " test");

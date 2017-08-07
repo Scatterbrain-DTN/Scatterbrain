@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
 
 @SuppressWarnings({"MismatchedReadAndWriteOfArray", "unused"})
 public class NormalActivity extends AppCompatActivity {
@@ -122,15 +123,31 @@ public class NormalActivity extends AppCompatActivity {
                 if(isExternalStorageReadable() && isExternalStorageWritable()) {
                     if(files.length == 1) {
                         File f = new File(files[0]);
-                        Messages.data.add(new DispMessage(files[0], "Sent file"));
-                        Messages.notifyDataSetChanged();
+
+
+                        byte[] hash = null;
                         if(service != null) {
                             try {
                                 FileInputStream i = new FileInputStream(f);
+                                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+                                byte[] buffer = new byte[1024];
+                                int bytes_recieved;
+                                int offset = 0;
+                                while((bytes_recieved = i.read(buffer)) != -1) {
+                                    digest.update(buffer, offset, bytes_recieved);
+                                    offset += bytes_recieved;
+                                }
+                                hash = digest.digest();
+                                i.skip(0);
                                 BlockDataPacket bd = new BlockDataPacket(i,f.length(),service.luid);
                                 service.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
                                         i, f.length());
-                            } catch (IOException e) {
+                                if(hash != null) {
+                                    Messages.data.add(new DispMessage(BlockDataPacket.bytesToHex(hash),
+                                            "Sent file"));
+                                    Messages.notifyDataSetChanged();
+                                }
+                            } catch (Exception e) {
 
                             }
 

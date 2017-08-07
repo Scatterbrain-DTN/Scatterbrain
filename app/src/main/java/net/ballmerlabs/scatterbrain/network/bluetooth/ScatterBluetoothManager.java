@@ -249,6 +249,7 @@ public class ScatterBluetoothManager {
             ScatterLogManager.e(TAG, "Recieved corrupt blockdatafilepacket");
             return;
         }
+        ScatterLogManager.v(TAG, "Recieved a file!");
 
         //if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
             Handler handler = new Handler(Looper.getMainLooper());
@@ -263,8 +264,10 @@ public class ScatterBluetoothManager {
                             int bytes_recieved;
                             int offset = 0;
                             while((bytes_recieved = in.source.read(buffer)) != -1) {
-                                digest.update(buffer, offset, bytes_recieved);
+                                digest.update(buffer, 0, bytes_recieved);
                                 offset += bytes_recieved;
+                                if(offset >= in.streamlen)
+                                    break;
                             }
                             hash = digest.digest();
                         } catch(NoSuchAlgorithmException s) {

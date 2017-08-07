@@ -377,7 +377,11 @@ public class ScatterBluetoothManager {
                 ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
             }
             else {
-                sendRaw(device, p.contents, false);
+                if(p.isfile) {
+                    sendRawStream(device, p.getContents(), p.source, p.streamlen, false);
+                } else {
+                    sendRaw(device, p.contents, false);
+                }
             }
         }
         unpauseDiscoverLoopThread();
@@ -425,6 +429,14 @@ public class ScatterBluetoothManager {
         }
     }
 
+    public void sendStreamToBroadcast(byte[] message, InputStream stream, long len) {
+        synchronized (connectedList) {
+            for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+                sendStreamToLocalPeer(ent.getKey(), message, stream, len);
+            }
+        }
+    }
+
     /*
      * Send a message to an already connected scatterbrain peer.
      * This method also has a function to connect to a local tcp debug
@@ -438,8 +450,7 @@ public class ScatterBluetoothManager {
     }
 
     private void sendStreamToLocalPeer(final String mactarget, final byte[] message, final InputStream stream, long len) {
-        BlockDataPacket bd = new BlockDataPacket(stream, len, trunk.mainService.luid);
-
+        sendRawStream(mactarget, message, stream, len, false);
     }
 
     private void sendRawStream(final String mactarget, final byte[] message,

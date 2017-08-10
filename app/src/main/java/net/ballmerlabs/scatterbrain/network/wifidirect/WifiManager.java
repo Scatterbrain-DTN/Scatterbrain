@@ -33,7 +33,7 @@ public class WifiManager extends BroadcastReceiver {
     private android.os.Handler threadHandler = new android.os.Handler();
     private final GlobalNet net;
     private WifiP2pManager manager;
-    private final WifiP2pManager.Channel chan;
+    private WifiP2pManager.Channel chan = null;
     private WifiP2pManager.ActionListener scanlistener;
     private final HashMap<WifiP2pDevice, WifiP2pConfig> connectedList;
     private final IntentFilter p2pIntenetFilter;
@@ -63,7 +63,9 @@ public class WifiManager extends BroadcastReceiver {
         net = trunk.globnet;
         connectedList = new HashMap<>();
         this.manager = (WifiP2pManager) trunk.mainService.getSystemService(Context.WIFI_P2P_SERVICE);
-        this.chan = manager.initialize(trunk.mainService, trunk.mainService.getMainLooper(), null);
+        if(manager != null) {
+            this.chan = manager.initialize(trunk.mainService, trunk.mainService.getMainLooper(), null);
+        }
         p2pIntenetFilter = new IntentFilter();
         p2pIntenetFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         p2pIntenetFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);

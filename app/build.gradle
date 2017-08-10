@@ -23,7 +23,12 @@ android {
     }
     productFlavors {
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
+
+
 
 repositories {
     maven {

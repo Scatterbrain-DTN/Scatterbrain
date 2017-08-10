@@ -552,7 +552,7 @@ public class ScatterBluetoothManager {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void sendRaw(final String mactarget, final byte[] message, final boolean fake) {
+    public void sendRaw(final String mactarget, final byte[] message, final boolean fake) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
 
         final OutputStream ostream;

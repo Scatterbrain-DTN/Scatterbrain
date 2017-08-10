@@ -5,6 +5,9 @@
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
+import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
+import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
 import org.junit.Test;
 
@@ -14,6 +17,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -59,6 +64,39 @@ public class ProtocolUnitTest {
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false,senderluid);
         assertThat(bd.isInvalid(), is(false));
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    public void BlockDataPacketDryRun() {
+        ScatterRoutingService service = new ScatterRoutingService();
+        NetTrunk trunk = new NetTrunk(service);
+        ScatterBluetoothManager bman = new ScatterBluetoothManager(trunk);
+
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+
+        boolean works;
+        try {
+            final ServerSocket ssocket = new ServerSocket(8877);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        ssocket.accept();
+                    } catch(IOException e) {
+
+                    }
+                }
+            });
+            t.start();
+            bman.sendRaw("nothing", bd.getContents(), true);  //TODO: left off here
+        } catch(IOException e) {
+            works = false;
+        }
+
     }
 
     @SuppressWarnings("unused")

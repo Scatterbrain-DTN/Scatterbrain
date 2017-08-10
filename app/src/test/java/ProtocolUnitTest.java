@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -78,23 +79,33 @@ public class ProtocolUnitTest {
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
 
-        boolean works;
+
         try {
             final ServerSocket ssocket = new ServerSocket(8877);
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        ssocket.accept();
+                       Socket sock =  ssocket.accept();
+                        InputStream istream = sock.getInputStream();
+                        ssocket.close();
+
                     } catch(IOException e) {
 
                     }
                 }
             });
             t.start();
+            assertThat(ssocket.isClosed(), is(false));
             bman.sendRaw("nothing", bd.getContents(), true);  //TODO: left off here
+
+            t.join();
+            assertThat(ssocket.isClosed(), is(true));
+
         } catch(IOException e) {
-            works = false;
+
+        }catch(InterruptedException i) {
+
         }
 
     }

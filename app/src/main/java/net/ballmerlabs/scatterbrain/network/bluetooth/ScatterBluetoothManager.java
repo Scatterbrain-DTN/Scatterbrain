@@ -21,6 +21,8 @@ import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -259,42 +261,28 @@ public class ScatterBluetoothManager {
                     long offset = 0;
                     if (NormalActivity.active || fake) {
                         byte[] hash = null;
-                        try {
-                            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-                            byte[] buffer = new byte[1024];
-                            int bytes_recieved;
-                            int toread = 1024;
-                            long bytes_left = in.size;
-                            if(bytes_left < 1024)
-                                toread = (int) bytes_left;
-                            while((bytes_recieved = in.source.read(buffer, 0, toread)) != -1) {
-                                if(bytes_left < 1024)
-                                    toread = (int) bytes_left;
-                                digest.update(buffer, 0, bytes_recieved);
-                                offset += bytes_recieved;
-                                bytes_left -= bytes_recieved;
-                                if(offset >= in.size)
-                                    break;
-                            }
-                            hash = digest.digest();
-                        } catch(NoSuchAlgorithmException s) {
-                            ScatterLogManager.e(TAG, "No such algorithm hashing incoming message");
-                        } catch(IOException e) {
-                            ScatterLogManager.e(TAG, "IOException when making test hash");
-                        }
-                        if(hash != null && !fake) {
-                            trunk.mainService.getMessageAdapter().data.add(
-                                    new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + offset ));
-                            trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                        }
 
-                        if(fake) {
+                        try {
+                            File out = new File("/dev/null");
+                            FileOutputStream ostream = new FileOutputStream(out);
+                            in.catBody(ostream);
+                            hash = in.streamhash;
+                            if (hash != null && !fake) {
+                                trunk.mainService.getMessageAdapter().data.add(
+                                        new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + offset));
+                                trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                            }
+                        } catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (fake) {
                             System.out.println("recieved hash " + BlockDataPacket.bytesToHex(hash));
                         }
                         //    ScatterLogManager.e(TAG, "Appended message to message list");
                     }
                 }
             };
+
             if(!fake) {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(t);

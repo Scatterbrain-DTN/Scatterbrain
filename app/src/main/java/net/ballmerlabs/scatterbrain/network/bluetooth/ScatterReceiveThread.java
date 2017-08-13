@@ -127,8 +127,10 @@ public class ScatterReceiveThread extends Thread{
                     // ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
 
                     if(!fake)
-                        trunk.blman.onSuccessfulReceive(buffer);
+                        trunk.blman.onSuccessfulReceive(buffer, false);
                     else {
+                        ScatterBluetoothManager blman = new ScatterBluetoothManager(new NetTrunk(new ScatterRoutingService()));
+                        blman.onSuccessfulReceive(buffer, true);
                         System.out.println("leave");
                         fakedone = true;
                         fakeres = null;
@@ -208,8 +210,10 @@ public class ScatterReceiveThread extends Thread{
 
             }
             catch(Exception e) {
-                ScatterLogManager.e(trunk.blman.TAG, "Generic exception in ScatterReciveThread:\n" +
-                        Arrays.toString(e.getStackTrace()));
+                if(!fake) {
+                    ScatterLogManager.e(trunk.blman.TAG, "Generic exception in ScatterReciveThread:\n" +
+                            Arrays.toString(e.getStackTrace()));
+                }
                 if(fake)
                     e.printStackTrace();
             }

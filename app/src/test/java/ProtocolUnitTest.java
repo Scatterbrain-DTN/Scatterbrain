@@ -8,6 +8,7 @@ import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
+import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterReceiveThread;
 
 import org.junit.Test;
 
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -78,8 +80,7 @@ public class ProtocolUnitTest {
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
-
-
+        boolean go = true;
         try {
             final ServerSocket ssocket = new ServerSocket(8877);
             Thread t = new Thread(new Runnable() {
@@ -87,25 +88,33 @@ public class ProtocolUnitTest {
                 public void run() {
                     try {
                        Socket sock =  ssocket.accept();
-                        InputStream istream = sock.getInputStream();
+                        ScatterReceiveThread res = new ScatterReceiveThread(sock);
+                        res.start();
+                        res.join();
                         ssocket.close();
+                        assertThat(res.fakedone, is(true));
 
                     } catch(IOException e) {
-
+                        e.printStackTrace();
+                    }
+                    catch(InterruptedException i) {
+                        i.printStackTrace();
                     }
                 }
             });
             t.start();
+            Thread.sleep(1000);
             assertThat(ssocket.isClosed(), is(false));
+
             bman.sendRaw("nothing", bd.getContents(), true);  //TODO: left off here
 
             t.join();
             assertThat(ssocket.isClosed(), is(true));
 
         } catch(IOException e) {
-
+            e.printStackTrace();
         }catch(InterruptedException i) {
-
+            i.printStackTrace();
         }
 
     }

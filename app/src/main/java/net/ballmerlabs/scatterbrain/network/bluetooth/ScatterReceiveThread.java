@@ -15,10 +15,12 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 /**
  * Thread started to wait for messages sent by peers
  */
-class ScatterReceiveThread extends Thread{
+public class ScatterReceiveThread extends Thread{
     private final BluetoothSocket socket;
     private final Socket fakesocket;
     private final NetTrunk trunk;
+    public BlockDataPacket fakeres;
+    public boolean fakedone;
     private int errcount;
     private final boolean fake;
     private boolean go;
@@ -33,10 +35,11 @@ class ScatterReceiveThread extends Thread{
 
     public ScatterReceiveThread(Socket socket) {
         this.fake = true;
+        this.fakedone = false;
         this.fakesocket = socket;
         this.socket = null;
+        this.go = true;
         this.trunk = ScatterRoutingService.getNetTrunk();
-        go = true;
         errcount = 0;
     }
 
@@ -55,6 +58,10 @@ class ScatterReceiveThread extends Thread{
     public void run() {
         int errorcount = 0;
         while(go) {
+            if(fake)
+                go = false;
+
+            System.out.println("enter");
             try {
                 errorcount = 0;
 
@@ -67,8 +74,9 @@ class ScatterReceiveThread extends Thread{
                         continue;
                     }
                 } else {
+                    System.out.println("preread header");
                     if (fakesocket.getInputStream().read(header) == -1) {
-                        ScatterLogManager.e(trunk.blman.TAG, "Received an incomplete blockdata header");
+                        System.out.println("Received an incomplete blockdata header");
                         continue;
                     }
                 }
@@ -92,7 +100,7 @@ class ScatterReceiveThread extends Thread{
 
                     System.arraycopy(header, 0, buffer, 0, header.length);
 
-                    byte[] block = new byte[100];
+                    byte[] block = new byte[1024];
                     int counter = BlockDataPacket.HEADERSIZE;
 
                     if(!fake) {
@@ -105,7 +113,9 @@ class ScatterReceiveThread extends Thread{
                                 break;
                         }
                     } else {
+                        System.out.println("preread");
                         while (fakesocket.getInputStream().read(block) != -1) {
+                            System.out.println("read " + counter);
                             for (int x = 0; (x < block.length) && (counter < buffer.length); x++) {
                                 buffer[counter] = block[x];
                                 counter++;
@@ -116,7 +126,14 @@ class ScatterReceiveThread extends Thread{
                     }
                     // ScatterLogManager.v(trunk.blman.TAG, "Received a stanza!!");
 
-                    trunk.blman.onSuccessfulReceive(buffer);
+                    if(!fake)
+                        trunk.blman.onSuccessfulReceive(buffer);
+                    else {
+                        System.out.println("leave");
+                        fakedone = true;
+                        fakeres = null;
+                        go = false;
+                    }
                 }
                 else if(file == 1) {
                     BlockDataPacket bd;
@@ -125,14 +142,25 @@ class ScatterReceiveThread extends Thread{
                         bd = new BlockDataPacket(header, socket.getInputStream());
                     } else {
                         bd = new BlockDataPacket(header, fakesocket.getInputStream());
+                        System.out.println( "Recieved packet len " + size + " streamlen " + bd.streamlen);
                     }
                     ScatterLogManager.v(trunk.blman.TAG, "Recieved packet len " + size + " streamlen " + bd.streamlen);
                     if(bd.isInvalid()) {
-                        ScatterLogManager.e(trunk.blman.TAG, "Recieved corrupt filepacket");
+                        if(!fake)
+                            ScatterLogManager.e(trunk.blman.TAG, "Recieved corrupt filepacket");
+                        else
+                            System.out.println("Reecieved corrupt filepacket");
                         continue;
                     }
 
-                    trunk.blman.onSuccessfulFileRecieve(bd);
+                    if(!fake)
+                        trunk.blman.onSuccessfulFileRecieve(bd);
+                    else {
+
+                        fakedone = true;
+                        fakeres = bd;
+                        go = false;
+                    }
                 }
 
             }
@@ -148,11 +176,16 @@ class ScatterReceiveThread extends Thread{
                     }
                     catch(IOException f) {
                         ScatterLogManager.e(trunk.blman.TAG, "Error in receiving thread. Did we disconnect?");
+
+                        if(fake)
+                            e.printStackTrace();
                     }
                     break;
                 }
 
                 ScatterLogManager.e(trunk.blman.TAG, "IOException when receiving stanza");
+                if(fake)
+                    e.printStackTrace();
                 errcount++;
                 if(errcount > 20) {
                     synchronized (trunk.blman.connectedList) {
@@ -166,6 +199,8 @@ class ScatterReceiveThread extends Thread{
                     }
                     catch(IOException c) {
                         ScatterLogManager.e(trunk.blman.TAG, Arrays.toString(c.getStackTrace()));
+                        if(fake)
+                            e.printStackTrace();
                     }
 
                     break;
@@ -175,6 +210,8 @@ class ScatterReceiveThread extends Thread{
             catch(Exception e) {
                 ScatterLogManager.e(trunk.blman.TAG, "Generic exception in ScatterReciveThread:\n" +
                         Arrays.toString(e.getStackTrace()));
+                if(fake)
+                    e.printStackTrace();
             }
         }
     }

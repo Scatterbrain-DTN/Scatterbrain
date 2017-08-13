@@ -578,6 +578,7 @@ public class ScatterBluetoothManager {
                 sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
                 ostream = sock.getOutputStream();
                 isConnected = true;
+                System.out.println("outsocket created");
             }
             catch(UnknownHostException u) {
                 System.out.println("Cannot connect to local debug server");
@@ -600,6 +601,8 @@ public class ScatterBluetoothManager {
                     try {
                         if (blockDataPacket.invalid) {
                             ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                            if(fake)
+                                System.out.println("Tried to send an invalid packet");
                             return;
                         }
                         ostream.write(blockDataPacket.getContents());
@@ -607,12 +610,18 @@ public class ScatterBluetoothManager {
                     } catch (IOException e) {
 
                         ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
+                        if(fake)
+                            e.printStackTrace();
                     }
                 }
             }
         };
 
-        bluetoothHan.post(messageSendThread);
+        if(!fake) {
+            bluetoothHan.post(messageSendThread);
+        } else {
+            messageSendThread.run();
+        }
     }
 
     public void resetBluetoothDiscoverability() {

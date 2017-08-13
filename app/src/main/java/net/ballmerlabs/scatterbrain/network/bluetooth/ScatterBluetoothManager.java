@@ -241,8 +241,8 @@ public class ScatterBluetoothManager {
 
 
     //function called when a packet with an accompanying file stream is recieved.
-    public void onSuccessfulFileRecieve(final BlockDataPacket in) {
-        if(!NormalActivity.active)
+    public void onSuccessfulFileRecieve(final BlockDataPacket in, boolean fake) {
+        if(!NormalActivity.active && !fake)
             trunk.mainService.startMessageActivity();
 
         if(in.isInvalid()) {
@@ -252,8 +252,8 @@ public class ScatterBluetoothManager {
         ScatterLogManager.v(TAG, "Recieved a file!");
 
         //if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
+
+            Runnable t = new Runnable() {
                 @Override
                 public void run() {
                     long offset = 0;
@@ -290,7 +290,13 @@ public class ScatterBluetoothManager {
                         //    ScatterLogManager.e(TAG, "Appended message to message list");
                     }
                 }
-            });
+            };
+            if(!fake) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(t);
+            } else {
+                t.run();
+            }
        // }
     }
 

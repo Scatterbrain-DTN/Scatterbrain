@@ -514,7 +514,7 @@ public class ScatterBluetoothManager {
         if(!fake)
             blockDataPacket = new BlockDataPacket(istream, len, trunk.mainService.luid);
         else {
-            byte[] luid = {1,2,3,4,5};
+            byte[] luid = {1,2,3,4,5,6};
             blockDataPacket = new BlockDataPacket(istream, len, luid);
         }
         Runnable messageSendThread = new Runnable() {

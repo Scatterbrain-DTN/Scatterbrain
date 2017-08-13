@@ -146,6 +146,7 @@ public class ScatterReceiveThread extends Thread{
                         bd = new BlockDataPacket(header, fakesocket.getInputStream());
                         System.out.println( "Recieved packet len " + size + " streamlen " + bd.streamlen);
                     }
+                    if(!fake)
                     ScatterLogManager.v(trunk.blman.TAG, "Recieved packet len " + size + " streamlen " + bd.streamlen);
                     if(bd.isInvalid()) {
                         if(!fake)

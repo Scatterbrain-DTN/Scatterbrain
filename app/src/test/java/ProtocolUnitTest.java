@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -67,6 +68,68 @@ public class ProtocolUnitTest {
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false,senderluid);
         assertThat(bd.isInvalid(), is(false));
+    }
+
+
+    @SuppressWarnings("unused")
+    @Test
+    public void BlockDataFilePacketDryRun() {
+        File tmp = new File("/tmp/t3fghju");
+        ScatterRoutingService service = new ScatterRoutingService();
+        NetTrunk trunk = new NetTrunk(service);
+        ScatterBluetoothManager bman = new ScatterBluetoothManager(trunk);
+
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        try {
+            FileOutputStream firstout = new FileOutputStream(tmp);
+            firstout.write(randomdata);
+            File tmpin = new File("/tmp/t3fghju");
+            FileInputStream in = new FileInputStream(tmpin);
+            BlockDataPacket bd = new BlockDataPacket(in, tmpin.length(),senderluid);
+
+            final ServerSocket ssocket = new ServerSocket(8877);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Socket sock =  ssocket.accept();
+                        ScatterReceiveThread res = new ScatterReceiveThread(sock);
+                        res.start();
+                        res.join();
+                        ssocket.close();
+                        assertThat(res.fakedone, is(true));
+
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                    catch(InterruptedException i) {
+                        i.printStackTrace();
+                    }
+                }
+            });
+            t.start();
+            Thread.sleep(1000);
+            assertThat(ssocket.isClosed(), is(false));
+
+            bman.sendRaw("nothing", bd.getContents(), true);  //TODO: left off here
+
+            t.join();
+            assertThat(ssocket.isClosed(), is(true));
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        } catch(InterruptedException i) {
+            i.printStackTrace();
+        }
     }
 
     @SuppressWarnings("unused")

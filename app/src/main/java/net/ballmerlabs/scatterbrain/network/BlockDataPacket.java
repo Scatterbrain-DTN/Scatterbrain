@@ -112,7 +112,6 @@ public class BlockDataPacket extends ScatterStanza {
 
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
-        this.streamhash = null;
         if (size < 0 || size > Integer.MAX_VALUE) {
             invalid = true;
         }
@@ -161,20 +160,23 @@ public class BlockDataPacket extends ScatterStanza {
             sizearr[i] = contents[i + 15];
         }
 
-        this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.BIG_ENDIAN).getLong();
+        this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getLong();
 
+        System.out.println("deserialized size " + size);
         if (size > 0) {
 
-            body = new byte[(int) size];
-            for (int x = 0; x < size; x++) {
-                body[x] = contents[x + 23];
+            if(!isfile) {
+                body = new byte[(int) size];
+                for (int x = 0; x < size; x++) {
+                    body[x] = contents[x + 23];
+                }
             }
 
 
             //verify crc with stored copy
             CRC32 crc = new CRC32();
             crc.update(contents, 0, contents.length - 4);
-            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt((int)crc.getValue()).array();
+            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int)crc.getValue()).array();
             byte[] real = new byte[4];
             for (int x = 0; x < real.length; x++) {
                 real[x] = contents[(contents.length - 4) + x];
@@ -230,10 +232,8 @@ public class BlockDataPacket extends ScatterStanza {
             contents[14] = 0;
 
         byte[] sizebytes;
-        if(body.length > 0)
-            sizebytes = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong((long)body.length).array();
-        else
-            sizebytes = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putInt(body.length).array();
+
+        sizebytes = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(size).array();
 
 
         for (int i = 0; i < 8; i++) {
@@ -246,7 +246,7 @@ public class BlockDataPacket extends ScatterStanza {
         //basic crc for integrity check
         CRC32 crc = new CRC32();
         crc.update(contents, 0, contents.length - 4);
-        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt((int)crc.getValue()).array();
+        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int)crc.getValue()).array();
         for (int x = 0; x < c.length; x++) {
             contents[(contents.length - 4) + x] = c[x];
         }
@@ -285,7 +285,7 @@ public class BlockDataPacket extends ScatterStanza {
             sizearr[i] = data[i+15];
         }
 
-        long size = ByteBuffer.wrap(sizearr).order(ByteOrder.BIG_ENDIAN).getLong();
+        long size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getLong();
         if(size < 0)
             return -1;
         else
@@ -296,7 +296,8 @@ public class BlockDataPacket extends ScatterStanza {
         if(isfile) {
             byte[] byteblock = new byte[1024];
             int bytesread = 0;
-            int bytestotal = 0;
+            long bytesleft = this.size;
+            int read = 1024;
             try {
 
 
@@ -305,15 +306,26 @@ public class BlockDataPacket extends ScatterStanza {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
 
                 digest.update(senderluid, 0, senderluid.length);
-                while ((bytesread= source.read(byteblock)) != -1 && (bytestotal < size)) {
+                System.out.println("catting size " + size);
+
+                if(bytesleft < read)
+                    read = (int)bytesleft;
+                while ((bytesread= source.read(byteblock, 0, read)) != -1) {
+                    System.out.println("read " + bytesread);
                     destination.write(byteblock);
                     digest.update(byteblock, 0, bytesread);
 
-                    if (bytestotal > size) {
+                    bytesleft -= bytesread;
+
+                    if(bytesleft < read)
+                        read = (int) bytesleft;
+                    if(bytesleft == 0)
+                        break;
+
+                    if (bytesleft < 0) {
                         this.invalid = true;
                         break;
                     }
-                    bytestotal += bytesread;
                 }
                 this.streamhash = digest.digest();
             } catch (IOException e) {

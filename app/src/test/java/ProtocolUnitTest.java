@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -72,7 +74,48 @@ public class ProtocolUnitTest {
     }
 
 
-    
+    @SuppressWarnings("unused")
+    @Test
+    public void BlockDataPacketFileStreamHashesWork() {
+        File tmp = new File("/tmp/t3fghju2");
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+
+        try {
+            FileOutputStream firstout = new FileOutputStream(tmp);
+            FileOutputStream devnull = new FileOutputStream("/dev/null");
+            firstout.write(randomdata);
+            File tmpin = new File("/tmp/t3fghju2");
+            File tmpin2 = new File("/tmp/t3fghju2");
+            FileInputStream in = new FileInputStream(tmpin);
+            FileInputStream in2 = new FileInputStream(tmpin2);
+            BlockDataPacket bd = new BlockDataPacket(in, tmpin.length(), senderluid);
+            BlockDataPacket bdnew = new BlockDataPacket(bd.getContents(), in2);
+            bd.catBody(devnull);
+            bdnew.catBody(devnull);
+            String hash1 = BlockDataPacket.bytesToHex(bd.streamhash);
+            String hash2 = BlockDataPacket.bytesToHex(bdnew.streamhash);
+            System.out.println("insize: " + bd.size + "\noutsize " + bdnew.size);
+            System.out.println("hash1 " + hash1);
+            System.out.println("hash2 " + hash2);
+            System.out.println(new String(bd.getContents()));
+            System.out.println(new String(bdnew.getContents()));
+            assertThat(Arrays.equals(bd.getContents(), bdnew.getContents()), is(true));
+            assertThat(Arrays.equals(bd.streamhash, bdnew.streamhash), is(true));
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @SuppressWarnings("unused")
     @Test
@@ -123,7 +166,7 @@ public class ProtocolUnitTest {
             Thread.sleep(1000);
             assertThat(ssocket.isClosed(), is(false));
 
-            bman.sendRawStream("nothing", bd.getContents(),in,tmp.length(), true);  //TODO: left off here
+            bman.sendRawStream("nothing", bd.getContents(),in,tmp.length(), true);
 
             t.join();
             assertThat(ssocket.isClosed(), is(true));
@@ -276,6 +319,7 @@ public class ProtocolUnitTest {
             valid =!bd.isInvalid();
             sent = bd.sent;
         } catch(IOException e) {
+            e.printStackTrace();
             valid = false;
         }
 

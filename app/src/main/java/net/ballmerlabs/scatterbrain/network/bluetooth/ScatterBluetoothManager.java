@@ -253,6 +253,8 @@ public class ScatterBluetoothManager {
         }
         ScatterLogManager.v(TAG, "Recieved a file!");
 
+        if(fake)
+            System.out.println("in onSuccessfulFileRecieve");
         //if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
 
             Runnable t = new Runnable() {
@@ -265,7 +267,9 @@ public class ScatterBluetoothManager {
                         try {
                             File out = new File("/dev/null");
                             FileOutputStream ostream = new FileOutputStream(out);
+                            System.out.println("catting body");
                             in.catBody(ostream);
+                            System.out.println("catted");
                             hash = in.streamhash;
                             if (hash != null && !fake) {
                                 trunk.mainService.getMessageAdapter().data.add(
@@ -296,6 +300,9 @@ public class ScatterBluetoothManager {
     //function called when a packet is received from a connected device
     public void onSuccessfulReceive(byte[] incoming, boolean fake) {
       //  ScatterLogManager.v(TAG, "Called onSuccessfulReceive for incoming message");
+        if(fake) {
+            System.out.println("entered onSuccessfulRecieve");
+        }
         if (!NormalActivity.active && !fake)
             trunk.mainService.startMessageActivity();
         final BlockDataPacket bd = new BlockDataPacket(incoming);

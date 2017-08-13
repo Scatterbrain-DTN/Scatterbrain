@@ -58,10 +58,10 @@ public class ScatterReceiveThread extends Thread{
     public void run() {
         int errorcount = 0;
         while(go) {
-            if(fake)
+            if(fake) {
                 go = false;
-
-            System.out.println("enter");
+                System.out.println("enter");
+            }
             try {
                 errorcount = 0;
 

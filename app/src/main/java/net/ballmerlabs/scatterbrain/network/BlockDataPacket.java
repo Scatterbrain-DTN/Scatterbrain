@@ -184,7 +184,6 @@ public class BlockDataPacket extends ScatterStanza {
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.BIG_ENDIAN).getLong();
 
-        System.out.println("Deserialized size " + this.size);
         if (size > 0) {
 
             body = new byte[(int) size];
@@ -258,7 +257,6 @@ public class BlockDataPacket extends ScatterStanza {
             sizebytes = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putInt(body.length).array();
 
 
-        System.out.println("serialized size " + body.length );
         for (int i = 0; i < 8; i++) {
             contents[i + 15] = sizebytes[i];
         }
@@ -322,7 +320,6 @@ public class BlockDataPacket extends ScatterStanza {
             int bytestotal = 0;
             try {
                 while ((bytesread= source.read(byteblock)) != -1 && (bytestotal < size)) {
-                    System.out.println("read " + bytesread);
                     destination.write(byteblock);
                     if (bytestotal > size) {
                         this.invalid = true;

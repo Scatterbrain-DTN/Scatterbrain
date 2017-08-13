@@ -23,6 +23,7 @@ public class BlockDataPacket extends ScatterStanza {
     public final byte[] senderluid;
     public byte[] receiverluid;
     public long size;
+    public byte[] streamhash;
     public final int[] err;
     private final int ERRSIZE = 10;
     public boolean isfile;
@@ -40,6 +41,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.err = new int[ERRSIZE];
         this.isfile = false;
         this.invalid = false;
+        this.streamhash = null;
         //noinspection RedundantIfStatement
         if (init() == null)
             invalid = true;
@@ -58,6 +60,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.invalid = false;
         this.text = false;
         this.sent = false;
+        this.streamhash = null;
         if (len > Integer.MAX_VALUE)
             invalid = true;
         if (init() == null)
@@ -68,32 +71,7 @@ public class BlockDataPacket extends ScatterStanza {
     public String getHash() {
 
         if (isfile) {
-            String hash = null;
-            try {
-                MessageDigest digest = MessageDigest.getInstance("SHA-1");
-
-                byte[] buf = new byte[1024];
-                int bytesread = 0;
-                int offset = 0;
-                try {
-                    while ((bytesread = this.source.read(buf)) != -1) {
-                        digest.update(buf, 0, bytesread);
-                        offset += bytesread;
-                    }
-                    // this.source.reset();
-                } catch (IOException e) {
-                    return null;
-                }
-
-                digest.update(senderluid, 0, senderluid.length);
-                byte[] res = digest.digest();
-                hash = bytesToHex(res);
-
-
-            } catch (NoSuchAlgorithmException nsa) {
-                ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");
-            }
-            return hash;
+            return null;
         } else {
             String hash = null;
             try {
@@ -134,6 +112,7 @@ public class BlockDataPacket extends ScatterStanza {
 
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
+        this.streamhash = null;
         if (size < 0 || size > Integer.MAX_VALUE) {
             invalid = true;
         }
@@ -319,17 +298,29 @@ public class BlockDataPacket extends ScatterStanza {
             int bytesread = 0;
             int bytestotal = 0;
             try {
+
+
+                String hash = null;
+
+                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+
+                digest.update(senderluid, 0, senderluid.length);
                 while ((bytesread= source.read(byteblock)) != -1 && (bytestotal < size)) {
                     destination.write(byteblock);
+                    digest.update(byteblock, 0, bytesread);
+
                     if (bytestotal > size) {
                         this.invalid = true;
                         break;
                     }
                     bytestotal += bytesread;
                 }
+                this.streamhash = digest.digest();
             } catch (IOException e) {
                 ScatterLogManager.e("Packet", "IOEXception when reading from filestream");
                 this.invalid = true;
+            } catch(NoSuchAlgorithmException n) {
+                n.printStackTrace();
             }
             this.sent = true;
         } else {

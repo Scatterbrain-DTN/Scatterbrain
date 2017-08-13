@@ -241,7 +241,7 @@ public class ScatterBluetoothManager {
 
 
     //function called when a packet with an accompanying file stream is recieved.
-    public void onSuccessfulFileRecieve(final BlockDataPacket in, boolean fake) {
+    public void onSuccessfulFileRecieve(final BlockDataPacket in,final boolean fake) {
         if(!NormalActivity.active && !fake)
             trunk.mainService.startMessageActivity();
 
@@ -257,7 +257,7 @@ public class ScatterBluetoothManager {
                 @Override
                 public void run() {
                     long offset = 0;
-                    if (NormalActivity.active) {
+                    if (NormalActivity.active || fake) {
                         byte[] hash = null;
                         try {
                             MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -282,10 +282,14 @@ public class ScatterBluetoothManager {
                         } catch(IOException e) {
                             ScatterLogManager.e(TAG, "IOException when making test hash");
                         }
-                        if(hash != null) {
+                        if(hash != null && !fake) {
                             trunk.mainService.getMessageAdapter().data.add(
                                     new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + offset ));
                             trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                        }
+
+                        if(fake) {
+                            System.out.println("recieved hash " + BlockDataPacket.bytesToHex(hash));
                         }
                         //    ScatterLogManager.e(TAG, "Appended message to message list");
                     }

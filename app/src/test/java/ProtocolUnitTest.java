@@ -11,6 +11,7 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterReceiveThread;
 
 import org.junit.Test;
+import org.mockito.cglib.core.Block;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -244,8 +245,9 @@ public class ProtocolUnitTest {
             FileInputStream is = new FileInputStream(in);
             os.write(randomdata);
             BlockDataPacket bd = new BlockDataPacket(is, randomdata.length, senderluid);
-            hash = bd.getHash();
-            System.out.println(hash);
+            bd.catBody(os);
+            hash = BlockDataPacket.bytesToHex(bd.streamhash);
+            System.out.println(BlockDataPacket.bytesToHex(bd.streamhash));
             works = true;
 
         } catch(IOException e) {

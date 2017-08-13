@@ -97,7 +97,7 @@ public class BlockDataPacket extends ScatterStanza {
         } else {
             String hash = null;
             try {
-                byte[] combined = new byte[(int) (size + (long) senderluid.length)];
+                byte[] combined = new byte[(int) (size + senderluid.length)];
                 for (int i = 0; i < size; i++) {
                     combined[i] = body[i];
                 }
@@ -195,11 +195,11 @@ public class BlockDataPacket extends ScatterStanza {
 
             //verify crc with stored copy
             CRC32 crc = new CRC32();
-            crc.update(contents, 0, contents.length - 8);
-            byte[] check = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(crc.getValue()).array();
-            byte[] real = new byte[8];
+            crc.update(contents, 0, contents.length - 4);
+            byte[] check = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt((int)crc.getValue()).array();
+            byte[] real = new byte[4];
             for (int x = 0; x < real.length; x++) {
-                real[x] = contents[(contents.length - 8) + x];
+                real[x] = contents[(contents.length - 4) + x];
             }
 
             if (!Arrays.equals(real, check)) {
@@ -268,10 +268,10 @@ public class BlockDataPacket extends ScatterStanza {
         }
         //basic crc for integrity check
         CRC32 crc = new CRC32();
-        crc.update(contents, 0, contents.length - 8);
-        byte[] c = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(crc.getValue()).array();
+        crc.update(contents, 0, contents.length - 4);
+        byte[] c = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt((int)crc.getValue()).array();
         for (int x = 0; x < c.length; x++) {
-            contents[(contents.length - 8) + x] = c[x];
+            contents[(contents.length - 4) + x] = c[x];
         }
 
         return contents;

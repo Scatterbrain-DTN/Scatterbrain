@@ -288,7 +288,7 @@ public class ProtocolUnitTest {
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         BlockDataPacket ne = new BlockDataPacket(bd.getContents());
 
-        System.out.println("BlockDataPacketFromDataIsValid() err");
+        System.out.println("BlockDataPacketFromDataIsValid() ");
         for(int x : ne.err) {
             System.out.print(x + " ");
         }
@@ -310,7 +310,6 @@ public class ProtocolUnitTest {
 
         assertThat(bd.getHash().equals(ne.getHash()), is(true));
     }
-
     @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketIsInvalidWithBogusLUID() {

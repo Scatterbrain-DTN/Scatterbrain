@@ -471,7 +471,7 @@ public class ScatterBluetoothManager {
         sendRawStream(mactarget, message, stream, len, false);
     }
 
-    private void sendRawStream(final String mactarget, final byte[] message,
+    public void sendRawStream(final String mactarget, final byte[] message,
                                final InputStream istream, long len, final boolean fake) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
 
@@ -498,6 +498,7 @@ public class ScatterBluetoothManager {
                 sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
                 ostream = sock.getOutputStream();
                 isConnected = true;
+                System.out.println("socket is connected");
             }
             catch(UnknownHostException u) {
                 System.out.println("Cannot connect to local debug server");
@@ -509,7 +510,13 @@ public class ScatterBluetoothManager {
             }
 
         }
-        final BlockDataPacket blockDataPacket = new BlockDataPacket(istream, len, trunk.mainService.luid);
+        final BlockDataPacket blockDataPacket;
+        if(!fake)
+            blockDataPacket = new BlockDataPacket(istream, len, trunk.mainService.luid);
+        else {
+            byte[] luid = {1,2,3,4,5};
+            blockDataPacket = new BlockDataPacket(istream, len, luid);
+        }
         Runnable messageSendThread = new Runnable() {
             @Override
             public void run() {
@@ -520,6 +527,7 @@ public class ScatterBluetoothManager {
                     try {
                         if (blockDataPacket.invalid) {
                             ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                            System.out.println("tried to send corrupt packet");
                             return;
                         }
                         ostream.write(blockDataPacket.getContents());
@@ -527,6 +535,7 @@ public class ScatterBluetoothManager {
                         byte[] buf = new byte[1024];
                         int bytes_read;
                         int offset = 0;
+                        System.out.println("starting read blockdata packet stream");
                         while((bytes_read = blockDataPacket.source.read(buf)) != -1) {
                             ostream.write(buf);
                             offset += bytes_read;
@@ -544,7 +553,10 @@ public class ScatterBluetoothManager {
             }
         };
 
-        bluetoothHan.post(messageSendThread);
+        if(!fake)
+            bluetoothHan.post(messageSendThread);
+        else
+            messageSendThread.run();
 
     }
 

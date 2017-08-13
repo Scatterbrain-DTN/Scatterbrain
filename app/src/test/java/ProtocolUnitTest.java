@@ -120,7 +120,7 @@ public class ProtocolUnitTest {
             Thread.sleep(1000);
             assertThat(ssocket.isClosed(), is(false));
 
-            bman.sendRaw("nothing", bd.getContents(), true);  //TODO: left off here
+            bman.sendRawStream("nothing", bd.getContents(),in,tmp.length(), true);  //TODO: left off here
 
             t.join();
             assertThat(ssocket.isClosed(), is(true));

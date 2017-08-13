@@ -81,7 +81,7 @@ public class ScatterReceiveThread extends Thread{
                     }
                 }
 
-                int size = BlockDataPacket.getSizeFromData(header);
+                long size = BlockDataPacket.getSizeFromData(header);
                // ScatterLogManager.v("Receive", "Got header with size " +size);
 
                 int file =  BlockDataPacket.getFileStatusFromData(header);
@@ -90,12 +90,11 @@ public class ScatterReceiveThread extends Thread{
                 if(file < 0)
                     continue;
                 else if(file == 0) {
-
                     //temporary 15mb filesize limit. Sorry.
                     if (size < 0 || size > 15728640)
                         continue;
 
-                    byte[] buffer = new byte[size +
+                    byte[] buffer = new byte[(int) size +
                             BlockDataPacket.HEADERSIZE];
 
                     System.arraycopy(header, 0, buffer, 0, header.length);
@@ -144,10 +143,10 @@ public class ScatterReceiveThread extends Thread{
                         bd = new BlockDataPacket(header, socket.getInputStream());
                     } else {
                         bd = new BlockDataPacket(header, fakesocket.getInputStream());
-                        System.out.println( "Recieved packet len " + size + " streamlen " + bd.streamlen);
+                        System.out.println( "Recieved packet len " + size + " streamlen " + bd.size);
                     }
                     if(!fake)
-                    ScatterLogManager.v(trunk.blman.TAG, "Recieved packet len " + size + " streamlen " + bd.streamlen);
+                    ScatterLogManager.v(trunk.blman.TAG, "Recieved packet len " + size + " streamlen " + bd.size);
                     if(bd.isInvalid()) {
                         if(!fake)
                             ScatterLogManager.e(trunk.blman.TAG, "Recieved corrupt filepacket");

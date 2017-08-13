@@ -264,7 +264,7 @@ public class ScatterBluetoothManager {
                             byte[] buffer = new byte[1024];
                             int bytes_recieved;
                             int toread = 1024;
-                            long bytes_left = in.streamlen;
+                            long bytes_left = in.size;
                             if(bytes_left < 1024)
                                 toread = (int) bytes_left;
                             while((bytes_recieved = in.source.read(buffer, 0, toread)) != -1) {
@@ -273,7 +273,7 @@ public class ScatterBluetoothManager {
                                 digest.update(buffer, 0, bytes_recieved);
                                 offset += bytes_recieved;
                                 bytes_left -= bytes_recieved;
-                                if(offset >= in.streamlen)
+                                if(offset >= in.size)
                                     break;
                             }
                             hash = digest.digest();
@@ -396,7 +396,7 @@ public class ScatterBluetoothManager {
             }
             else {
                 if(p.isfile) {
-                    sendRawStream(device, p.getContents(), p.source, p.streamlen, false);
+                    sendRawStream(device, p.getContents(), p.source, p.size, false);
                 } else {
                     sendRaw(device, p.contents, false);
                 }
@@ -531,6 +531,8 @@ public class ScatterBluetoothManager {
                             return;
                         }
                         ostream.write(blockDataPacket.getContents());
+                        System.out.println("wrote blockdata packet len " + blockDataPacket.size +
+                        " streamlen " + blockDataPacket.size);
 
                         byte[] buf = new byte[1024];
                         int bytes_read;
@@ -541,7 +543,7 @@ public class ScatterBluetoothManager {
                             offset += bytes_read;
                         }
 
-                        if(offset > blockDataPacket.streamlen) {
+                        if(offset > blockDataPacket.size) {
                             ScatterLogManager.e(TAG, "sent a file of invalid length");
                         }
                         //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );

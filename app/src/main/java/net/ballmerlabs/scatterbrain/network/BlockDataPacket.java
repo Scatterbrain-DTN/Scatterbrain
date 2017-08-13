@@ -22,26 +22,26 @@ public class BlockDataPacket extends ScatterStanza {
     public final boolean text;
     public final byte[] senderluid;
     public byte[] receiverluid;
-    public final Integer size;
+    public long size;
     public final int[] err;
-    private final int ERRSIZE =10;
+    private final int ERRSIZE = 10;
     public boolean isfile;
-    public long streamlen;
     public InputStream source;
     public boolean sent;
-    public static final int HEADERSIZE = 23;
+    public static final int HEADERSIZE = 27;
     private static final byte MAGIC = 124;
+
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
-        super(HEADERSIZE+body.length);
+        super(HEADERSIZE + body.length);
         this.body = body;
         this.text = text;
         this.senderluid = senderluid;
-        this.size = body.length;
+        this.size = (long) body.length;
         this.err = new int[ERRSIZE];
         this.isfile = false;
         this.invalid = false;
         //noinspection RedundantIfStatement
-        if(init() == null)
+        if (init() == null)
             invalid = true;
 
 
@@ -49,26 +49,25 @@ public class BlockDataPacket extends ScatterStanza {
 
     public BlockDataPacket(InputStream source, long len, byte[] senderluid) {
         super(HEADERSIZE);
-        this.size = HEADERSIZE;
-        this.streamlen = len;
+        this.size = (long) HEADERSIZE;
         this.err = new int[ERRSIZE];
-        this.body = null;
+        this.body = new byte[0];
         this.senderluid = senderluid;
         this.source = source;
         this.isfile = true;
         this.invalid = false;
         this.text = false;
         this.sent = false;
-        if(len > Integer.MAX_VALUE)
+        if (len > Integer.MAX_VALUE)
             invalid = true;
-        if(init() == null)
+        if (init() == null)
             invalid = true;
     }
 
 
     public String getHash() {
 
-        if(isfile) {
+        if (isfile) {
             String hash = null;
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -77,17 +76,17 @@ public class BlockDataPacket extends ScatterStanza {
                 int bytesread = 0;
                 int offset = 0;
                 try {
-                    while((bytesread = this.source.read(buf)) != -1) {
-                        digest.update(buf,0, bytesread);
+                    while ((bytesread = this.source.read(buf)) != -1) {
+                        digest.update(buf, 0, bytesread);
                         offset += bytesread;
                     }
-                   // this.source.reset();
-                } catch(IOException e) {
+                    // this.source.reset();
+                } catch (IOException e) {
                     return null;
                 }
 
                 digest.update(senderluid, 0, senderluid.length);
-                byte[] res= digest.digest();
+                byte[] res = digest.digest();
                 hash = bytesToHex(res);
 
 
@@ -98,13 +97,13 @@ public class BlockDataPacket extends ScatterStanza {
         } else {
             String hash = null;
             try {
-                byte[] combined = new byte[size + senderluid.length];
+                byte[] combined = new byte[(int) (size + (long) senderluid.length)];
                 for (int i = 0; i < size; i++) {
                     combined[i] = body[i];
                 }
 
-                for (int i = size; i < senderluid.length; i++) {
-                    combined[i] = senderluid[i - size];
+                for (long i = size; i < senderluid.length; i++) {
+                    combined[(int) i] = senderluid[(int) (i - size)];
                 }
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
                 digest.update(combined, 0, combined.length);
@@ -121,30 +120,32 @@ public class BlockDataPacket extends ScatterStanza {
 
     // http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    public static String bytesToHex(byte[] bytes)
-    {
-        char[] hexChars = new char[ bytes.length * 2 ];
-        for( int j = 0; j < bytes.length; j++ )
-        {
-            int v = bytes[ j ] & 0xFF;
-            hexChars[ j * 2 ] = hexArray[ v >>> 4 ];
-            hexChars[ j * 2 + 1 ] = hexArray[ v & 0x0F ];
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
-        return new String( hexChars );
+        return new String(hexChars);
     }
 
 
     public BlockDataPacket(final byte raw[]) {
         super(raw.length);
+        if (size < 0 || size > Integer.MAX_VALUE) {
+            invalid = true;
+        }
         this.err = new int[ERRSIZE];
-        if(raw.length >= HEADERSIZE)
+        if (raw.length >= HEADERSIZE)
             contents = raw.clone();
         else if (raw.length < HEADERSIZE) {
             err[0] = 1;
             invalid = true;
         }
 
-        if(contents[0] != BlockDataPacket.MAGIC) {
+        if (contents[0] != BlockDataPacket.MAGIC) {
             err[1] = 1;
             invalid = true;
         }
@@ -152,12 +153,12 @@ public class BlockDataPacket extends ScatterStanza {
         byte recieverluid[] = new byte[6];
         byte senderluid[] = new byte[6];
 
-        for(int x = 1;x<7;x++) {
-            senderluid[x-1] = contents[x];
+        for (int x = 1; x < 7; x++) {
+            senderluid[x - 1] = contents[x];
         }
 
-        for(int x=7;x<13;x++) {
-            recieverluid[x-7] = contents[x];
+        for (int x = 7; x < 13; x++) {
+            recieverluid[x - 7] = contents[x];
         }
 
         //noinspection UnusedAssignment
@@ -165,112 +166,112 @@ public class BlockDataPacket extends ScatterStanza {
         this.receiverluid = recieverluid;
 
         //noinspection RedundantIfStatement
-        if(contents[13] == 1)
+        if (contents[13] == 1)
             text = true;
         else
             text = false;
 
-        if(contents[14] == 1)
+        if (contents[14] == 1)
             isfile = true;
         else
             isfile = false;
 
-        byte[] sizearr = new byte[4];
+        byte[] sizearr = new byte[8];
 
-        for(int i=0;i<4;i++) {
-            sizearr[i] = contents[i+15];
+        for (int i = 0; i < 8; i++) {
+            sizearr[i] = contents[i + 15];
         }
 
-        this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.BIG_ENDIAN).getLong();
+
+        System.out.println("Deserialized size " + this.size);
+        if (size > 0) {
+
+            body = new byte[(int) size];
+            for (int x = 0; x < size; x++) {
+                body[x] = contents[x + 23];
+            }
 
 
-        if(!this.isfile) {
-            if (size > 0) {
-                body = new byte[size];
-                for (int x = 0; x < size; x++) {
-                    body[x] = contents[x + 19];
-                }
+            //verify crc with stored copy
+            CRC32 crc = new CRC32();
+            crc.update(contents, 0, contents.length - 8);
+            byte[] check = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(crc.getValue()).array();
+            byte[] real = new byte[8];
+            for (int x = 0; x < real.length; x++) {
+                real[x] = contents[(contents.length - 8) + x];
+            }
 
-
-                //verify crc with stored copy
-                CRC32 crc = new CRC32();
-                crc.update(contents, 0, contents.length - 4);
-                byte[] check = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
-                byte[] real = new byte[4];
-                for (int x = 0; x < real.length; x++) {
-                    real[x] = contents[(contents.length - 4) + x];
-                }
-
-                if (!Arrays.equals(real, check)) {
-                    err[2] = 1;
-                    invalid = true;
-                }
+            if (!Arrays.equals(real, check)) {
+                err[2] = 1;
+                invalid = true;
             }
         }
     }
 
     public BlockDataPacket(byte[] data, InputStream source) {
         this(data);
+        this.isfile = true;
         this.source = source;
+        this.body = new byte[0];
     }
 
     private byte[] init() {
         contents[0] = BlockDataPacket.MAGIC;
-        if(senderluid.length != 6) {
+        if (senderluid.length != 6) {
             ScatterLogManager.e("BDinit", "Senderluid wrong length");
             err[3] = 1;
             return null;
         }
 
-        for(int x=1;x<7;x++) {
-            contents[x] = senderluid[x-1];
+        for (int x = 1; x < 7; x++) {
+            contents[x] = senderluid[x - 1];
         }
-        byte[] receiverluid = {0,0,0,0,0,0}; //not implemented yet
+        byte[] receiverluid = {0, 0, 0, 0, 0, 0}; //not implemented yet
 
         this.receiverluid = receiverluid;
-        if(receiverluid.length != 6) {
+        if (receiverluid.length != 6) {
             err[4] = 1;
             invalid = true;
             ScatterLogManager.e("BDinit", "ReceiverLuid wrong size");
             return null;
         }
 
-        for(int x = 0; x< receiverluid.length; x++) {
-            contents[x+7] = receiverluid[x];
+        for (int x = 0; x < receiverluid.length; x++) {
+            contents[x + 7] = receiverluid[x];
         }
 
-        if(text)
+        if (text)
             contents[13] = 1;
         else
             contents[13] = 0;
 
-        if(isfile)
+        if (isfile)
             contents[14] = 1;
         else
             contents[14] = 0;
 
-        if(!isfile) {
-            byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(body.length).array();
+        byte[] sizebytes;
+        if(body.length > 0)
+            sizebytes = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong((long)body.length).array();
+        else
+            sizebytes = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putInt(body.length).array();
 
-            for (int i = 0; i < 4; i++) {
-                contents[i + 15] = sizebytes[i];
-            }
 
-            for (int x = 0; x < body.length; x++) {
-                contents[x + 19] = body[x];
-            }
-            //basic crc for integrity check
-            CRC32 crc = new CRC32();
-            crc.update(contents, 0, contents.length - 4);
-            byte[] c = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) crc.getValue()).array();
-            for (int x = 0; x < c.length; x++) {
-                contents[(contents.length - 4) + x] = c[x];
-            }
-        } else {
-            byte[] sizebytes = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(this.size - HEADERSIZE).array();
-            for (int i = 0; i < 4; i++) {
-                contents[i + 15] = sizebytes[i];
-            }
+        System.out.println("serialized size " + body.length );
+        for (int i = 0; i < 8; i++) {
+            contents[i + 15] = sizebytes[i];
+        }
+
+        for (int x = 0; x < body.length; x++) {
+            contents[x + 23] = body[x];
+        }
+        //basic crc for integrity check
+        CRC32 crc = new CRC32();
+        crc.update(contents, 0, contents.length - 8);
+        byte[] c = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(crc.getValue()).array();
+        for (int x = 0; x < c.length; x++) {
+            contents[(contents.length - 8) + x] = c[x];
         }
 
         return contents;
@@ -292,8 +293,8 @@ public class BlockDataPacket extends ScatterStanza {
             return 0;
     }
 
-    public static int getSizeFromData(byte[] data) {
-        byte[] sizearr = new byte[4];
+    public static long getSizeFromData(byte[] data) {
+        byte[] sizearr = new byte[8];
 
         if (data.length < HEADERSIZE) {
             return -1;
@@ -303,11 +304,11 @@ public class BlockDataPacket extends ScatterStanza {
             return -1;
         }
 
-        for(int i=0;i<4;i++) {
+        for(int i=0;i<8;i++) {
             sizearr[i] = data[i+15];
         }
 
-        int size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        long size = ByteBuffer.wrap(sizearr).order(ByteOrder.BIG_ENDIAN).getLong();
         if(size < 0)
             return -1;
         else
@@ -320,10 +321,10 @@ public class BlockDataPacket extends ScatterStanza {
             int bytesread = 0;
             int bytestotal = 0;
             try {
-                while ((bytesread= source.read(byteblock)) != -1 && (bytestotal < streamlen)) {
+                while ((bytesread= source.read(byteblock)) != -1 && (bytestotal < size)) {
                     System.out.println("read " + bytesread);
                     destination.write(byteblock);
-                    if (bytestotal > streamlen) {
+                    if (bytestotal > size) {
                         this.invalid = true;
                         break;
                     }

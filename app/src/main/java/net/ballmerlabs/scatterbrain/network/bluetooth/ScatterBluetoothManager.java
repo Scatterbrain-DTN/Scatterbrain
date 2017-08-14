@@ -273,7 +273,7 @@ public class ScatterBluetoothManager {
                             hash = in.streamhash;
                             if (hash != null && !fake) {
                                 trunk.mainService.getMessageAdapter().data.add(
-                                        new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + offset));
+                                        new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + in.size));
                                 trunk.mainService.getMessageAdapter().notifyDataSetChanged();
                             }
                         } catch(IOException e) {

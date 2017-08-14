@@ -162,7 +162,6 @@ public class BlockDataPacket extends ScatterStanza {
 
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getLong();
 
-        System.out.println("deserialized size " + size);
         if (size > 0) {
 
             if(!isfile) {
@@ -306,12 +305,10 @@ public class BlockDataPacket extends ScatterStanza {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
 
                 digest.update(senderluid, 0, senderluid.length);
-                System.out.println("catting size " + size);
 
                 if(bytesleft < read)
                     read = (int)bytesleft;
                 while ((bytesread= source.read(byteblock, 0, read)) != -1) {
-                    System.out.println("read " + bytesread);
                     destination.write(byteblock);
                     digest.update(byteblock, 0, bytesread);
 

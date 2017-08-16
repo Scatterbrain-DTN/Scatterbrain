@@ -533,19 +533,12 @@ public class ScatterBluetoothManager {
                         System.out.println("wrote blockdata packet len " + blockDataPacket.size +
                         " streamlen " + blockDataPacket.size);
 
-                        byte[] buf = new byte[1024];
-                        int bytes_read;
-                        int offset = 0;
                         System.out.println("starting read blockdata packet stream");
-                        while((bytes_read = blockDataPacket.source.read(buf)) != -1) {
-                            ostream.write(buf);
-                            offset += bytes_read;
-                        }
-
-                        if(offset > blockDataPacket.size) {
-                            ScatterLogManager.e(TAG, "sent a file of invalid length");
-                        }
+                        blockDataPacket.catBody(ostream);
                         //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+                        if(fake) {
+                            System.out.println("sent raw stream packet with hash " + BlockDataPacket.bytesToHex(blockDataPacket.streamhash));
+                        }
                     } catch (IOException e) {
 
                         ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);

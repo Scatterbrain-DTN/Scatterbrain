@@ -267,7 +267,7 @@ public class ScatterBluetoothManager {
                         try {
                             File out = new File("/dev/null");
                             FileOutputStream ostream = new FileOutputStream(out);
-                            System.out.println("catting body");
+                            System.out.println("catting body len " + in.size);
                             in.catBody(ostream);
                             System.out.println("catted");
                             hash = in.streamhash;

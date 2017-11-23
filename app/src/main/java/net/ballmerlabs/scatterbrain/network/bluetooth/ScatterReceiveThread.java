@@ -87,9 +87,11 @@ public class ScatterReceiveThread extends Thread{
                 int file =  BlockDataPacket.getFileStatusFromData(header);
 
 
+
                 if(file < 0)
                     continue;
                 else if(file == 0) {
+                    ScatterLogManager.v(trunk.blman.TAG, "Received blockdata size " + size);
                     //temporary 15mb filesize limit. Sorry.
                     if (size < 0 || size > 15728640)
                         continue;
@@ -141,12 +143,13 @@ public class ScatterReceiveThread extends Thread{
 
                     if(!fake) {
                         bd = new BlockDataPacket(header, socket.getInputStream());
+                        ScatterLogManager.v(trunk.blman.TAG, "Received blockdata size " + bd.size);
                     } else {
                         bd = new BlockDataPacket(header, fakesocket.getInputStream());
                         System.out.println( "Recieved packet len " + size + " streamlen " + bd.size);
                     }
                     if(!fake)
-                    ScatterLogManager.v(trunk.blman.TAG, "Recieved packet len " + size + " streamlen " + bd.size);
+                        ScatterLogManager.v(trunk.blman.TAG, "Recieved packet len " + size + " streamlen " + bd.size);
                     if(bd.isInvalid()) {
                         if(!fake)
                             ScatterLogManager.e(trunk.blman.TAG, "Recieved corrupt filepacket");
@@ -156,11 +159,8 @@ public class ScatterReceiveThread extends Thread{
                     }
 
                     if(!fake)
-                        trunk.blman.onSuccessfulFileRecieve(bd, false);
-                    else {
-                        ScatterBluetoothManager blman = new ScatterBluetoothManager(new NetTrunk(new ScatterRoutingService()));
-                        if(!fake)
-                            blman.onSuccessfulFileRecieve(bd, true);
+                        trunk.blman.onSuccessfulFileRecieve(bd, fake);
+                    if(fake) {
                         fakedone = true;
                         fakeres = bd;
                         go = false;

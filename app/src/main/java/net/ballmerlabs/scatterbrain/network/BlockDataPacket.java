@@ -295,19 +295,23 @@ public class BlockDataPacket extends ScatterStanza {
         if(isfile) {
             byte[] byteblock = new byte[1024];
             int bytesread = 0;
-            int read = 1024;
+            final int read = 1024;
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
 
                 digest.update(senderluid, 0, senderluid.length);
                 int count =0;
-                while ((bytesread= source.read(byteblock)) != -1) {
-                    if((count + read) > this.size)
-                        bytesread = (int) this.size - count;
+                boolean go = true;
+                while (go && (bytesread= source.read(byteblock))!= -1) {
+
+                    //if we tried to read more than the stanza length, cap the read at the size
+                    if((bytesread + count) > this.size) {
+                        bytesread =   bytesread - (int) (((count+bytesread) - this.size));
+                        go = false;
+                    }
+                    System.out.println("write " +bytesread );
                     destination.write(byteblock,0,bytesread);
                     digest.update(byteblock, 0, bytesread);
-                    if((count + read) > this.size)
-                        break;
                     count += bytesread;
                 }
                 this.streamhash = digest.digest();

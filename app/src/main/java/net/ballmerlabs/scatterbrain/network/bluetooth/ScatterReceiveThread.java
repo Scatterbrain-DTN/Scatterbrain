@@ -159,7 +159,8 @@ public class ScatterReceiveThread extends Thread{
                         trunk.blman.onSuccessfulFileRecieve(bd, false);
                     else {
                         ScatterBluetoothManager blman = new ScatterBluetoothManager(new NetTrunk(new ScatterRoutingService()));
-                        blman.onSuccessfulFileRecieve(bd, true);
+                        if(!fake)
+                            blman.onSuccessfulFileRecieve(bd, true);
                         fakedone = true;
                         fakeres = bd;
                         go = false;

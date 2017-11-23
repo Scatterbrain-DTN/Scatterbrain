@@ -51,7 +51,7 @@ public class BlockDataPacket extends ScatterStanza {
 
     public BlockDataPacket(InputStream source, long len, byte[] senderluid) {
         super(HEADERSIZE);
-        this.size = (long) HEADERSIZE;
+        this.size = len;
         this.err = new int[ERRSIZE];
         this.body = new byte[0];
         this.senderluid = senderluid;
@@ -295,34 +295,20 @@ public class BlockDataPacket extends ScatterStanza {
         if(isfile) {
             byte[] byteblock = new byte[1024];
             int bytesread = 0;
-            long bytesleft = this.size;
             int read = 1024;
             try {
-
-
-                String hash = null;
-
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
 
                 digest.update(senderluid, 0, senderluid.length);
-
-                if(bytesleft < read)
-                    read = (int)bytesleft;
-                while ((bytesread= source.read(byteblock, 0, read)) != -1) {
-                    destination.write(byteblock);
+                int count =0;
+                while ((bytesread= source.read(byteblock)) != -1) {
+                    if((count + read) > this.size)
+                        bytesread = (int) this.size - count;
+                    destination.write(byteblock,0,bytesread);
                     digest.update(byteblock, 0, bytesread);
-
-                    bytesleft -= bytesread;
-
-                    if(bytesleft < read)
-                        read = (int) bytesleft;
-                    if(bytesleft == 0)
+                    if((count + read) > this.size)
                         break;
-
-                    if (bytesleft < 0) {
-                        this.invalid = true;
-                        break;
-                    }
+                    count += bytesread;
                 }
                 this.streamhash = digest.digest();
             } catch (IOException e) {

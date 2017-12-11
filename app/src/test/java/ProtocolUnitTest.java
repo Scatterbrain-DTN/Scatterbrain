@@ -116,6 +116,79 @@ public class ProtocolUnitTest {
         }
     }
 
+    @SuppressWarnings("unused")
+    @Test
+    public void MultipleBlockDataPacketDryRun() {
+        ScatterRoutingService service = new ScatterRoutingService();
+        NetTrunk trunk = new NetTrunk(service);
+        ScatterBluetoothManager bman = new ScatterBluetoothManager(trunk);
+
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        try {
+            ArrayList<File> files = new ArrayList<>();
+            ArrayList<BlockDataPacket> bdlist = new ArrayList<>();
+            for (int x = 0; x < 5; x++) {
+                File tmp = new File("/tmp/t3fghju" + x);
+                FileOutputStream firstout = new FileOutputStream(tmp);
+                firstout.write(randomdata);
+                files.add(new File("/tmp/t3fghju" + x));
+
+                FileInputStream in = new FileInputStream(files.get(x));
+                bdlist.add(new BlockDataPacket(in, files.get(x).length(), senderluid));
+            }
+
+            final ServerSocket ssocket = new ServerSocket(8877);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Socket sock =  ssocket.accept();
+                        ScatterReceiveThread res = new ScatterReceiveThread(sock);
+                        res.start();
+                        res.join(); //TODO: implement hash check
+
+                        // System.out.println(res.fakeres.getHash());
+                        assertThat(res.fakedone, is(true));
+
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                    catch(InterruptedException i) {
+                        i.printStackTrace();
+                    }
+                }
+            });
+            t.start();
+            Thread.sleep(1000);
+            assertThat(ssocket.isClosed(), is(false));
+
+            int x = 0;
+            for(BlockDataPacket  bd :  bdlist) {
+                bman.sendRawStream("nothing", bd.getContents(), bd.source, files.get(x).length(), true);
+                x++;
+            }
+
+            t.join();
+
+            ssocket.close();
+            assertThat(ssocket.isClosed(), is(true));
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        } catch(InterruptedException i) {
+            i.printStackTrace();
+        }
+    }
+
 
     @SuppressWarnings("unused")
     @Test

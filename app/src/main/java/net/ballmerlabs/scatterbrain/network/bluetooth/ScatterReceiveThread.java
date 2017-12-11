@@ -136,7 +136,8 @@ public class ScatterReceiveThread extends Thread{
                         System.out.println("leave");
                         fakedone = true;
                         fakeres = null;
-                        go = false;
+                        System.out.println("fakereceived nonfile packet");
+                        //go = false;
                     }
                 }
                 else if(file == 1) {
@@ -164,7 +165,8 @@ public class ScatterReceiveThread extends Thread{
                     if(fake) {
                         fakedone = true;
                         fakeres = bd;
-                        go = false;
+                        System.out.println("fakereceived packet with hash " + bd.getHash());
+                        //go = false;
                     }
                 }
 

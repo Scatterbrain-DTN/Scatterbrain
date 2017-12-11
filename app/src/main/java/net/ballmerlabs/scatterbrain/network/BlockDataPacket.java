@@ -319,16 +319,18 @@ public class BlockDataPacket extends ScatterStanza {
                         break;
                     }
                     if(count == 0) {
-                        break;
+                        bytesread = 0;
+                        go = false;
                     }
                     else if(count < 0) {
                         bytesread =  bytesread +  count;
                         go = false;
                     }
-                    ScatterLogManager.v("BlockDataPacket", "catbody read " + bytesread);
+                    ScatterLogManager.v("BlockDataPacket", "catbody read " + count);
                     destination.write(byteblock,0,bytesread);
                     digest.update(byteblock, 0, bytesread);
                 }
+                ScatterLogManager.v("BlockDataPacket", "CAT DONE");
                 this.streamhash = digest.digest();
             } catch (IOException e) {
                 ScatterLogManager.e("Packet", "IOEXception when reading from filestream");

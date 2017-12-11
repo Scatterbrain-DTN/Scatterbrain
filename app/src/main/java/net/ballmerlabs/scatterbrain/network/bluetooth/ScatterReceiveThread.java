@@ -91,7 +91,8 @@ public class ScatterReceiveThread extends Thread{
                 if(file < 0)
                     continue;
                 else if(file == 0) {
-                    ScatterLogManager.v(trunk.blman.TAG, "Received blockdata size " + size);
+                    if(!fake)
+                        ScatterLogManager.v(trunk.blman.TAG, "Received blockdata size " + size);
                     //temporary 15mb filesize limit. Sorry.
                     if (size < 0 || size > 15728640)
                         continue;

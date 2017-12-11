@@ -126,6 +126,7 @@ public class NormalActivity extends AppCompatActivity {
                         File f = new File(files[0]);
 
 
+                        ScatterLogManager.v(TAG, "opening file " + files[0]);
                         if(mService != null) {
                             try {
                                 FileInputStream i = new FileInputStream(f);
@@ -134,8 +135,7 @@ public class NormalActivity extends AppCompatActivity {
                                 if(bd.isInvalid()) {
                                     ScatterLogManager.e(TAG, "Invalid file blockdata packet");
                                 }
-                                mService.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),
-                                        i, f.length());
+                                mService.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),i,f.length());
                                 FileInputStream n = new FileInputStream(f);
                                 String hash2 = BlockDataPacket.bytesToHex(ScatterRoutingService.getHashForStream(n));
                                     Messages.data.add(new DispMessage(hash2,
@@ -147,7 +147,7 @@ public class NormalActivity extends AppCompatActivity {
 
                         }
                     } else {
-                        //TODO: handle user selecting more than one filexrdfrdxszre2q11fhygtre      gy6rewq qwer6ue4r5f6joiutrewa   q
+                        ScatterLogManager.e(TAG, "service was null when selecting a file");
                     }
 
                 }

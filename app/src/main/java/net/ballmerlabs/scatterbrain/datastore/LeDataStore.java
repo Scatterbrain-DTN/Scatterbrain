@@ -121,24 +121,28 @@ public class LeDataStore {
     }
 
     public synchronized int enqueueMessageNoDuplicate(BlockDataPacket bd) {
-        Cursor cu = db.rawQuery("SELECT * FROM " +
-                MsgDataDb.MessageQueue.TABLE_NAME +
-                " WHERE " +
-                MsgDataDb.MessageQueue.COLUMN_NAME_HASH +
-                " = " + "?",
-                new String[] {bd.getHash()});
 
-        if(cu.getCount() == 0){
-            cu.close();
-           // ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash() +"  "+  bd.size + "  " + bd.senderluid.length);
-            return enqueueMessage(bd);
+        if(bd.getHash() != null) {
+            Cursor cu = db.rawQuery("SELECT * FROM " +
+                            MsgDataDb.MessageQueue.TABLE_NAME +
+                            " WHERE " +
+                            MsgDataDb.MessageQueue.COLUMN_NAME_HASH + " = " + "?",
+                    new String[]{bd.getHash()});
+
+            if (cu.getCount() == 0) {
+                cu.close();
+                // ScatterLogManager.v(TAG, "No duplicate found (" + cu.getCount() + ") Inserting hash " + bd.getHash() +"  "+  bd.size + "  " + bd.senderluid.length);
+                return enqueueMessage(bd);
+            } else {
+                // ScatterLogManager.e(TAG, "Attempted to insert duplicate data to datastore");
+                cu.close();
+                return 1;
+            }
         }
         else {
-           // ScatterLogManager.e(TAG, "Attempted to insert duplicate data to datastore");
-            cu.close();
-            return 1;
+            ScatterLogManager.e(TAG, "Attempted to log a filepacket. Action not supported yet.");
+            return 0;
         }
-
     }
 
     /* Very temporary method for writing a blockdata stanza to datastore */

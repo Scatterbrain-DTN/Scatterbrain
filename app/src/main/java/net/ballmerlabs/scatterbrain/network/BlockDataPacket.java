@@ -292,27 +292,42 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
     public void catBody(OutputStream destination) {
+        ScatterLogManager.v("REMOVETHIS", "catbody");
         if(isfile) {
-            byte[] byteblock = new byte[1024];
             int bytesread = 0;
-            final int read = 1024;
+            final int read;
+            if(size < 1024) {
+                read = (int)size;
+            } else {
+                read = 1024;
+            }
+            ScatterLogManager.v("REMOVETHIS", "catting read size " + read);
+            byte[] byteblock = new byte[read];
+
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
 
                 digest.update(senderluid, 0, senderluid.length);
-                int count =0;
+                int count = (int)size;
                 boolean go = true;
                 while (go && (bytesread= source.read(byteblock))!= -1) {
+                    count -= bytesread;
 
-                    //if we tried to read more than the stanza length, cap the read at the size
-                    if((bytesread + count) > this.size) {
-                        bytesread =   bytesread - (int) (((count+bytesread) - this.size));
+                    if(count < 0 - bytesread) {
+                     //overrun this shouldn't happen
+                        invalid = true;
+                        break;
+                    }
+                    if(count == 0) {
+                        break;
+                    }
+                    else if(count < 0) {
+                        bytesread =  bytesread +  count;
                         go = false;
                     }
-                    System.out.println("write " +bytesread );
+                    ScatterLogManager.v("BlockDataPacket", "catbody read " + bytesread);
                     destination.write(byteblock,0,bytesread);
                     digest.update(byteblock, 0, bytesread);
-                    count += bytesread;
                 }
                 this.streamhash = digest.digest();
             } catch (IOException e) {

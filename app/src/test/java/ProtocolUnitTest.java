@@ -240,8 +240,13 @@ public class ProtocolUnitTest {
             Thread.sleep(1000);
             assertThat(ssocket.isClosed(), is(false));
 
-            bman.sendRawStream("nothing", bd.getContents(),in,tmp.length(), true);
+            bman.sendStreamToLocalPeer("nothing", bd.getContents(),in,tmp.length(), true);
 
+            try {
+                Thread.sleep(10000);
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            }
             t.join();
 
             ssocket.close();

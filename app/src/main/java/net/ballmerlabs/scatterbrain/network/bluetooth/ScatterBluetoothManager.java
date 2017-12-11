@@ -446,10 +446,10 @@ public class ScatterBluetoothManager {
         }
     }
 
-    public void sendStreamToBroadcast(byte[] message, InputStream stream, long len) {
+    public void sendStreamToBroadcast(byte[] message, InputStream stream, long len, boolean fake) {
         synchronized (connectedList) {
             for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                sendStreamToLocalPeer(ent.getKey(), message, stream, len);
+                sendStreamToLocalPeer(ent.getKey(), message, stream, len, fake);
             }
         }
     }
@@ -459,15 +459,15 @@ public class ScatterBluetoothManager {
      * This method also has a function to connect to a local tcp debug
      * server outside of android for unit testing.
      */
-    private void sendMessageToLocalPeer(final String mactarget, final byte[] message,
+    public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                         final boolean text, final boolean file) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
         BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
         sendRaw(mactarget,bd.getContents(), false);
     }
 
-    private void sendStreamToLocalPeer(final String mactarget, final byte[] message, final InputStream stream, long len) {
-        sendRawStream(mactarget, message, stream, len, false);
+    public void sendStreamToLocalPeer(final String mactarget, final byte[] message, final InputStream stream, long len, boolean fake) {
+        sendRawStream(mactarget, message, stream, len, fake);
     }
 
     public void sendRawStream(final String mactarget, final byte[] message,

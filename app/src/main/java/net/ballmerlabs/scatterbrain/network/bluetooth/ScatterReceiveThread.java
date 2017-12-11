@@ -7,7 +7,10 @@ import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import net.ballmerlabs.scatterbrain.network.ScatterRoutingService;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
@@ -166,6 +169,10 @@ public class ScatterReceiveThread extends Thread{
                         fakedone = true;
                         fakeres = bd;
                         System.out.println("fakereceived packet with hash " + bd.getHash());
+                        File f  = new File("/dev/null");
+                        OutputStream ostream = new FileOutputStream(f);
+
+                        bd.catBody(ostream);
                         //go = false;
                     }
                 }

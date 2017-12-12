@@ -83,7 +83,6 @@ public class ScatterReceiveThread extends Thread{
                         continue;
                     }
                 }
-
                 long size = BlockDataPacket.getSizeFromData(header);
                // ScatterLogManager.v("Receive", "Got header with size " +size);
 
@@ -149,6 +148,7 @@ public class ScatterReceiveThread extends Thread{
                     if(!fake) {
                         bd = new BlockDataPacket(header, socket.getInputStream());
                         ScatterLogManager.v(trunk.blman.TAG, "Received blockdata size " + bd.size);
+                        trunk.blman.pauseDiscoverLoopThread();
                     } else {
                         bd = new BlockDataPacket(header, fakesocket.getInputStream());
                         System.out.println( "Recieved packet len " + size + " streamlen " + bd.size);
@@ -163,8 +163,10 @@ public class ScatterReceiveThread extends Thread{
                         continue;
                     }
 
-                    if(!fake)
+                    if(!fake) {
                         trunk.blman.onSuccessfulFileRecieve(bd, fake);
+                        trunk.blman.unpauseDiscoverLoopThread();
+                    }
                     if(fake) {
                         fakedone = true;
                         fakeres = bd;

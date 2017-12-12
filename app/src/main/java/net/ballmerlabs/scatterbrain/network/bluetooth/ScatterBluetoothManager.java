@@ -377,10 +377,8 @@ public class ScatterBluetoothManager {
 
     //attempt to intelligently transmit a number of packets from datastore to peer nearby
     public void offloadRandomPacketsToBroadcast() {
-        synchronized (connectedList) {
-            for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                offloadRandomPackets(500, ent.getKey());
-            }
+        for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            offloadRandomPackets(500, ent.getKey());
         }
     }
 
@@ -405,7 +403,7 @@ public class ScatterBluetoothManager {
     }
 
     //stops (and kills) the discovery thread
-    public synchronized void stopDiscoverLoopThread() {
+    public void stopDiscoverLoopThread() {
         ScatterLogManager.v(TAG, "Stopping bluetooth discovery thread");
         runScanThread = false;
         if(adapter != null)
@@ -413,7 +411,7 @@ public class ScatterBluetoothManager {
     }
 
     //temporarilly stops the discovery thread with the option to quickly resume without loss of data
-    public synchronized void pauseDiscoverLoopThread() {
+    public void pauseDiscoverLoopThread() {
         synchronized (threadPaused) {
             if (!threadPaused) {
                 ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
@@ -438,19 +436,15 @@ public class ScatterBluetoothManager {
     //sends a BlockDataPacket to all connected peers
     @SuppressWarnings("unused")
     public void sendMessageToBroadcast(byte[] message, boolean text, boolean file) {
-        synchronized (connectedList) {
-           // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
-            for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                sendMessageToLocalPeer(ent.getKey(), message, text, file);
-            }
+        // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
+        for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            sendMessageToLocalPeer(ent.getKey(), message, text, file);
         }
     }
 
     public void sendStreamToBroadcast(byte[] message, InputStream stream, long len, boolean fake) {
-        synchronized (connectedList) {
-            for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                sendStreamToLocalPeer(ent.getKey(), message, stream, len, fake);
-            }
+        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            sendStreamToLocalPeer(ent.getKey(), message, stream, len, fake);
         }
     }
 
@@ -557,12 +551,11 @@ public class ScatterBluetoothManager {
 
     //sends a BlockDataPacket to all connected peers
     public void sendRawToBroadcast(byte[] message) {
-        synchronized (connectedList) {
             //ScatterLogManager.v(TAG, "Sending RAW message to " + connectedList.size() + " local peers");
-            for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-                sendRaw(ent.getKey(), message, false);
-            }
+        for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            sendRaw(ent.getKey(), message, false);
         }
+
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -574,9 +567,7 @@ public class ScatterBluetoothManager {
         final boolean isConnected;
         if(!fake) {
             LocalPeer target;
-            synchronized (connectedList) {
-                target = connectedList.get(mactarget);
-            }
+            target = connectedList.get(mactarget);
             target.socket.isConnected();
             try {
                 ostream = target.socket.getOutputStream();

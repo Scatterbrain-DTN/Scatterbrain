@@ -310,7 +310,8 @@ public class BlockDataPacket extends ScatterStanza {
                 digest.update(senderluid, 0, senderluid.length);
                 int count = (int)size;
                 boolean go = true;
-                while (go && (bytesread= source.read(byteblock))!= -1) {
+                while (go) {
+                    go = (bytesread= source.read(byteblock)) != -1;
                     count -= bytesread;
 
                     if(count < 0 - bytesread) {
@@ -319,6 +320,7 @@ public class BlockDataPacket extends ScatterStanza {
                         break;
                     }
                     if(count == 0) {
+
                         go = false;
                     }
                     else if(count < 0) {

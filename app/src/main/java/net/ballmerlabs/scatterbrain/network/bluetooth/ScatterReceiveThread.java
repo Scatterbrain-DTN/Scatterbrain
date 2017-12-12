@@ -172,6 +172,7 @@ public class ScatterReceiveThread extends Thread{
                         File f  = new File("/dev/null");
                         OutputStream ostream = new FileOutputStream(f);
                         bd.catBody(ostream);
+                        System.out.println("DONE catting body [debug]");
                         //go = false;
                     }
                 }

@@ -171,7 +171,6 @@ public class ScatterReceiveThread extends Thread{
                         System.out.println("fakereceived packet with hash " + bd.getHash());
                         File f  = new File("/dev/null");
                         OutputStream ostream = new FileOutputStream(f);
-
                         bd.catBody(ostream);
                         //go = false;
                     }

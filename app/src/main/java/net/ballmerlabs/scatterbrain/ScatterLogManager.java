@@ -16,6 +16,7 @@ public  class ScatterLogManager {
     private static ArrayAdapter<String> adapter;
     private static final ArrayList<String> buffer = new ArrayList<>();
     private static final int MAXBUFFER = 1000;
+    public static boolean fake = false;
     public static void init(ArrayAdapter<String> madapter) {
         adapter = madapter;
         for(String line : buffer) {
@@ -35,66 +36,82 @@ public  class ScatterLogManager {
     }
     public static void v(final String tag, final String msg) {
         checkBuffer();
-        Log.v(tag,msg);
-        if(adapter != null) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    adapter.add("[" + tag + "]: " + msg);
-                }
-            });
+        if(fake) {
+            System.out.println(tag + msg);
         }
         else {
-            buffer.add("[" + tag + "]: " + msg);
+            Log.v(tag, msg);
+            if (adapter != null) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.add("[" + tag + "]: " + msg);
+                    }
+                });
+            } else {
+                buffer.add("[" + tag + "]: " + msg);
+            }
         }
     }
 
     public static void e(final String tag, final String msg) {
-        checkBuffer();
-        Log.e(tag,msg);
-        if(adapter != null) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    adapter.add("[" + tag + "]: " + msg);
-                }
-            });
+        if(fake) {
+            System.out.println(tag + msg);
         }
         else {
-            buffer.add("[" + tag + "]: " + msg);
+            checkBuffer();
+            Log.e(tag, msg);
+            if (adapter != null) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.add("[" + tag + "]: " + msg);
+                    }
+                });
+            } else {
+                buffer.add("[" + tag + "]: " + msg);
+            }
         }
 
     }
 
     public static void d(final String tag) {
-        checkBuffer();
-        Log.d(tag, "onStartSuccess, settingInEffect is null");
-        if(adapter != null) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    adapter.add("[" + tag + "]: " + "onStartSuccess, settingInEffect is null");
-                }
-            });
+        if(fake) {
+            System.out.println(tag);
         }
         else {
-            buffer.add("[" + tag + "]: " + "onStartSuccess, settingInEffect is null");
+            checkBuffer();
+            Log.d(tag, "onStartSuccess, settingInEffect is null");
+            if (adapter != null) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.add("[" + tag + "]: " + "onStartSuccess, settingInEffect is null");
+                    }
+                });
+            } else {
+                buffer.add("[" + tag + "]: " + "onStartSuccess, settingInEffect is null");
+            }
         }
     }
 
     public static void i(final String tag,final String msg) {
-        checkBuffer();
-        Log.i(tag,msg);
-        if(adapter != null) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    adapter.add("["+tag+"]: "+msg);
-                }
-            });
+        if(fake) {
+            System.out.println(tag + msg);
         }
         else {
-            buffer.add("[" + tag + "]: " + msg);
+            checkBuffer();
+            Log.i(tag, msg);
+            if (adapter != null) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.add("[" + tag + "]: " + msg);
+                    }
+                });
+            } else {
+                buffer.add("[" + tag + "]: " + msg);
+            }
         }
     }
 }

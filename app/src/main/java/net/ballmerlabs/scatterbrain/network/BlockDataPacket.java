@@ -293,13 +293,14 @@ public class BlockDataPacket extends ScatterStanza {
 
     public void catBody(OutputStream destination) {
         ScatterLogManager.v("REMOVETHIS", "catbody");
+        final int MAXBLOCKSIZE = 1024*512;
         if(isfile) {
             int bytesread = 0;
             final int read;
-            if(size < 1024) {
+            if(size < MAXBLOCKSIZE) {
                 read = (int)size;
             } else {
-                read = 1024;
+                read = MAXBLOCKSIZE;
             }
             ScatterLogManager.v("REMOVETHIS", "catting read size " + read);
             byte[] byteblock = new byte[read];
@@ -329,6 +330,7 @@ public class BlockDataPacket extends ScatterStanza {
                     }
                     ScatterLogManager.v("BlockDataPacket", "catbody read " + count);
                     destination.write(byteblock,0,bytesread);
+                    destination.flush();
                     digest.update(byteblock, 0, bytesread);
                 }
                 ScatterLogManager.v("BlockDataPacket", "CAT DONE");

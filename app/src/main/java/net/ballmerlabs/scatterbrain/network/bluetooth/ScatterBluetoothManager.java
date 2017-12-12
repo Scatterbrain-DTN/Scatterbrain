@@ -386,7 +386,6 @@ public class ScatterBluetoothManager {
     @SuppressWarnings("SameParameterValue")
     private void offloadRandomPackets(int count, final String device) {
         final ArrayList<BlockDataPacket> ran = trunk.mainService.dataStore.getTopRandomMessages(count);
-        pauseDiscoverLoopThread();
         for (BlockDataPacket p : ran) {
             if (p.isInvalid()) {
                 ScatterLogManager.e(TAG, "sent invalid packet with offloadRandomPackets()");
@@ -399,7 +398,6 @@ public class ScatterBluetoothManager {
                 }
             }
         }
-        unpauseDiscoverLoopThread();
     }
 
     //stops (and kills) the discovery thread
@@ -467,12 +465,13 @@ public class ScatterBluetoothManager {
     public void sendRawStream(final String mactarget, final byte[] message,
                                final InputStream istream, long len, final boolean fake) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
+        pauseDiscoverLoopThread();
 
         final OutputStream ostream;
         final Socket sock;
         final boolean isConnected;
+        final LocalPeer target;
         if(!fake) {
-            LocalPeer target;
             synchronized (connectedList) {
                 target = connectedList.get(mactarget);
             }
@@ -487,6 +486,7 @@ public class ScatterBluetoothManager {
             }
         }
         else {
+            target = null;
             try {
                 sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
                 ostream = sock.getOutputStream();
@@ -541,8 +541,17 @@ public class ScatterBluetoothManager {
             }
         };
 
-        if(!fake)
+        final ScatterBluetoothManager t = this;
+        Runnable unpauseThread = new Runnable() {
+            @Override
+            public void run() {
+                t.unpauseDiscoverLoopThread();
+            }
+        };
+        if(!fake) {
             bluetoothHan.post(messageSendThread);
+            bluetoothHan.post(unpauseThread);
+        }
         else
             messageSendThread.run();
 

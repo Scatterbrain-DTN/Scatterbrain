@@ -530,7 +530,7 @@ public class ScatterBluetoothManager {
                             return;
                         }
                         ostream.write(blockDataPacket.getContents());
-                        System.out.println("wrote blockdata packet len " + blockDataPacket.size +
+                        System.out.println("wrote blockdata packet header" + blockDataPacket.getContents().length +
                         " streamlen " + blockDataPacket.size);
 
                         System.out.println("starting read blockdata packet stream");

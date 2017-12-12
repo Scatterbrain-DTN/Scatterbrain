@@ -2,6 +2,7 @@
  * Performs tests on the scatterbrain protocol outside android to
  * reduce the chance of bugged out packets.
  **/
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
@@ -193,6 +194,7 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataFilePacketDryRun() {
+        ScatterLogManager.fake = true;
         File tmp = new File("/tmp/t3fghju");
         ScatterRoutingService service = new ScatterRoutingService();
         NetTrunk trunk = new NetTrunk(service);

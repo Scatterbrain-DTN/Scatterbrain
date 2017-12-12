@@ -319,7 +319,6 @@ public class BlockDataPacket extends ScatterStanza {
                         break;
                     }
                     if(count == 0) {
-                        bytesread = 0;
                         go = false;
                     }
                     else if(count < 0) {

@@ -463,7 +463,7 @@ public class ScatterBluetoothManager {
             Runnable sendRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    sendStreamToLocalPeer(ent.getKey(), message, stream, len, fake);
+                    sendRawStream(ent.getKey(), message, stream, len, fake);
                 }
             };
             bluetoothHan.post(sendRunnable);
@@ -483,15 +483,50 @@ public class ScatterBluetoothManager {
      * This method also has a function to connect to a local tcp debug
      * server outside of android for unit testing.
      */
-    public void sendMessageToLocalPeer(final String mactarget, final byte[] message,
+    public synchronized void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                         final boolean text, final boolean file) {
         //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-        BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
-        sendRaw(mactarget,bd.getContents(), false);
+        pauseDiscoverLoopThread();
+        final BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
+        Runnable sendRunnable = new Runnable() {
+            @Override
+            public void run() {
+                sendRaw(mactarget,bd.getContents(), false);
+            }
+        };
+
+        Runnable unpauseRunnable = new Runnable() {
+            @Override
+            public void run() {
+                unpauseDiscoverLoopThread();
+            }
+        };
+
+        bluetoothHan.post(sendRunnable);
+        bluetoothHan.post(unpauseRunnable);
     }
 
-    public void sendStreamToLocalPeer(final String mactarget, final byte[] message, final InputStream stream, long len, boolean fake) {
-        sendRawStream(mactarget, message, stream, len, fake);
+    public void sendStreamToLocalPeer(final String mactarget, final byte[] message,
+                                      final InputStream stream, final long len, final boolean fake) {
+        pauseDiscoverLoopThread();
+
+        Runnable sendRunnable = new Runnable() {
+            @Override
+            public void run() {
+                sendRawStream(mactarget, message, stream, len, fake);
+            }
+        };
+
+        final Runnable unpauseRunnable = new Runnable() {
+            @Override
+            public void run() {
+                unpauseDiscoverLoopThread();
+            }
+        };
+
+        bluetoothHan.post(sendRunnable);
+        bluetoothHan.post(unpauseRunnable);
+
     }
 
     public void sendRawStream(final String mactarget, final byte[] message,

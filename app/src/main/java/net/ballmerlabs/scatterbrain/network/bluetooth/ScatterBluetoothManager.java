@@ -433,17 +433,49 @@ public class ScatterBluetoothManager {
 
     //sends a BlockDataPacket to all connected peers
     @SuppressWarnings("unused")
-    public void sendMessageToBroadcast(byte[] message, boolean text, boolean file) {
+    public void sendMessageToBroadcast(final byte[] message, final boolean text,  final boolean file) {
         // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
-        for (Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-            sendMessageToLocalPeer(ent.getKey(), message, text, file);
+        pauseDiscoverLoopThread();
+        for (final Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            Runnable sendRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    sendMessageToLocalPeer(ent.getKey(), message, text, file);
+                }
+            };
+            bluetoothHan.post(sendRunnable);
         }
+
+        final Runnable unpauseRunnable = new Runnable() {
+            @Override
+            public void run() {
+                unpauseDiscoverLoopThread();
+            }
+        };
+
+        bluetoothHan.post(unpauseRunnable);
     }
 
-    public void sendStreamToBroadcast(byte[] message, InputStream stream, long len, boolean fake) {
-        for(Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
-            sendStreamToLocalPeer(ent.getKey(), message, stream, len, fake);
+    public void sendStreamToBroadcast(final byte[] message, final InputStream stream,final long len,
+                                      final boolean fake) {
+        pauseDiscoverLoopThread();
+        for(final Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
+            Runnable sendRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    sendStreamToLocalPeer(ent.getKey(), message, stream, len, fake);
+                }
+            };
+            bluetoothHan.post(sendRunnable);
         }
+
+        final Runnable unpauseRunnable = new Runnable() {
+            @Override
+            public void run() {
+                unpauseDiscoverLoopThread();
+            }
+        };
+        bluetoothHan.post(unpauseRunnable);
     }
 
     /*
@@ -510,50 +542,28 @@ public class ScatterBluetoothManager {
             byte[] luid = {1,2,3,4,5,6};
             blockDataPacket = new BlockDataPacket(istream, len, luid);
         }
-        Runnable messageSendThread = new Runnable() {
-            @Override
-            public void run() {
-              //  if (!fake)
-               //     trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
-                //noinspection ConstantConditions
-                if (isConnected) {
-                    try {
-                        if (blockDataPacket.invalid) {
-                            ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
-                            System.out.println("tried to send corrupt packet");
-                            return;
-                        }
-                        ostream.write(blockDataPacket.getContents());
-                        System.out.println("wrote blockdata packet header" + blockDataPacket.getContents().length +
+        if (isConnected) {
+            try {
+                if (blockDataPacket.invalid) {
+                    ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                    System.out.println("tried to send corrupt packet");
+                    return;
+                }
+                ostream.write(blockDataPacket.getContents());
+                System.out.println("wrote blockdata packet header" + blockDataPacket.getContents().length +
                         " streamlen " + blockDataPacket.size);
 
-                        System.out.println("starting read blockdata packet stream");
-                        blockDataPacket.catBody(ostream);
-                        //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
-                        if(fake) {
-                            System.out.println("sent raw stream packet with hash " + BlockDataPacket.bytesToHex(blockDataPacket.streamhash));
-                        }
-                    } catch (IOException e) {
-
-                        ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
-                    }
+                System.out.println("starting read blockdata packet stream");
+                blockDataPacket.catBody(ostream);
+                //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+                if (fake) {
+                    System.out.println("sent raw stream packet with hash " + BlockDataPacket.bytesToHex(blockDataPacket.streamhash));
                 }
-            }
-        };
+            } catch (IOException e) {
 
-        final ScatterBluetoothManager t = this;
-        Runnable unpauseThread = new Runnable() {
-            @Override
-            public void run() {
-                t.unpauseDiscoverLoopThread();
+                ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
             }
-        };
-        if(!fake) {
-            bluetoothHan.post(messageSendThread);
-            bluetoothHan.post(unpauseThread);
         }
-        else
-            messageSendThread.run();
 
     }
 
@@ -605,37 +615,28 @@ public class ScatterBluetoothManager {
 
         }
         final BlockDataPacket blockDataPacket = new BlockDataPacket(message);
-        Runnable messageSendThread = new Runnable() {
-            @Override
-            public void run() {
-                if (!fake)
-                    trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
-                //noinspection ConstantConditions
-                if (isConnected) {
-                    try {
-                        if (blockDataPacket.invalid) {
-                            ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
-                            if(fake)
-                                System.out.println("Tried to send an invalid packet");
-                            return;
-                        }
-                        ostream.write(blockDataPacket.getContents());
-                        //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
-                    } catch (IOException e) {
-
-                        ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
-                        if(fake)
-                            e.printStackTrace();
-                    }
+        if (!fake)
+            trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
+        //noinspection ConstantConditions
+        if (isConnected) {
+            try {
+                if (blockDataPacket.invalid) {
+                    ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
+                    if (fake)
+                        System.out.println("Tried to send an invalid packet");
+                    return;
                 }
-            }
-        };
+                ostream.write(blockDataPacket.getContents());
+                //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+            } catch (IOException e) {
 
-        if(!fake) {
-            bluetoothHan.post(messageSendThread);
-        } else {
-            messageSendThread.run();
+                ScatterLogManager.e(TAG, "Error on sending message to " + mactarget);
+                if (fake)
+                    e.printStackTrace();
+            }
         }
+
+
     }
 
     public void resetBluetoothDiscoverability() {

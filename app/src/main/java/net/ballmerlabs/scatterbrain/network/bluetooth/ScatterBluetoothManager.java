@@ -67,11 +67,17 @@ public class ScatterBluetoothManager {
     @SuppressWarnings("FieldCanBeLocal")
     private final int PARALLELUUID = 1; //number of devices to scan at a time.
     private Method setDuration;
+    private String unpauseKey;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
      * and calls actions for different scenarios.
      */
+
+
+    //TODO: this gets unpaused twice, which could be bad form
+    private final String LOOPPAUSETAG = "mainscanningloop";
+
     @SuppressWarnings("FieldCanBeLocal")
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -94,7 +100,7 @@ public class ScatterBluetoothManager {
                 resetBluetoothDiscoverability();
                 //stop discovering and attempt to gently fetch UUIDs from devices.
                 //This can fail with an overloaded adapter or saturated channels, so we do it slowly.
-                pauseDiscoverLoopThread();
+                pauseDiscoverLoopThread(LOOPPAUSETAG);
                 synchronized (foundList) {
                     targetUUID = foundList.size();
                     for (int x = currentUUID; x < foundList.size() && x < (PARALLELUUID + currentUUID); x++) {
@@ -106,7 +112,7 @@ public class ScatterBluetoothManager {
                 else {
                     currentUUID = 0;
                     connectToDevice(scatterList);
-                    unpauseDiscoverLoopThread();
+                    unpauseDiscoverLoopThread(LOOPPAUSETAG);
                 }
 
                 //if we are still turned on, rescan later at interval defined by settings
@@ -146,7 +152,7 @@ public class ScatterBluetoothManager {
                 else {
                     currentUUID = 0;
                     connectToDevice(scatterList);
-                    unpauseDiscoverLoopThread();
+                    unpauseDiscoverLoopThread(LOOPPAUSETAG);
                 }
             }
         }
@@ -180,6 +186,7 @@ public class ScatterBluetoothManager {
         }
         acceptThreadRunning = false;
         threadPaused = false;
+        unpauseKey = null;
         try {
             if(adapter != null) {
                 Class c = Class.forName(adapter.getClass().getName());
@@ -409,7 +416,16 @@ public class ScatterBluetoothManager {
     }
 
     //temporarilly stops the discovery thread with the option to quickly resume without loss of data
-    public void pauseDiscoverLoopThread() {
+    public int pauseDiscoverLoopThread(String pausekey) {
+
+        ScatterLogManager.v(TAG, "attempted to pause discovery thread with keys " + pausekey +
+                " : " + this.unpauseKey);
+        if(pausekey == null)
+            return -2;
+        if(this.unpauseKey != null)
+            return -1;
+
+        this.unpauseKey = pausekey;
         synchronized (threadPaused) {
             if (!threadPaused) {
                 ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
@@ -418,15 +434,31 @@ public class ScatterBluetoothManager {
                     adapter.cancelDiscovery();
             }
         }
+        return 0;
     }
 
     //resumes after calling pauseDiscoverLoopThread()
-    public synchronized void unpauseDiscoverLoopThread() {
-        synchronized (threadPaused) {
-            if (threadPaused) {
-                ScatterLogManager.v(TAG, "Resuming bluetooth discovery thread");
-                threadPaused = false;
+    public synchronized int unpauseDiscoverLoopThread(String pausekey) {
+        ScatterLogManager.v(TAG, "attempted to unpause discovery thread with keys " + pausekey +
+                " : " + this.unpauseKey);
+        if(pausekey == null)
+            return -2;
+
+        if(this.unpauseKey == null)
+            return -1;
+
+        if(this.unpauseKey.equals(pausekey)) {
+            synchronized (threadPaused) {
+                if (threadPaused) {
+                    ScatterLogManager.v(TAG, "Resuming bluetooth discovery thread");
+                    threadPaused = false;
+                }
             }
+            this.unpauseKey = null;
+            return 0;
+        }
+        else {
+            return -1;
         }
     }
 
@@ -434,8 +466,8 @@ public class ScatterBluetoothManager {
     //sends a BlockDataPacket to all connected peers
     @SuppressWarnings("unused")
     public void sendMessageToBroadcast(final byte[] message, final boolean text,  final boolean file) {
-        // ScatterLogManager.v(TAG, "Sendint message to " + connectedList.size() + " local peers");
-        pauseDiscoverLoopThread();
+        final String SENDBR_PAUSETAG = "sendmessagebroadcast";
+        pauseDiscoverLoopThread(SENDBR_PAUSETAG);
         for (final Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
             Runnable sendRunnable = new Runnable() {
                 @Override
@@ -449,7 +481,7 @@ public class ScatterBluetoothManager {
         final Runnable unpauseRunnable = new Runnable() {
             @Override
             public void run() {
-                unpauseDiscoverLoopThread();
+                unpauseDiscoverLoopThread(SENDBR_PAUSETAG);
             }
         };
 
@@ -458,7 +490,8 @@ public class ScatterBluetoothManager {
 
     public void sendStreamToBroadcast(final byte[] message, final InputStream stream,final long len,
                                       final boolean fake) {
-        pauseDiscoverLoopThread();
+        final String SSTREMPAUSETAG = "sendstreambroadcast";
+        pauseDiscoverLoopThread(SSTREMPAUSETAG);
         for(final Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
             Runnable sendRunnable = new Runnable() {
                 @Override
@@ -472,7 +505,7 @@ public class ScatterBluetoothManager {
         final Runnable unpauseRunnable = new Runnable() {
             @Override
             public void run() {
-                unpauseDiscoverLoopThread();
+                unpauseDiscoverLoopThread(SSTREMPAUSETAG);
             }
         };
         bluetoothHan.post(unpauseRunnable);
@@ -485,8 +518,8 @@ public class ScatterBluetoothManager {
      */
     public synchronized void sendMessageToLocalPeer(final String mactarget, final byte[] message,
                                         final boolean text, final boolean file) {
-        //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-        pauseDiscoverLoopThread();
+        final String SLOCALPEERPAUSETAG = "sendlocalpeer";
+        pauseDiscoverLoopThread(SLOCALPEERPAUSETAG);
         final BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
         Runnable sendRunnable = new Runnable() {
             @Override
@@ -498,7 +531,7 @@ public class ScatterBluetoothManager {
         Runnable unpauseRunnable = new Runnable() {
             @Override
             public void run() {
-                unpauseDiscoverLoopThread();
+                unpauseDiscoverLoopThread(SLOCALPEERPAUSETAG);
             }
         };
 
@@ -508,7 +541,8 @@ public class ScatterBluetoothManager {
 
     public void sendStreamToLocalPeer(final String mactarget, final byte[] message,
                                       final InputStream stream, final long len, final boolean fake) {
-        pauseDiscoverLoopThread();
+        final String SSLOCALPEERTAG = "sendstreamlocalpeer";
+        pauseDiscoverLoopThread(SSLOCALPEERTAG);
 
         Runnable sendRunnable = new Runnable() {
             @Override
@@ -520,7 +554,7 @@ public class ScatterBluetoothManager {
         final Runnable unpauseRunnable = new Runnable() {
             @Override
             public void run() {
-                unpauseDiscoverLoopThread();
+                unpauseDiscoverLoopThread(SSLOCALPEERTAG);
             }
         };
 
@@ -531,9 +565,6 @@ public class ScatterBluetoothManager {
 
     public void sendRawStream(final String mactarget, final byte[] message,
                                final InputStream istream, long len, final boolean fake) {
-        //ScatterLogManager.v(TAG, "Sending message to peer " + mactarget);
-        pauseDiscoverLoopThread();
-
         final OutputStream ostream;
         final Socket sock;
         final boolean isConnected;
@@ -590,7 +621,7 @@ public class ScatterBluetoothManager {
 
                 System.out.println("starting read blockdata packet stream");
                 blockDataPacket.catBody(ostream);
-                //ScatterLogManager.v(TAG, "Sent message successfully to " + mactarget );
+
                 if (fake) {
                     System.out.println("sent raw stream packet with hash " + BlockDataPacket.bytesToHex(blockDataPacket.streamhash));
                 }

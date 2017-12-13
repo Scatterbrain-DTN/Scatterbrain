@@ -145,10 +145,11 @@ public class ScatterReceiveThread extends Thread{
                 else if(file == 1) {
                     BlockDataPacket bd;
 
+                    final String SRECEIVETHREAD_FILE_PAUSE = "sreceivefilepause";
                     if(!fake) {
                         bd = new BlockDataPacket(header, socket.getInputStream());
                         ScatterLogManager.v(trunk.blman.TAG, "Received blockdata size " + bd.size);
-                        trunk.blman.pauseDiscoverLoopThread();
+                        trunk.blman.pauseDiscoverLoopThread(SRECEIVETHREAD_FILE_PAUSE);
                     } else {
                         bd = new BlockDataPacket(header, fakesocket.getInputStream());
                         System.out.println( "Recieved packet len " + size + " streamlen " + bd.size);
@@ -165,7 +166,7 @@ public class ScatterReceiveThread extends Thread{
 
                     if(!fake) {
                         trunk.blman.onSuccessfulFileRecieve(bd, fake);
-                        trunk.blman.unpauseDiscoverLoopThread();
+                        trunk.blman.unpauseDiscoverLoopThread(SRECEIVETHREAD_FILE_PAUSE);
                     }
                     if(fake) {
                         fakedone = true;

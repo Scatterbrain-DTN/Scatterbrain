@@ -116,9 +116,10 @@ public class ScatterBluetoothManager {
                 }
 
                 //if we are still turned on, rescan later at interval defined by settings
-                if (runScanThread) {
+                //this gets run after discovery finishes, to avoid overloading the adapter.
+                if (runScanThread && !threadPaused) {
                     int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
-                    ScatterLogManager.v(TAG,"Posting new scanning runnable (running)");
+                    ScatterLogManager.v(TAG,"Posting new scanning runnable delay "+ scan );
                     bluetoothHan.postDelayed(scanr, scan * 1000);
                 } else
                     ScatterLogManager.v(TAG, "Stopping wifi direct scan thread");
@@ -230,15 +231,17 @@ public class ScatterBluetoothManager {
         scanr = new Runnable() {
             @Override
             public void run() {
-                ScatterLogManager.v(TAG, "Scanning...");
+                ScatterLogManager.v(TAG, "Scanning... " + runScanThread + " " + threadPaused);
 
                 if(!threadPaused) {
                     if (adapter != null)
                         adapter.startDiscovery();
                 }
+                // if we are paused, but not stopped, keep checking back after the set delay
+                // to see if we are not paused.
                 else if(runScanThread){
                     int scan = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(trunk.mainService).getString("sync_frequency", "7"));
-               //     ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
+                    ScatterLogManager.v(TAG,"Posting new scanning runnable (paused)");
                     bluetoothHan.postDelayed(scanr, scan * 1000);
                 }
 
@@ -425,10 +428,10 @@ public class ScatterBluetoothManager {
         if(this.unpauseKey != null)
             return -1;
 
+        ScatterLogManager.v(TAG, "successfully paused");
         this.unpauseKey = pausekey;
         synchronized (threadPaused) {
             if (!threadPaused) {
-                ScatterLogManager.v(TAG, "Pausing bluetooth discovery thread");
                 threadPaused = true;
                 if (adapter != null)
                     adapter.cancelDiscovery();
@@ -444,6 +447,7 @@ public class ScatterBluetoothManager {
         if(pausekey == null)
             return -2;
 
+        ScatterLogManager.v(TAG, "successfully unpaused");
         if(this.unpauseKey == null)
             return -1;
 

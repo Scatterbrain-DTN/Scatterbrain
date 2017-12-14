@@ -317,7 +317,7 @@ public class BlockDataPacket extends ScatterStanza {
                 boolean go = true;
                 while (go) {
 
-                    if(source.available() > read) {
+                    if(source.available() > 0) {
                         go = (bytesread = source.read(byteblock)) != -1;
                         count -= bytesread;
                         if (count < 0 - bytesread) {

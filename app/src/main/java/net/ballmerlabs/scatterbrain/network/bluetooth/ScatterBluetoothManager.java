@@ -68,8 +68,8 @@ public class ScatterBluetoothManager {
     private final int PARALLELUUID = 1; //number of devices to scan at a time.
     private Method setDuration;
     private String unpauseKey;
-    public final int UNPAUSEDELAY = 1000 * 25;
-    public final long CATBLOCK_DELAY = 50;
+    public final int UNPAUSEDELAY = 1000 * 30;
+    public final long CATBLOCK_DELAY = 256;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
@@ -255,6 +255,7 @@ public class ScatterBluetoothManager {
 
 
     //function called when a packet with an accompanying file stream is recieved.
+    // don't call this on the main thread. Blocking. 
     public void onSuccessfulFileRecieve(final BlockDataPacket in,final boolean fake) {
         if(!NormalActivity.active && !fake)
             trunk.mainService.startMessageActivity();
@@ -269,42 +270,31 @@ public class ScatterBluetoothManager {
             System.out.println("in onSuccessfulFileRecieve");
         //if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
 
-            Runnable t = new Runnable() {
-                @Override
-                public void run() {
-                    long offset = 0;
-                    if (NormalActivity.active || fake) {
-                        byte[] hash = null;
+        long offset = 0;
+        if (NormalActivity.active || fake) {
+            byte[] hash = null;
 
-                        try {
-                            File out = new File("/dev/null");
-                            FileOutputStream ostream = new FileOutputStream(out);
-                            System.out.println("catting body len " + in.size);
-                            in.catBody(ostream,CATBLOCK_DELAY);
-                            System.out.println("catted");
-                            hash = in.streamhash;
-                            if (hash != null && !fake) {
-                                trunk.mainService.getMessageAdapter().data.add(
-                                        new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + in.size));
-                                trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                            }
-                        } catch(IOException e) {
-                            e.printStackTrace();
-                        }
-                        if (fake) {
-                            System.out.println("recieved hash " + BlockDataPacket.bytesToHex(hash));
-                        }
-                        //    ScatterLogManager.e(TAG, "Appended message to message list");
-                    }
+            try {
+                File out = new File("/dev/null");
+                FileOutputStream ostream = new FileOutputStream(out);
+                System.out.println("catting body len " + in.size);
+                in.catBody(ostream, CATBLOCK_DELAY);
+                System.out.println("catted");
+                hash = in.streamhash;
+                if (hash != null && !fake) {
+                    trunk.mainService.getMessageAdapter().data.add(
+                            new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + in.size));
+                    trunk.mainService.getMessageAdapter().notifyDataSetChanged();
                 }
-            };
-
-            if(!fake) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(t);
-            } else {
-                t.run();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            if (fake) {
+                System.out.println("recieved hash " + BlockDataPacket.bytesToHex(hash));
+            }
+            //    ScatterLogManager.e(TAG, "Appended message to message list");
+        }
+
        // }
     }
 

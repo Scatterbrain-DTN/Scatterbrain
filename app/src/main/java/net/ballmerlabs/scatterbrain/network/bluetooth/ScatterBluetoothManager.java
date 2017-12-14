@@ -68,6 +68,8 @@ public class ScatterBluetoothManager {
     private final int PARALLELUUID = 1; //number of devices to scan at a time.
     private Method setDuration;
     private String unpauseKey;
+    public final int UNPAUSEDELAY = 1000 * 25;
+    public final long CATBLOCK_DELAY = 100;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
@@ -278,7 +280,7 @@ public class ScatterBluetoothManager {
                             File out = new File("/dev/null");
                             FileOutputStream ostream = new FileOutputStream(out);
                             System.out.println("catting body len " + in.size);
-                            in.catBody(ostream);
+                            in.catBody(ostream,CATBLOCK_DELAY);
                             System.out.println("catted");
                             hash = in.streamhash;
                             if (hash != null && !fake) {
@@ -489,7 +491,7 @@ public class ScatterBluetoothManager {
             }
         };
 
-        bluetoothHan.post(unpauseRunnable);
+        bluetoothHan.postDelayed(unpauseRunnable, UNPAUSEDELAY);
     }
 
     public void sendStreamToBroadcast(final byte[] message, final InputStream stream,final long len,
@@ -512,7 +514,7 @@ public class ScatterBluetoothManager {
                 unpauseDiscoverLoopThread(SSTREMPAUSETAG);
             }
         };
-        bluetoothHan.post(unpauseRunnable);
+        bluetoothHan.postDelayed(unpauseRunnable,UNPAUSEDELAY);
     }
 
     /*
@@ -540,7 +542,7 @@ public class ScatterBluetoothManager {
         };
 
         bluetoothHan.post(sendRunnable);
-        bluetoothHan.post(unpauseRunnable);
+        bluetoothHan.postDelayed(unpauseRunnable,UNPAUSEDELAY);
     }
 
     public void sendStreamToLocalPeer(final String mactarget, final byte[] message,
@@ -563,7 +565,7 @@ public class ScatterBluetoothManager {
         };
 
         bluetoothHan.post(sendRunnable);
-        bluetoothHan.post(unpauseRunnable);
+        bluetoothHan.postDelayed(unpauseRunnable,UNPAUSEDELAY);
 
     }
 
@@ -624,7 +626,7 @@ public class ScatterBluetoothManager {
                         " streamlen " + blockDataPacket.size);
 
                 System.out.println("starting read blockdata packet stream");
-                blockDataPacket.catBody(ostream);
+                blockDataPacket.catBody(ostream, CATBLOCK_DELAY);
 
                 if (fake) {
                     System.out.println("sent raw stream packet with hash " + BlockDataPacket.bytesToHex(blockDataPacket.streamhash));

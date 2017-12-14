@@ -292,8 +292,12 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
     public void catBody(OutputStream destination) {
+        catBody(destination, 0);
+    }
+
+    public void catBody(OutputStream destination, long delaymillis) {
         ScatterLogManager.v("REMOVETHIS", "catbody");
-        final int MAXBLOCKSIZE = 1024*512;
+        final int MAXBLOCKSIZE = 1024;
         if(isfile) {
             int bytesread = 0;
             final int read;
@@ -317,21 +321,28 @@ public class BlockDataPacket extends ScatterStanza {
 
                     if(count < 0 - bytesread) {
                      //overrun this shouldn't happen
+                        ScatterLogManager.e("REMOVETHIS", "err: overrun");
                         invalid = true;
                         break;
                     }
                     if(count == 0) {
-
+                        ScatterLogManager.e("REMOVETHIS", "done: count is 0");
                         go = false;
                     }
                     else if(count < 0) {
                         bytesread =  bytesread +  count;
+                        ScatterLogManager.e("REMOVETHIS", "done: count < 0 corrected: " + bytesread);
                         go = false;
                     }
                     ScatterLogManager.v("BlockDataPacket", "catbody read " + count);
                     destination.write(byteblock,0,bytesread);
                     destination.flush();
                     digest.update(byteblock, 0, bytesread);
+                    try {
+                        Thread.sleep(delaymillis);
+                    } catch(InterruptedException e) {
+
+                    }
                 }
                 ScatterLogManager.v("BlockDataPacket", "CAT DONE");
                 this.streamhash = digest.digest();

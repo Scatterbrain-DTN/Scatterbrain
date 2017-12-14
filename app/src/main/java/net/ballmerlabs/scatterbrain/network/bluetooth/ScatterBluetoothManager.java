@@ -69,7 +69,7 @@ public class ScatterBluetoothManager {
     private Method setDuration;
     private String unpauseKey;
     public final int UNPAUSEDELAY = 1000 * 25;
-    public final long CATBLOCK_DELAY = 100;
+    public final long CATBLOCK_DELAY = 50;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices

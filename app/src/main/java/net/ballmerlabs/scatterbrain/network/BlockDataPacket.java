@@ -73,7 +73,7 @@ public class BlockDataPacket extends ScatterStanza {
         try {
             if (isfile) {
                 if(streamhash == null)
-                    return null; 
+                    return null;
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
                 digest.update(senderluid, 0, senderluid.length);
                 digest.update(streamhash, 0, streamhash.length);
@@ -301,7 +301,7 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
     public void catBody(OutputStream destination, long delaymillis) {
-        ScatterLogManager.v("REMOVETHIS", "catbody");
+        //ScatterLogManager.v("REMOVETHIS", "catbody");
         final int MAXBLOCKSIZE = 512;
         if(isfile) {
             int bytesread = 0;
@@ -311,7 +311,7 @@ public class BlockDataPacket extends ScatterStanza {
             } else {
                 read = MAXBLOCKSIZE;
             }
-            ScatterLogManager.v("REMOVETHIS", "catting read " + read + " size " + size);
+            //ScatterLogManager.v("REMOVETHIS", "catting read " + read + " size " + size);
             byte[] byteblock = new byte[read];
 
             try {
@@ -327,19 +327,19 @@ public class BlockDataPacket extends ScatterStanza {
                         count -= bytesread;
                         if (count < 0 - bytesread) {
                             //overrun this shouldn't happen
-                            ScatterLogManager.e("REMOVETHIS", "err: overrun");
+               //             ScatterLogManager.e("REMOVETHIS", "err: overrun");
                             invalid = true;
                             break;
                         }
                         if (count == 0) {
-                            ScatterLogManager.e("REMOVETHIS", "done: count is 0");
+                   //         ScatterLogManager.e("REMOVETHIS", "done: count is 0");
                             go = false;
                         } else if (count < 0) {
                             bytesread = bytesread + count;
-                            ScatterLogManager.e("REMOVETHIS", "done: count < 0 corrected: " + bytesread);
+                            //ScatterLogManager.e("REMOVETHIS", "done: count < 0 corrected: " + bytesread);
                             go = false;
                         }
-                        ScatterLogManager.v("BlockDataPacket", "catbody read " + bytesread + " " + count);
+                       // ScatterLogManager.v("BlockDataPacket", "catbody read " + bytesread + " " + count);
 
                         destination.write(byteblock, 0, bytesread);
                         destination.flush();

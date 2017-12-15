@@ -610,14 +610,14 @@ public class ScatterBluetoothManager {
             try {
                 if (blockDataPacket.invalid) {
                     ScatterLogManager.e(TAG, "Tried to send a corrupt packet");
-                    System.out.println("tried to send corrupt packet");
+                  //  System.out.println("tried to send corrupt packet");
                     return;
                 }
                 ostream.write(blockDataPacket.getContents());
-                System.out.println("wrote blockdata packet header" + blockDataPacket.getContents().length +
-                        " streamlen " + blockDataPacket.size);
+              //  System.out.println("wrote blockdata packet header" + blockDataPacket.getContents().length +
+                //        " streamlen " + blockDataPacket.size);
 
-                System.out.println("starting read blockdata packet stream");
+                //System.out.println("starting read blockdata packet stream");
                 blockDataPacket.catBody(ostream, CATBLOCK_DELAY);
 
                 if (fake) {

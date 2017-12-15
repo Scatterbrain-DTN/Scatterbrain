@@ -144,7 +144,7 @@ public class ScatterRoutingService extends Service {
     public static byte[] getHashForStream(InputStream i) {
         byte[] hash;
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] buffer = new byte[1024];
             int bytes_recieved;
             int offset = 0;

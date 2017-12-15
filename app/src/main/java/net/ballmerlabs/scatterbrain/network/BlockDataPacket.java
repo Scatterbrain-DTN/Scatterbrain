@@ -74,7 +74,7 @@ public class BlockDataPacket extends ScatterStanza {
             if (isfile) {
                 if(streamhash == null)
                     return null;
-                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 digest.update(senderluid, 0, senderluid.length);
                 digest.update(streamhash, 0, streamhash.length);
                 byte[] combined = digest.digest();
@@ -88,7 +88,7 @@ public class BlockDataPacket extends ScatterStanza {
                 for (long i = size; i < senderluid.length; i++) {
                     combined[(int) i] = senderluid[(int) (i - size)];
                 }
-                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 digest.update(combined, 0, combined.length);
                 combined = digest.digest();
                 hash = bytesToHex(combined);
@@ -315,7 +315,7 @@ public class BlockDataPacket extends ScatterStanza {
             byte[] byteblock = new byte[read];
 
             try {
-                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
                 digest.update(senderluid, 0, senderluid.length);
                 int count = (int)size;

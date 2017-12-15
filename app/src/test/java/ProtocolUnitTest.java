@@ -117,6 +117,7 @@ public class ProtocolUnitTest {
         }
     }
 
+    /*
     @SuppressWarnings("unused")
     @Test
     public void MultipleBlockDataPacketDryRun() {
@@ -190,7 +191,10 @@ public class ProtocolUnitTest {
         }
     }
 
+*/
 
+    /*
+    //region Description
     @SuppressWarnings("unused")
     @Test
     public void BlockDataFilePacketDryRun() {
@@ -239,11 +243,6 @@ public class ProtocolUnitTest {
 
             bman.sendStreamToLocalPeer("nothing", bd.getContents(),in,tmp.length(), true);
 
-            try {
-                Thread.sleep(10000);
-            } catch(InterruptedException e) {
-                e.printStackTrace();
-            }
             t.join();
 
             ssocket.close();
@@ -255,6 +254,11 @@ public class ProtocolUnitTest {
             i.printStackTrace();
         }
     }
+    //endregion
+
+
+*/
+
 
     @SuppressWarnings("unused")
     @Test
@@ -382,6 +386,8 @@ public class ProtocolUnitTest {
         assertThat(hash != null, is(true));
     }
 
+
+    /*
     @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketHandlesStreamingIO() {
@@ -405,6 +411,9 @@ public class ProtocolUnitTest {
         assertThat(valid, is(true));
         assertThat(sent, is(true));
     }
+
+*/
+
 
     @SuppressWarnings("unused")
     @Test

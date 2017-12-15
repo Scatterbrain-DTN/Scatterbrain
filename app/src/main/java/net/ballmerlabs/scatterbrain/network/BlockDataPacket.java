@@ -69,12 +69,15 @@ public class BlockDataPacket extends ScatterStanza {
 
 
     public String getHash() {
-
-        if (isfile) {
-            return null;
-        } else {
-            String hash = null;
-            try {
+        String hash = null;
+        try {
+            if (isfile) {
+                MessageDigest digest = MessageDigest.getInstance("SHA-1");
+                digest.update(senderluid, 0, senderluid.length);
+                digest.update(streamhash, 0, streamhash.length);
+                byte[] combined = digest.digest();
+                hash = bytesToHex(combined);
+            } else {
                 byte[] combined = new byte[(int) (size + senderluid.length)];
                 for (int i = 0; i < size; i++) {
                     combined[i] = body[i];
@@ -87,14 +90,14 @@ public class BlockDataPacket extends ScatterStanza {
                 digest.update(combined, 0, combined.length);
                 combined = digest.digest();
                 hash = bytesToHex(combined);
-
-
-            } catch (NoSuchAlgorithmException nsa) {
-                ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");
             }
-            return hash;
+
+        } catch (NoSuchAlgorithmException nsa) {
+            ScatterLogManager.e("BlockDataPacket", "SHA-1 needed for BlockData hashing.");
         }
+        return hash;
     }
+
 
     // http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -340,20 +343,16 @@ public class BlockDataPacket extends ScatterStanza {
                         destination.flush();
                         digest.update(byteblock, 0, bytesread);
                     }
-                    try {
-                        Thread.sleep(delaymillis);
-                    } catch (InterruptedException e) {
-
-                    }
-
                 }
-                ScatterLogManager.v("BlockDataPacket", "CAT DONE");
                 this.streamhash = digest.digest();
+                ScatterLogManager.v("BlockDataPacket", "CAT DONE streamhash: " +
+                        BlockDataPacket.bytesToHex(streamhash) );
+
             } catch (IOException e) {
                 ScatterLogManager.e("Packet", "IOEXception when reading from filestream");
                 this.invalid = true;
             } catch(NoSuchAlgorithmException n) {
-                n.printStackTrace();
+                ScatterLogManager.e("BlockDataPacket", "NosuchAlgorithm");
             }
             this.sent = true;
         } else {

@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DialogTitle;
@@ -123,7 +125,7 @@ public class NormalActivity extends AppCompatActivity {
             public void onSelectedFilePaths(String[] files) {
                 if(isExternalStorageReadable() && isExternalStorageWritable()) {
                     if(files.length == 1) {
-                        File f = new File(files[0]);
+                        final File f = new File(files[0]);
 
 
                         ScatterLogManager.v(TAG, "opening file " + files[0]);
@@ -131,16 +133,17 @@ public class NormalActivity extends AppCompatActivity {
                             try {
                                 FileInputStream i = new FileInputStream(f);
 
-                               BlockDataPacket bd = new BlockDataPacket(i,f.length(),mService.luid);
+                               final BlockDataPacket bd = new BlockDataPacket(i,f.length(),mService.luid);
                                 if(bd.isInvalid()) {
                                     ScatterLogManager.e(TAG, "Invalid file blockdata packet");
                                 }
                                 mService.getBluetoothManager().sendStreamToBroadcast(bd.getContents(),i,f.length(),false);
                                 FileInputStream n = new FileInputStream(f);
-                                String hash2 = BlockDataPacket.bytesToHex(ScatterRoutingService.getHashForStream(n));
-                                    Messages.data.add(new DispMessage(hash2,
-                                            "Sent file len " + f.length()));
-                                    Messages.notifyDataSetChanged();
+
+                                Messages.data.add(new DispMessage("Sent!",
+                                        "Sent file len " + f.length()));
+                                Messages.notifyDataSetChanged();
+
                             } catch (Exception e) {
                                     ScatterLogManager.e(TAG, Log.getStackTraceString(e) + " test");
                             }

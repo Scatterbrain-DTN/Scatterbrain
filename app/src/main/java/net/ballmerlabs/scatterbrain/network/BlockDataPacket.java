@@ -72,6 +72,8 @@ public class BlockDataPacket extends ScatterStanza {
         String hash = null;
         try {
             if (isfile) {
+                if(streamhash == null)
+                    return null; 
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
                 digest.update(senderluid, 0, senderluid.length);
                 digest.update(streamhash, 0, streamhash.length);

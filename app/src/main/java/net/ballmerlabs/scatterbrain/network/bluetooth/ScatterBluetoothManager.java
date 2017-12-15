@@ -69,7 +69,7 @@ public class ScatterBluetoothManager {
     private Method setDuration;
     private String unpauseKey;
     public final int UNPAUSEDELAY = 1000 * 30;
-    public final long CATBLOCK_DELAY = 256;
+    public final long CATBLOCK_DELAY = 0;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
@@ -255,7 +255,7 @@ public class ScatterBluetoothManager {
 
 
     //function called when a packet with an accompanying file stream is recieved.
-    // don't call this on the main thread. Blocking. 
+    // don't call this on the main thread. Blocking.
     public void onSuccessfulFileRecieve(final BlockDataPacket in,final boolean fake) {
         if(!NormalActivity.active && !fake)
             trunk.mainService.startMessageActivity();
@@ -272,7 +272,6 @@ public class ScatterBluetoothManager {
 
         long offset = 0;
         if (NormalActivity.active || fake) {
-            byte[] hash = null;
 
             try {
                 File out = new File("/dev/null");
@@ -280,22 +279,25 @@ public class ScatterBluetoothManager {
                 System.out.println("catting body len " + in.size);
                 in.catBody(ostream, CATBLOCK_DELAY);
                 System.out.println("catted");
-                hash = in.streamhash;
+                final byte[] hash = in.streamhash;
                 if (hash != null && !fake) {
-                    trunk.mainService.getMessageAdapter().data.add(
-                            new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + in.size));
-                    trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                    Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            trunk.mainService.getMessageAdapter().data.add(
+                                    new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + in.size));
+                            trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                        }
+                    };
+                    Handler h = new Handler(Looper.getMainLooper());
+                    h.post(r);
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (fake) {
-                System.out.println("recieved hash " + BlockDataPacket.bytesToHex(hash));
-            }
-            //    ScatterLogManager.e(TAG, "Appended message to message list");
-        }
 
-       // }
+        }
     }
 
 

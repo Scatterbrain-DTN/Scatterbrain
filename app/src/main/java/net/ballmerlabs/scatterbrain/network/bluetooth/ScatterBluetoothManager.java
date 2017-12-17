@@ -601,10 +601,10 @@ public class ScatterBluetoothManager {
         }
         final BlockDataPacket blockDataPacket;
         if(!fake)
-            blockDataPacket = new BlockDataPacket(istream, len, trunk.mainService.luid);
+            blockDataPacket = new BlockDataPacket(istream,"fakename",  len, trunk.mainService.luid);
         else {
             byte[] luid = {1,2,3,4,5,6};
-            blockDataPacket = new BlockDataPacket(istream, len, luid);
+            blockDataPacket = new BlockDataPacket(istream, "fakename", len, luid);
         }
         if (isConnected) {
             try {

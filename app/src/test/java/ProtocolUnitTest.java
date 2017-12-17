@@ -98,7 +98,7 @@ public class ProtocolUnitTest {
             File tmpin2 = new File("/tmp/t3fghju2");
             FileInputStream in = new FileInputStream(tmpin);
             FileInputStream in2 = new FileInputStream(tmpin2);
-            BlockDataPacket bd = new BlockDataPacket(in, tmpin.length(), senderluid);
+            BlockDataPacket bd = new BlockDataPacket(in,"fakename", tmpin.length(), senderluid);
             BlockDataPacket bdnew = new BlockDataPacket(bd.getContents(), in2);
             bd.catBody(devnull);
             bdnew.catBody(devnull);
@@ -329,7 +329,7 @@ public class ProtocolUnitTest {
         try {
             FileOutputStream out = new FileOutputStream(testfile);
             FileInputStream in = new FileInputStream(infile);
-            BlockDataPacket bd = new BlockDataPacket(in, 4096, senderluid);
+            BlockDataPacket bd = new BlockDataPacket(in,"fakename", 4096, senderluid);
             int fileStatusFromData = BlockDataPacket.getFileStatusFromData(bd.getContents());
             if(fileStatusFromData == 1) {
                 works = true;
@@ -349,7 +349,7 @@ public class ProtocolUnitTest {
         File f = new File("/dev/urandom");
         try {
             FileInputStream i = new FileInputStream(f);
-            BlockDataPacket bd = new BlockDataPacket(i, 4096 , senderluid);
+            BlockDataPacket bd = new BlockDataPacket(i,"fakename", 4096 , senderluid);
         } catch (IOException e) {
 
         }
@@ -372,7 +372,7 @@ public class ProtocolUnitTest {
             FileOutputStream os = new FileOutputStream(out);
             FileInputStream is = new FileInputStream(in);
             os.write(randomdata);
-            BlockDataPacket bd = new BlockDataPacket(is, randomdata.length, senderluid);
+            BlockDataPacket bd = new BlockDataPacket(is,"fakename", randomdata.length, senderluid);
             bd.catBody(os);
             hash = BlockDataPacket.bytesToHex(bd.streamhash);
             System.out.println(BlockDataPacket.bytesToHex(bd.streamhash));

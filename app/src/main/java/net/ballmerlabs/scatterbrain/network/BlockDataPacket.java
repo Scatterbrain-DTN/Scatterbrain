@@ -5,6 +5,7 @@ import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
@@ -52,7 +53,7 @@ public class BlockDataPacket extends ScatterStanza {
 
     }
 
-    public BlockDataPacket(InputStream source, long len, byte[] senderluid) {
+    public BlockDataPacket(InputStream source, String name,  long len, byte[] senderluid) {
         super(HEADERSIZE);
         this.size = len;
         this.err = new int[ERRSIZE];
@@ -64,7 +65,16 @@ public class BlockDataPacket extends ScatterStanza {
         this.text = false;
         this.sent = false;
         this.streamhash = null;
-        this.filename = new byte[FILENAMELEN];
+        try {
+            byte[] b = name.getBytes("UTF-8");
+            if(b.length > FILENAMELEN) {
+                invalid = true;
+                return;
+            }
+            this.filename = Arrays.copyOf(b,FILENAMELEN);
+        } catch(UnsupportedEncodingException e) {
+
+        }
         if (len > Integer.MAX_VALUE)
             invalid = true;
         if (init() == null)
@@ -314,6 +324,14 @@ public class BlockDataPacket extends ScatterStanza {
             return -1;
         else
             return size;
+    }
+
+    public String getFilename() {
+        try {
+            return new String(this.filename, "UTF-8");
+        } catch(UnsupportedEncodingException e) {
+            return null;
+        }
     }
 
     public void catBody(OutputStream destination) {

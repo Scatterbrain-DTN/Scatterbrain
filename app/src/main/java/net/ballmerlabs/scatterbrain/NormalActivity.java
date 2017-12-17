@@ -133,7 +133,7 @@ public class NormalActivity extends AppCompatActivity {
                             try {
                                 FileInputStream i = new FileInputStream(f);
 
-                               final BlockDataPacket bd = new BlockDataPacket(i,"fakename", f.length(),mService.luid);
+                               final BlockDataPacket bd = new BlockDataPacket(i,f.getName(), f.length(),mService.luid);
                                 if(bd.isInvalid()) {
                                     ScatterLogManager.e(TAG, "Invalid file blockdata packet");
                                 }
@@ -141,7 +141,7 @@ public class NormalActivity extends AppCompatActivity {
                                 FileInputStream n = new FileInputStream(f);
 
                                 Messages.data.add(new DispMessage("Sent!",
-                                        "Sent file len " + f.length()));
+                                        "Sent file len " + f.length() + " name " + bd.getFilename()));
                                 Messages.notifyDataSetChanged();
 
                             } catch (Exception e) {

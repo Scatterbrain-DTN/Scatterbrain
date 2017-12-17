@@ -285,7 +285,8 @@ public class ScatterBluetoothManager {
                         @Override
                         public void run() {
                             trunk.mainService.getMessageAdapter().data.add(
-                                    new DispMessage(BlockDataPacket.bytesToHex(hash), "FILE: len " + in.size));
+                                    new DispMessage(BlockDataPacket.bytesToHex(hash),
+                                            "FILE: len " + in.size + " name " + in.getFilename()));
                             trunk.mainService.getMessageAdapter().notifyDataSetChanged();
                         }
                     };

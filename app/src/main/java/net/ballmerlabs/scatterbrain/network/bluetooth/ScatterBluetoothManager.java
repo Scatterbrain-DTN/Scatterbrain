@@ -566,6 +566,9 @@ public class ScatterBluetoothManager {
         final Socket sock;
         final boolean isConnected;
         final LocalPeer target;
+
+        if (!fake)
+            trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
         if(!fake) {
             synchronized (connectedList) {
                 target = connectedList.get(mactarget);

@@ -121,7 +121,6 @@ public class LeDataStore {
     }
 
     public synchronized int enqueueMessageNoDuplicate(BlockDataPacket bd) {
-
         if(bd.getHash() != null) {
             Cursor cu = db.rawQuery("SELECT * FROM " +
                             MsgDataDb.MessageQueue.TABLE_NAME +

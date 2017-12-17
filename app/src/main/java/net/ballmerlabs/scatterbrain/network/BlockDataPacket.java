@@ -2,12 +2,16 @@ package net.ballmerlabs.scatterbrain.network;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -32,6 +36,7 @@ public class BlockDataPacket extends ScatterStanza {
     public boolean isfile;
     public InputStream source;
     public boolean sent;
+    public File diskfile;
     public static final int HEADERSIZE = 27 + FILENAMELEN;
     private static final byte MAGIC = 124;
 
@@ -85,9 +90,21 @@ public class BlockDataPacket extends ScatterStanza {
     public String getHash() {
         String hash = null;
         try {
+            FileInputStream fo = null;
             if (isfile) {
-                if(streamhash == null)
-                    return null;
+                if(streamhash == null) {
+                    if(diskfile == null)
+                        return null;
+                    if(diskfile.length() != this.size)
+                        return null;
+
+                    try {
+                         fo = new FileInputStream(this.diskfile);
+                    } catch(IOException e) {
+                        return null;
+                    }
+                    updateStreamHash(fo);
+                }
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 digest.update(senderluid, 0, senderluid.length);
                 digest.update(filename, 0, filename.length);
@@ -127,6 +144,47 @@ public class BlockDataPacket extends ScatterStanza {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+
+    //only call if you know the file is correct
+    public boolean updateStreamHash(FileInputStream f) {
+        try {
+            byte[] byteblock = new byte[16384];
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            int count = (int)size;
+            int bytesread = 0;
+            boolean go = true;
+            while (go) {
+
+                if(f.available() > 0) {
+                    go = (bytesread = source.read(byteblock)) != -1;
+                    count -= bytesread;
+                    if (count < 0 - bytesread) {
+                        //overrun this shouldn't happen
+                        invalid = true;
+                        break;
+                    }
+                    if (count == 0) {
+                        go = false;
+                    } else if (count < 0) {
+                        bytesread = bytesread + count;
+                        go = false;
+                    }
+                    digest.update(byteblock, 0, bytesread);
+                }
+            }
+            this.streamhash = digest.digest();
+
+        } catch(NoSuchAlgorithmException e) {
+            ScatterLogManager.e("BlockDataPacket" ,"NoSuchAlgorithm");
+            return false;
+        } catch(IOException e) {
+            ScatterLogManager.e("BlockDataPacket", "IOException when updating streamhash");
+            return false;
+        }
+        return true;
+
     }
 
 
@@ -215,11 +273,26 @@ public class BlockDataPacket extends ScatterStanza {
         }
     }
 
+    public BlockDataPacket(byte[] data, File filesource) {
+        this(data);
+        try {
+            FileInputStream f = new FileInputStream(filesource);
+            this.isfile = true;
+            this.source = f;
+            this.body = new byte[0];
+            this.diskfile = filesource;
+        } catch(IOException e) {
+            ScatterLogManager.e("BlockDataPacket", "IOException in file input");
+        }
+
+    }
+
     public BlockDataPacket(byte[] data, InputStream source) {
         this(data);
         this.isfile = true;
         this.source = source;
         this.body = new byte[0];
+        this.diskfile = null;
     }
 
     private byte[] init() {
@@ -338,8 +411,17 @@ public class BlockDataPacket extends ScatterStanza {
         catBody(destination, 0);
     }
 
+    public void catBody(File destination, long delaymillis) {
+        try {
+            FileOutputStream fo = new FileOutputStream(destination);
+            this.diskfile = destination;
+            catBody(fo, delaymillis);
+        } catch(IOException e) {
+            ScatterLogManager.e("BlockDataPacket" , "Tried to cat to bad file");
+        }
+    }
+
     public void catBody(OutputStream destination, long delaymillis) {
-        //ScatterLogManager.v("REMOVETHIS", "catbody");
         final int MAXBLOCKSIZE = 512;
         if(isfile) {
             int bytesread = 0;
@@ -349,13 +431,12 @@ public class BlockDataPacket extends ScatterStanza {
             } else {
                 read = MAXBLOCKSIZE;
             }
-            //ScatterLogManager.v("REMOVETHIS", "catting read " + read + " size " + size);
             byte[] byteblock = new byte[read];
 
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-                digest.update(senderluid, 0, senderluid.length);
+
                 int count = (int)size;
                 boolean go = true;
                 while (go) {
@@ -365,19 +446,15 @@ public class BlockDataPacket extends ScatterStanza {
                         count -= bytesread;
                         if (count < 0 - bytesread) {
                             //overrun this shouldn't happen
-               //             ScatterLogManager.e("REMOVETHIS", "err: overrun");
                             invalid = true;
                             break;
                         }
                         if (count == 0) {
-                   //         ScatterLogManager.e("REMOVETHIS", "done: count is 0");
                             go = false;
                         } else if (count < 0) {
                             bytesread = bytesread + count;
-                            //ScatterLogManager.e("REMOVETHIS", "done: count < 0 corrected: " + bytesread);
                             go = false;
                         }
-                       // ScatterLogManager.v("BlockDataPacket", "catbody read " + bytesread + " " + count);
 
                         destination.write(byteblock, 0, bytesread);
                         destination.flush();
@@ -398,6 +475,20 @@ public class BlockDataPacket extends ScatterStanza {
         } else {
             this.invalid = true;
         }
+    }
+
+    public boolean setDiskFile(File f) {
+        if(f.length() == this.size || f.length() == 0) {
+            this.diskfile = f;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public File getDiskFile() {
+        return this.diskfile;
     }
 }
 

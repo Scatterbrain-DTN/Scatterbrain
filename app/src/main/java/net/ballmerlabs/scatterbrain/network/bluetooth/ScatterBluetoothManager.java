@@ -397,7 +397,7 @@ public class ScatterBluetoothManager {
             }
             else {
                 if(p.isfile) {
-                    sendRawStream(device, p.getContents(), p.source, p.size, false);
+                    sendRawStream(device, p, false);
                 } else {
                     sendRaw(device, p.contents, false);
                 }
@@ -464,14 +464,14 @@ public class ScatterBluetoothManager {
 
     //sends a BlockDataPacket to all connected peers
     @SuppressWarnings("unused")
-    public void sendMessageToBroadcast(final byte[] message, final boolean text,  final boolean file) {
+    public void sendMessageToBroadcast(final BlockDataPacket bd) {
         final String SENDBR_PAUSETAG = "sendmessagebroadcast";
         pauseDiscoverLoopThread(SENDBR_PAUSETAG);
         for (final Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
             Runnable sendRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    sendMessageToLocalPeer(ent.getKey(), message, text, file);
+                    sendMessageToLocalPeer(ent.getKey(), bd);
                 }
             };
             bluetoothHan.post(sendRunnable);
@@ -487,7 +487,7 @@ public class ScatterBluetoothManager {
         bluetoothHan.postDelayed(unpauseRunnable, UNPAUSEDELAY);
     }
 
-    public void sendStreamToBroadcast(final byte[] message, final InputStream stream,final long len,
+    public void sendStreamToBroadcast(final BlockDataPacket bd,
                                       final boolean fake) {
         final String SSTREMPAUSETAG = "sendstreambroadcast";
         pauseDiscoverLoopThread(SSTREMPAUSETAG);
@@ -495,7 +495,7 @@ public class ScatterBluetoothManager {
             Runnable sendRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    sendRawStream(ent.getKey(), message, stream, len, fake);
+                    sendRawStream(ent.getKey(), bd, fake);
                 }
             };
             bluetoothHan.post(sendRunnable);
@@ -515,11 +515,9 @@ public class ScatterBluetoothManager {
      * This method also has a function to connect to a local tcp debug
      * server outside of android for unit testing.
      */
-    public synchronized void sendMessageToLocalPeer(final String mactarget, final byte[] message,
-                                        final boolean text, final boolean file) {
+    public synchronized void sendMessageToLocalPeer(final String mactarget, final BlockDataPacket bd) {
         final String SLOCALPEERPAUSETAG = "sendlocalpeer";
         pauseDiscoverLoopThread(SLOCALPEERPAUSETAG);
-        final BlockDataPacket bd = new BlockDataPacket(message,text, trunk.mainService.luid );
         Runnable sendRunnable = new Runnable() {
             @Override
             public void run() {
@@ -538,15 +536,15 @@ public class ScatterBluetoothManager {
         bluetoothHan.postDelayed(unpauseRunnable,UNPAUSEDELAY);
     }
 
-    public void sendStreamToLocalPeer(final String mactarget, final byte[] message,
-                                      final InputStream stream, final long len, final boolean fake) {
+    public void sendStreamToLocalPeer(final String mactarget, final BlockDataPacket bd,
+                                      final boolean fake) {
         final String SSLOCALPEERTAG = "sendstreamlocalpeer";
         pauseDiscoverLoopThread(SSLOCALPEERTAG);
 
         Runnable sendRunnable = new Runnable() {
             @Override
             public void run() {
-                sendRawStream(mactarget, message, stream, len, fake);
+                sendRawStream(mactarget, bd, fake);
             }
         };
 
@@ -562,8 +560,8 @@ public class ScatterBluetoothManager {
 
     }
 
-    public void sendRawStream(final String mactarget, final byte[] message,
-                               final InputStream istream, long len, final boolean fake) {
+    public void sendRawStream(final String mactarget, final BlockDataPacket blockDataPacket,
+                              final boolean fake) {
         final OutputStream ostream;
         final Socket sock;
         final boolean isConnected;
@@ -583,7 +581,6 @@ public class ScatterBluetoothManager {
             }
         }
         else {
-            target = null;
             try {
                 sock = new Socket(InetAddress.getByName("127.0.0.1"), 8877);
                 ostream = sock.getOutputStream();
@@ -599,13 +596,6 @@ public class ScatterBluetoothManager {
                 return;
             }
 
-        }
-        final BlockDataPacket blockDataPacket;
-        if(!fake)
-            blockDataPacket = new BlockDataPacket(istream,"fakename",  len, trunk.mainService.luid);
-        else {
-            byte[] luid = {1,2,3,4,5,6};
-            blockDataPacket = new BlockDataPacket(istream, "fakename", len, luid);
         }
         if (isConnected) {
             try {

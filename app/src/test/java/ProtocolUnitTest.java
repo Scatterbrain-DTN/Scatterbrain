@@ -387,6 +387,25 @@ public class ProtocolUnitTest {
     }
 
 
+    @Test
+    public void blockDataStreamPacketHasSaneFileName() {
+        File f = new File("/dev/zero");
+        byte[] senderluid = {1,2,3,4,5,6};
+        boolean err = false;
+        try {
+            FileInputStream fi = new FileInputStream(f);
+            BlockDataPacket bd = new BlockDataPacket(fi, "test name", 100, senderluid);
+            System.out.println(bd.getFilename());
+            //names are not fully equal because encoding is UTF-8
+            assertThat(bd.getFilename().contains("test name"), is(true));
+        } catch(IOException e) {
+            System.err.println("IOException");
+            err = true;
+        }
+
+        assertThat(err, is(false));
+    }
+
     /*
     @SuppressWarnings("unused")
     @Test

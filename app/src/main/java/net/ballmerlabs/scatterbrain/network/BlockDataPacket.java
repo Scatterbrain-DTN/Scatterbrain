@@ -22,6 +22,8 @@ public class BlockDataPacket extends ScatterStanza {
     public final boolean text;
     public final byte[] senderluid;
     public byte[] receiverluid;
+    public byte[] filename;
+    public static final int FILENAMELEN = 128;
     public long size;
     public byte[] streamhash;
     public final int[] err;
@@ -29,7 +31,7 @@ public class BlockDataPacket extends ScatterStanza {
     public boolean isfile;
     public InputStream source;
     public boolean sent;
-    public static final int HEADERSIZE = 27;
+    public static final int HEADERSIZE = 27 + FILENAMELEN;
     private static final byte MAGIC = 124;
 
     public BlockDataPacket(byte body[], boolean text, byte[] senderluid) {
@@ -42,6 +44,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.isfile = false;
         this.invalid = false;
         this.streamhash = null;
+        this.filename = null;
         //noinspection RedundantIfStatement
         if (init() == null)
             invalid = true;
@@ -61,6 +64,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.text = false;
         this.sent = false;
         this.streamhash = null;
+        this.filename = new byte[FILENAMELEN];
         if (len > Integer.MAX_VALUE)
             invalid = true;
         if (init() == null)
@@ -76,6 +80,7 @@ public class BlockDataPacket extends ScatterStanza {
                     return null;
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 digest.update(senderluid, 0, senderluid.length);
+                digest.update(filename, 0, filename.length);
                 digest.update(streamhash, 0, streamhash.length);
                 byte[] combined = digest.digest();
                 hash = bytesToHex(combined);
@@ -165,6 +170,13 @@ public class BlockDataPacket extends ScatterStanza {
             sizearr[i] = contents[i + 15];
         }
 
+        if(isfile) {
+            this.filename = new byte[FILENAMELEN];
+            for (int i = 0; i < FILENAMELEN; i++) {
+                this.filename[i] = contents[i + 23];
+            }
+        }
+
         this.size = ByteBuffer.wrap(sizearr).order(ByteOrder.LITTLE_ENDIAN).getLong();
 
         if (size > 0) {
@@ -172,7 +184,7 @@ public class BlockDataPacket extends ScatterStanza {
             if(!isfile) {
                 body = new byte[(int) size];
                 for (int x = 0; x < size; x++) {
-                    body[x] = contents[x + 23];
+                    body[x] = contents[x + 23 + FILENAMELEN];
                 }
             }
 
@@ -244,8 +256,16 @@ public class BlockDataPacket extends ScatterStanza {
             contents[i + 15] = sizebytes[i];
         }
 
+        for(int i=0;i<FILENAMELEN;i++) {
+            if(isfile) {
+                contents[i+23] = filename[i];
+            } else {
+                contents[i+23] = 0;
+            }
+        }
+
         for (int x = 0; x < body.length; x++) {
-            contents[x + 23] = body[x];
+            contents[x + 23 + FILENAMELEN] = body[x];
         }
         //basic crc for integrity check
         CRC32 crc = new CRC32();

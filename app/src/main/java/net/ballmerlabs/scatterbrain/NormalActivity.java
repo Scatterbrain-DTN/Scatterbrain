@@ -130,25 +130,20 @@ public class NormalActivity extends AppCompatActivity {
 
                         ScatterLogManager.v(TAG, "opening file " + files[0]);
                         if(mService != null) {
-                            try {
-                                FileInputStream i = new FileInputStream(f);
 
-                               final BlockDataPacket bd = new BlockDataPacket(i,f.getName(), f.length(),mService.luid);
+                               final BlockDataPacket bd = new BlockDataPacket(f,f.getName(), f.length(),mService.luid);
                                 if(bd.isInvalid()) {
                                     ScatterLogManager.e(TAG, "Invalid file blockdata packet");
                                 }
 
+
                                 mService.dataStore.enqueueMessageNoDuplicate(bd);
                                 mService.getBluetoothManager().sendStreamToBroadcast(bd,false);
-                                FileInputStream n = new FileInputStream(f);
 
                                 Messages.data.add(new DispMessage("Sent!",
                                         "Sent file len " + f.length() + " name " + bd.getFilename()));
                                 Messages.notifyDataSetChanged();
 
-                            } catch (Exception e) {
-                                    ScatterLogManager.e(TAG, Log.getStackTraceString(e) + " test");
-                            }
 
                         }
                     } else {

@@ -69,6 +69,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.invalid = false;
         this.text = false;
         this.sent = false;
+        this.diskfile = null;
         this.streamhash = null;
         try {
             byte[] b = name.getBytes("UTF-8");
@@ -86,6 +87,41 @@ public class BlockDataPacket extends ScatterStanza {
             invalid = true;
     }
 
+    public BlockDataPacket(File source, String name,  long len, byte[] senderluid) {
+        super(HEADERSIZE);
+        this.size = len;
+        this.err = new int[ERRSIZE];
+        this.body = new byte[0];
+        this.text = false;
+        this.senderluid = senderluid;
+        FileInputStream f = null;
+        try {
+            f = new FileInputStream(source);
+        } catch(IOException e) {
+            invalid = true;
+            return;
+        }
+        this.diskfile = source;
+        this.source = f;
+        this.isfile = true;
+        this.invalid = false;
+        this.sent = false;
+        this.streamhash = null;
+        try {
+            byte[] b = name.getBytes("UTF-8");
+            if(b.length > FILENAMELEN) {
+                invalid = true;
+                return;
+            }
+            this.filename = Arrays.copyOf(b,FILENAMELEN);
+        } catch(UnsupportedEncodingException e) {
+
+        }
+        if (len > Integer.MAX_VALUE)
+            invalid = true;
+        if (init() == null)
+            invalid = true;
+    }
 
     public String getHash() {
         String hash = null;

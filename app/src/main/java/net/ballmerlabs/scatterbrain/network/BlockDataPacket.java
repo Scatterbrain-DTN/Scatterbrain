@@ -28,7 +28,7 @@ public class BlockDataPacket extends ScatterStanza {
     public final byte[] senderluid;
     public byte[] receiverluid;
     public byte[] filename;
-    public static final int FILENAMELEN = 128;
+    public static final int FILENAMELEN = 256;
     public long size;
     public byte[] streamhash;
     public final int[] err;

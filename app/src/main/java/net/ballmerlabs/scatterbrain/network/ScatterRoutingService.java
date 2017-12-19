@@ -200,7 +200,7 @@ public class ScatterRoutingService extends Service {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
         trunk = new NetTrunk(this);
-        this.dataStore = new LeDataStore(this);
+        this.dataStore = new LeDataStore(this, trunk);
         dataStore.connect();
     }
 

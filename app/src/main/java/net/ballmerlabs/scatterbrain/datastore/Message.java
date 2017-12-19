@@ -30,9 +30,11 @@ public class Message {
 
     private final int file;
 
+    public final String filename;
+
     public Message(String uuid, int extbody,   String body, String application, int text, int file,  int ttl,
                    String replyto, String luid, String receiverLuid,
-                   String sig, String flags){
+                   String sig, String flags, String filename){
         this.application = application;
         this.body = body;
         this.ttl = ttl;
@@ -45,6 +47,7 @@ public class Message {
         this.extbody = extbody;
         this.text = text;
         this.file = file;
+        this.filename = filename;
     }
 
 

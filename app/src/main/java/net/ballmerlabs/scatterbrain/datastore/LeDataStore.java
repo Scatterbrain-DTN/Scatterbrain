@@ -8,7 +8,10 @@ import android.util.Base64;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
+import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
+import java.io.File;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -30,6 +33,7 @@ public class LeDataStore {
     @SuppressWarnings("unused")
     private Cursor c;
     public boolean connected;
+    private NetTrunk trunk;
     @SuppressWarnings("unused")
     public final String[] names = {
             MsgDataDb.MessageQueue.COLUMN_NAME_HASH,
@@ -45,9 +49,10 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS};
 
-    public LeDataStore(Service mainService) {
+    public LeDataStore(Service mainService , NetTrunk trunk) {
         dataTrimLimit = 100;
         this.mainService = mainService;
+        this.trunk = trunk;
 
     }
 
@@ -85,7 +90,7 @@ public class LeDataStore {
      */
     private synchronized void enqueueMessage(String uuid, String body, int ttl,boolean text, boolean file,
                                              String replyto, String luid,
-                                             String sig) {
+                                             String sig, String filename) {
 
        // ScatterLogManager.e(TAG, "Enqueued a message to the datastore.");
         ContentValues values = new ContentValues();
@@ -105,6 +110,7 @@ public class LeDataStore {
         else
             f = 0;
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FILE, f);
+        values.put(MsgDataDb.MessageQueue.COLUMN_NAME_FILENAME, filename);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_TTL, ttl);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK, replyto);
         values.put(MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID, luid);
@@ -154,7 +160,7 @@ public class LeDataStore {
                     return -1;
                 }
                 enqueueMessage(bd.getHash(), Base64.encodeToString(bd.body, Base64.DEFAULT),
-                        -1, bd.text, bd.isfile, Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
+                        -1, bd.text, bd.isfile,bd.getFilename(), Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
                         Base64.encodeToString(bd.senderluid, Base64.DEFAULT),
                         Base64.encodeToString(bd.receiverluid, Base64.DEFAULT));
             } else {
@@ -169,7 +175,6 @@ public class LeDataStore {
     }
 
 
-    //TODO: remove default values for text and file parameters
     @SuppressWarnings("unused")
     public synchronized BlockDataPacket messageToBlockData(Message m) {
         return new BlockDataPacket(Base64.decode(m.body, Base64.DEFAULT),true,
@@ -209,6 +214,7 @@ public class LeDataStore {
                         MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_FILE + SEP +
+                        MsgDataDb.MessageQueue.COLUMN_NAME_FILENAME + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
                         MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
@@ -221,25 +227,84 @@ public class LeDataStore {
         cu.moveToFirst();
         //check here for overrun problems
         while (!cu.isAfterLast()) {
-            String  hash = cu.getString(0);
-            int extbody = cu.getInt(1);
-            String body = cu.getString(2);
-            String application = cu.getString(3);
-            int text = cu.getInt(4);
-            int file = cu.getInt(5);
-            int ttl = cu.getInt(6);
-            String replylink = cu.getString(7);
-            String senderluid = cu.getString(8);
-            String receiverluid = cu.getString(9);
-            String sig = cu.getString(10);
-            String flags = cu.getString(11);
+            int id=0;
+            String  hash = cu.getString(id++);
+            int extbody = cu.getInt(id++);
+            String body = cu.getString(id++);
+            String application = cu.getString(id++);
+            int text = cu.getInt(id++);
+            int file = cu.getInt(id++);
+            String filename = cu.getString(id++);
+            int ttl = cu.getInt(id++);
+            String replylink = cu.getString(id++);
+            String senderluid = cu.getString(id++);
+            String receiverluid = cu.getString(id++);
+            String sig = cu.getString(id++);
+            String flags = cu.getString(id++);
 
             cu.moveToNext();
             finalresult.add(new Message(hash, extbody, body, application,
-                    text, file, ttl, replylink, senderluid, receiverluid, sig, flags));
+                    text, file, ttl, replylink, senderluid, receiverluid, sig, flags, filename));
         }
         cu.close();
 
+        return finalresult;
+
+    }
+
+
+
+    //TODO: make filename a unique key?
+    @SuppressWarnings({"unused", "Convert2Diamond"})
+    public synchronized ArrayList<Message> getMessageByFilename(String filename) {
+
+        //  ScatterLogManager.v(TAG, "Retreiving message from hash");
+
+        final String SEP = ", ";
+        Cursor cu = db.rawQuery("SELECT "+
+                MsgDataDb.MessageQueue.COLUMN_NAME_HASH + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_EXTBODY + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_BODY + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_FILE + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_FILENAME + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
+                MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS +
+                " FROM " + MsgDataDb.MessageQueue.TABLE_NAME +
+                " WHERE " + MsgDataDb.MessageQueue.COLUMN_NAME_FILENAME + " = " +
+                "?", new String[] {filename});
+
+        ArrayList<Message> finalresult = new ArrayList<Message>();
+        cu.moveToFirst();
+        //check here for overrun problems
+        while (!cu.isAfterLast()) {
+            int id = 0;
+            String hash = cu.getString(id++);
+            int extbody = cu.getInt(id++);
+            String body = cu.getString(id++);
+            String application = cu.getString(id++);
+            int text = cu.getInt(id++);
+            int file = cu.getInt(id++);
+            String filename_res = cu.getString(id++);
+            int ttl = cu.getInt(id++);
+            String replylink = cu.getString(id++);
+            String senderluid = cu.getString(id++);
+            String receiverluid = cu.getString(id++);
+            String sig = cu.getString(id++);
+            String flags = cu.getString(id++);
+
+            cu.moveToNext();
+            finalresult.add(new Message(hash, extbody, body, application,
+                        text, file, ttl, replylink, senderluid, receiverluid, sig, flags, filename_res));
+
+        }
+
+        cu.close();
         return finalresult;
 
     }
@@ -271,22 +336,24 @@ public class LeDataStore {
         cu.moveToFirst();
         //check here for overrun problems
         while (!cu.isAfterLast()) {
-            String  hash = cu.getString(0);
-            int extbody = cu.getInt(1);
-            String body = cu.getString(2);
-            String application = cu.getString(3);
-            int text = cu.getInt(4);
-            int file = cu.getInt(5);
-            int ttl = cu.getInt(6);
-            String replylink = cu.getString(7);
-            String senderluid = cu.getString(8);
-            String receiverluid = cu.getString(9);
-            String sig = cu.getString(10);
-            String flags = cu.getString(11);
+            int id = 0;
+            String  hash = cu.getString(id++);
+            int extbody = cu.getInt(id++);
+            String body = cu.getString(id++);
+            String application = cu.getString(id++);
+            int text = cu.getInt(id++);
+            int file = cu.getInt(id++);
+            String filename = cu.getString(id++);
+            int ttl = cu.getInt(id++);
+            String replylink = cu.getString(id++);
+            String senderluid = cu.getString(id++);
+            String receiverluid = cu.getString(id++);
+            String sig = cu.getString(id++);
+            String flags = cu.getString(id++);
 
             cu.moveToNext();
             finalresult.add(new Message(hash, extbody, body, application,
-                    text,file,  ttl, replylink, senderluid, receiverluid, sig, flags));
+                    text,file,  ttl, replylink, senderluid, receiverluid, sig, flags, filename));
         }
 
         cu.close();
@@ -384,6 +451,7 @@ public class LeDataStore {
                     MsgDataDb.MessageQueue.COLUMN_NAME_APPLICATION + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_TEXT + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_FILE + SEP +
+                    MsgDataDb.MessageQueue.COLUMN_NAME_FILENAME + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_TTL + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_REPLYLINK + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_SENDERLUID + SEP +
@@ -398,18 +466,20 @@ public class LeDataStore {
             cu.moveToFirst();
             //check here for overrun problems
             while (!cu.isAfterLast()) {
-                String hash = cu.getString(0);
-                int extbody = cu.getInt(1);
-                String body = cu.getString(2);
-                String application = cu.getString(3);
-                int text = cu.getInt(4);
-                int file = cu.getInt(5);
-                int ttl = cu.getInt(6);
-                String replylink = cu.getString(7);
-                String senderluid = cu.getString(8);
-                String receiverluid = cu.getString(9);
-                String sig = cu.getString(10);
-                String flags = cu.getString(11);
+                int id = 0;
+                String hash = cu.getString(id++);
+                int extbody = cu.getInt(id++);
+                String body = cu.getString(id++);
+                String application = cu.getString(id++);
+                int text = cu.getInt(id++);
+                int file = cu.getInt(id++);
+                String filename = cu.getString(id++);
+                int ttl = cu.getInt(id++);
+                String replylink = cu.getString(id++);
+                String senderluid = cu.getString(id++);
+                String receiverluid = cu.getString(id++);
+                String sig = cu.getString(id++);
+                String flags = cu.getString(id++);
 
                 cu.moveToNext();
                 boolean t;
@@ -428,7 +498,12 @@ public class LeDataStore {
                 }
                 //ScatterLogManager.e(TAG, body);
                 if (body.length() > 0) {
-                    finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
+                    if(file != 0 ) {
+                        BlockDataPacket bd = trunk.filehelper.bdPacketFromFilename(filename);
+                        finalresult.add(bd);
+                    } else {
+                        finalresult.add(new BlockDataPacket(Base64.decode(body, Base64.DEFAULT), t, Base64.decode(senderluid, Base64.DEFAULT)));
+                    }
                 }
             }
 

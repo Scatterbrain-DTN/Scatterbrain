@@ -2,6 +2,7 @@ package net.ballmerlabs.scatterbrain.network;
 
 import net.ballmerlabs.scatterbrain.SettingsManager;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
+import net.ballmerlabs.scatterbrain.network.filesystem.FileHelper;
 
 /**
  * Collection of global objects for use by scatterbrain
@@ -14,6 +15,7 @@ public class NetTrunk {
     public final DeviceProfile profile;
     public final SettingsManager settings;
     public final ScatterRoutingService mainService;
+    public final FileHelper filehelper;
 
 
     public NetTrunk(ScatterRoutingService mainService) {
@@ -24,5 +26,6 @@ public class NetTrunk {
         settings = new SettingsManager();
        // globnet.getWifiManager().startWifiDirctLoopThread();
         blman = new ScatterBluetoothManager(this);
+        filehelper = new FileHelper(mainService.getApplicationContext(), this);
     }
 }

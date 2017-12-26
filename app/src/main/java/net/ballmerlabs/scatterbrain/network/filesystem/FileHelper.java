@@ -13,6 +13,7 @@ import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 
 /**
@@ -23,6 +24,8 @@ public class FileHelper {
     public static final String TAG = "FileHelper";
     public static final int LOCATION_EXTERNAL = 1;
     public static final int LOCATION_PRIVATE = 0;
+    public static final int SOURCE_STREAM = 2;
+    public static final int SOURCE_FILE = 3;
     public String externalDir = "ScatterBrain";
     public String privateDir = "scatterbrainFiles";
     private Context context;
@@ -95,7 +98,10 @@ public class FileHelper {
 
 
     /* warning: this is blocking */
-    public byte[] writeBlockDataPacket(BlockDataPacket bd, int location) {
+    public byte[] writeBlockDataPacket(BlockDataPacket bd, int location, int source) {
+
+        if(source != SOURCE_FILE && source != SOURCE_STREAM)
+            return null;
 
         if(!isExternalStorageWritable())
             return null;
@@ -113,13 +119,14 @@ public class FileHelper {
             }
 
 
-            bd.catBody(out,0);
+            if(source == SOURCE_STREAM)
+                bd.catBody(out,0);
+            else if(source == SOURCE_FILE)
+                bd.catFile(out, 0);
         } else {
             return null;
         }
 
         return bd.streamhash;
     }
-
-
 }

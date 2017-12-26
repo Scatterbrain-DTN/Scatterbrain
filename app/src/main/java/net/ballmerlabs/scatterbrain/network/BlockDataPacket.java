@@ -451,6 +451,17 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
 
+    public void catFile(File destination, long delaymillis) {
+        try {
+            FileOutputStream fo = new FileOutputStream(destination);
+            this.diskfile = destination;
+            catFile(fo);
+        } catch(IOException e) {
+            ScatterLogManager.e("BlockDataPacket" , "Tried to cat to bad file");
+        }
+    }
+
+
     public boolean catFile(OutputStream destination) {
         final int MAXBLOCKSIZE = 512;
         if(isfile && diskfile != null) {

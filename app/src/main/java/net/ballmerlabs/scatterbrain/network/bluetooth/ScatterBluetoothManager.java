@@ -272,11 +272,9 @@ public class ScatterBluetoothManager {
             System.out.println("in onSuccessfulFileRecieve");
         //if(trunk.mainService.dataStore.enqueueMessageNoDuplicate(in) == 0) {
 
-        long offset = 0;
+        final byte[] hash = trunk.filehelper.writeBlockDataPacket(in, FileHelper.LOCATION_PRIVATE,
+                FileHelper.SOURCE_STREAM);
         if (NormalActivity.active || fake) {
-
-            final byte[] hash = trunk.filehelper.writeBlockDataPacket(in, FileHelper.LOCATION_PRIVATE);
-
             if (hash != null && !fake) {
                 Runnable r = new Runnable() {
                     @Override
@@ -393,7 +391,7 @@ public class ScatterBluetoothManager {
             }
             else {
                 if(p.isfile) {
-                    sendRawStream(device, p, false);
+                    sendRawStream(device, p, false, false);
                 } else {
                     sendRaw(device, p.contents, false);
                 }
@@ -486,12 +484,14 @@ public class ScatterBluetoothManager {
     public void sendStreamToBroadcast(final BlockDataPacket bd,
                                       final boolean fake) {
         final String SSTREMPAUSETAG = "sendstreambroadcast";
+        trunk.mainService.dataStore.enqueueMessageNoDuplicate(bd);
+        trunk.filehelper.writeBlockDataPacket(bd, FileHelper.LOCATION_PRIVATE, FileHelper.SOURCE_FILE);
         pauseDiscoverLoopThread(SSTREMPAUSETAG);
         for(final Map.Entry<String, LocalPeer> ent : connectedList.entrySet()) {
             Runnable sendRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    sendRawStream(ent.getKey(), bd, fake);
+                    sendRawStream(ent.getKey(), bd, fake, false);
                 }
             };
             bluetoothHan.post(sendRunnable);
@@ -532,40 +532,20 @@ public class ScatterBluetoothManager {
         bluetoothHan.postDelayed(unpauseRunnable,UNPAUSEDELAY);
     }
 
-    public void sendStreamToLocalPeer(final String mactarget, final BlockDataPacket bd,
-                                      final boolean fake) {
-        final String SSLOCALPEERTAG = "sendstreamlocalpeer";
-        pauseDiscoverLoopThread(SSLOCALPEERTAG);
-
-        Runnable sendRunnable = new Runnable() {
-            @Override
-            public void run() {
-                sendRawStream(mactarget, bd, fake);
-            }
-        };
-
-        final Runnable unpauseRunnable = new Runnable() {
-            @Override
-            public void run() {
-                unpauseDiscoverLoopThread(SSLOCALPEERTAG);
-            }
-        };
-
-        bluetoothHan.post(sendRunnable);
-        bluetoothHan.postDelayed(unpauseRunnable,UNPAUSEDELAY);
-
-    }
-
     public void sendRawStream(final String mactarget, final BlockDataPacket blockDataPacket,
-                              final boolean fake) {
+                              final boolean fake, final boolean enqueue) {
         final OutputStream ostream;
         final Socket sock;
         final boolean isConnected;
         final LocalPeer target;
 
-        if (!fake)
+        if (!fake && enqueue) {
             trunk.mainService.dataStore.enqueueMessageNoDuplicate(blockDataPacket);
+            trunk.filehelper.writeBlockDataPacket(blockDataPacket,FileHelper.LOCATION_PRIVATE,
+                    FileHelper.SOURCE_FILE);
+        }
         if(!fake) {
+
             synchronized (connectedList) {
                 target = connectedList.get(mactarget);
             }

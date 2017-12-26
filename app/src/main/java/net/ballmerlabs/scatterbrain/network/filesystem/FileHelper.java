@@ -90,7 +90,7 @@ public class FileHelper {
             return null;
 
         if(location == LOCATION_PRIVATE)
-            return context.getFilesDir();
+            return   context.getFilesDir();
         else {
             return Environment.getExternalStorageDirectory();
         }
@@ -111,11 +111,11 @@ public class FileHelper {
         String locationdir = locfile.getAbsolutePath();
 
         if(bd.getFilename() != null ) {
-            File out = new File(locationdir + bd.getFilename());
+            File out = new File(locationdir + "/" + bd.getFilename());
             int counter = 0;
             while (out.exists()) {
                 out = new File(locationdir
-                        + bd.getFilename() + "." + counter++);
+                        + "/" +bd.getFilename() + "." + counter++);
             }
 
 

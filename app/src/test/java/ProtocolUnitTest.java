@@ -397,7 +397,7 @@ public class ProtocolUnitTest {
             BlockDataPacket bd = new BlockDataPacket(fi, "test name", 100, senderluid);
             System.out.println(bd.getFilename());
             //names are not fully equal because encoding is UTF-8
-            assertThat(bd.getFilename().contains("test name"), is(true));
+            assertThat(bd.getFilename().equals("test name"), is(true));
         } catch(IOException e) {
             System.err.println("IOException");
             err = true;

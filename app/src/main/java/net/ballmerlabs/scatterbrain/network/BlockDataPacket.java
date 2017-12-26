@@ -444,7 +444,7 @@ public class BlockDataPacket extends ScatterStanza {
             return "";
         }
         try {
-            return new String(this.filename, "UTF-8");
+            return new String(this.filename, "UTF-8").trim();
         } catch(UnsupportedEncodingException e) {
             return null;
         }
@@ -457,7 +457,8 @@ public class BlockDataPacket extends ScatterStanza {
             this.diskfile = destination;
             catFile(fo);
         } catch(IOException e) {
-            ScatterLogManager.e("BlockDataPacket" , "Tried to cat to bad file");
+            ScatterLogManager.e("BlockDataPacket" , "Tried to cat to bad file " +
+            destination.getAbsolutePath());
         }
     }
 

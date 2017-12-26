@@ -37,6 +37,7 @@ public class BlockDataPacket extends ScatterStanza {
     public InputStream source;
     public boolean sent;
     public File diskfile;
+    public boolean streamresettable;
     public static final int HEADERSIZE = 27 + FILENAMELEN;
     private static final byte MAGIC = 124;
 
@@ -51,6 +52,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.invalid = false;
         this.streamhash = null;
         this.filename = null;
+        streamresettable = false;
         //noinspection RedundantIfStatement
         if (init() == null)
             invalid = true;
@@ -71,6 +73,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.sent = false;
         this.diskfile = null;
         this.streamhash = null;
+        this.streamresettable = false;
         try {
             byte[] b = name.getBytes("UTF-8");
             if(b.length > FILENAMELEN) {
@@ -107,6 +110,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.invalid = false;
         this.sent = false;
         this.streamhash = null;
+        this.streamresettable = true;
         try {
             byte[] b = name.getBytes("UTF-8");
             if(b.length > FILENAMELEN) {
@@ -436,12 +440,83 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
     public String getFilename() {
+        if(this.filename == null) {
+            return "";
+        }
         try {
             return new String(this.filename, "UTF-8");
         } catch(UnsupportedEncodingException e) {
             return null;
         }
     }
+
+
+    public boolean catFile(OutputStream destination) {
+        final int MAXBLOCKSIZE = 512;
+        if(isfile && diskfile != null) {
+            if(diskfile.length() != size)
+                return false;
+
+
+            int bytesread = 0;
+            final int read;
+            if(size < MAXBLOCKSIZE) {
+                read = (int)size;
+            } else {
+                read = MAXBLOCKSIZE;
+            }
+            byte[] byteblock = new byte[read];
+
+            try {
+
+                FileInputStream fi = new FileInputStream(this.diskfile);
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+
+                int count = (int)size;
+                boolean go = true;
+                while (go) {
+
+                    if(fi.available() > 0) {
+                        go = (bytesread = fi.read(byteblock)) != -1;
+                        count -= bytesread;
+                        if (count < 0 - bytesread) {
+                            //overrun this shouldn't happen
+                            invalid = true;
+                            break;
+                        }
+                        if (count == 0) {
+                            go = false;
+                        } else if (count < 0) {
+                            bytesread = bytesread + count;
+                            go = false;
+                        }
+
+                        destination.write(byteblock, 0, bytesread);
+                        destination.flush();
+                        digest.update(byteblock, 0, bytesread);
+                    }
+                }
+                this.streamhash = digest.digest();
+                ScatterLogManager.v("BlockDataPacket", "CAT DONE streamhash: " +
+                        BlockDataPacket.bytesToHex(streamhash) );
+
+            } catch (IOException e) {
+                ScatterLogManager.e("Packet", "IOEXception when reading from filestream");
+                this.invalid = true;
+                return false;
+            } catch(NoSuchAlgorithmException n) {
+                ScatterLogManager.e("BlockDataPacket", "NosuchAlgorithm");
+                return false;
+            }
+            this.sent = true;
+        } else {
+            this.invalid = true;
+            return false;
+        }
+        return true;
+    }
+
 
     public void catBody(OutputStream destination) {
         catBody(destination, 0);

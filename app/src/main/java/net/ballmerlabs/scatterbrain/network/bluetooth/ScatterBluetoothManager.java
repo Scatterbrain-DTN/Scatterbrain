@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.network.filesystem.FileHelper;
+
 /**
  * Abstraction for android bluetooth stack for Scatterbrain.
  */
@@ -273,29 +275,23 @@ public class ScatterBluetoothManager {
         long offset = 0;
         if (NormalActivity.active || fake) {
 
-            try {
-                File out = new File("/dev/null");
-                FileOutputStream ostream = new FileOutputStream(out);
-                System.out.println("catting body len " + in.size);
-                in.catBody(ostream, CATBLOCK_DELAY);
-                System.out.println("catted");
-                final byte[] hash = in.streamhash;
-                if (hash != null && !fake) {
-                    Runnable r = new Runnable() {
-                        @Override
-                        public void run() {
-                            trunk.mainService.getMessageAdapter().data.add(
-                                    new DispMessage(BlockDataPacket.bytesToHex(hash),
-                                            "FILE: len " + in.size + " name " + in.getFilename()));
-                            trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                        }
-                    };
-                    Handler h = new Handler(Looper.getMainLooper());
-                    h.post(r);
+            final byte[] hash = trunk.filehelper.writeBlockDataPacket(in, FileHelper.LOCATION_PRIVATE);
 
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (hash != null && !fake) {
+                Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        trunk.mainService.getMessageAdapter().data.add(
+                                new DispMessage(BlockDataPacket.bytesToHex(hash),
+                                        "FILE: len " + in.size + " name " + in.getFilename()));
+                        trunk.mainService.getMessageAdapter().notifyDataSetChanged();
+                    }
+                };
+                Handler h = new Handler(Looper.getMainLooper());
+                h.post(r);
+
+            } else if( hash == null) {
+                ScatterLogManager.e(TAG, "Failed to store packet in filesystem");
             }
 
         }

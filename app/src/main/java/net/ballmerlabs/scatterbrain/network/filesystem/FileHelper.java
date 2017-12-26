@@ -95,13 +95,13 @@ public class FileHelper {
 
 
     /* warning: this is blocking */
-    public boolean writeBlockDataPacket(BlockDataPacket bd, int location) {
+    public byte[] writeBlockDataPacket(BlockDataPacket bd, int location) {
 
         if(!isExternalStorageWritable())
-            return false;
+            return null;
         File locfile = getDirectory(location);
         if(locfile == null)
-            return false;
+            return null;
         String locationdir = locfile.getAbsolutePath();
 
         if(bd.getFilename() != null ) {
@@ -112,17 +112,13 @@ public class FileHelper {
                         + bd.getFilename() + "." + counter++);
             }
 
-            try {
-                FileOutputStream fo = new FileOutputStream(out);
-                bd.catBody(fo);
-            } catch(IOException e) {
-                return false;
-            }
+
+            bd.catBody(out,0);
         } else {
-            return false;
+            return null;
         }
 
-        return true;
+        return bd.streamhash;
     }
 
 

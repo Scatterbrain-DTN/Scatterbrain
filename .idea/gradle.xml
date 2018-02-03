@@ -12,7 +12,6 @@
             <option value="$PROJECT_DIR$/android-file-chooser/filechooser" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/blelib" />
-            <option value="$PROJECT_DIR$/totallynormal" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

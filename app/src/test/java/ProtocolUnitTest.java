@@ -3,6 +3,7 @@
  * reduce the chance of bugged out packets.
  **/
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
@@ -34,6 +35,22 @@ import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("unused")
 public class ProtocolUnitTest {
+
+
+    @Test
+    public void DataStoreTemplate() {
+        ScatterRoutingService mainService = new ScatterRoutingService();
+        NetTrunk netTrunk = new NetTrunk(mainService);
+        LeDataStore dataStore = new LeDataStore(mainService, netTrunk);
+        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false,senderluid);
+        dataStore.enqueueMessageNoDuplicate(bd);
+        ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(1);
+        assertThat(res.size() == 1, is(true));
+        assertThat(res.get(0).isInvalid(), is(false));
+    }
 
     @SuppressWarnings("unused")
     @Test

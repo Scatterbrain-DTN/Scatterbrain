@@ -20,17 +20,13 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     private final ArrayList<WifiP2pDeviceList> peerstack;
     @SuppressWarnings("unused")
     private TextView peersView;
-    private final WifiManager manager;
     @SuppressWarnings("FieldCanBeLocal")
     private final GlobalNet globnet;
-    private final WifiP2pManager.Channel channel;
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "PeerListener";
     @SuppressWarnings("unused")
     public ScatterPeerListener(NetTrunk trunk) {
-        this.manager = trunk.globnet.getWifiManager();
         this.globnet = trunk.globnet;
-        this.channel = globnet.getWifiManager().getChannel();
         haspeers = false;
         peerstack = new ArrayList<>();
 
@@ -53,7 +49,7 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
         }
 
         for(WifiP2pDevice d : peers.getDeviceList()) {
-            manager.connectToPeer(channel, d);
+            //broke
         }
     }
 

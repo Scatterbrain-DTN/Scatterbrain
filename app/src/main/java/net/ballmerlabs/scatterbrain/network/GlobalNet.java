@@ -18,7 +18,6 @@ public class GlobalNet {
     private final ArrayList<ScatterStanza> packetqueue;
     @SuppressWarnings("unused")
     public final String TAG = "GlobNet";
-    private final WifiManager directmanager;
     private final NetTrunk trunk;
     @SuppressWarnings("unused")
     public ScatterPeerListener peerlistener;
@@ -27,8 +26,6 @@ public class GlobalNet {
     public GlobalNet(NetTrunk trunk) {
         packetqueue = new ArrayList<>();
         this.trunk = trunk;
-        directmanager = new WifiManager(trunk);
-        directmanager.stopWifiDirectLoopThread();
     }
 
 
@@ -59,17 +56,6 @@ public class GlobalNet {
         return new BlockDataPacket(body, text, trunk.mainService.luid);
     }
 
-
-    @SuppressWarnings("unused")
-    public IntentFilter getP2pIntentFilter() {
-        return directmanager.getP2pIntenetFilter();
-    }
-
-
-
-    public WifiManager getWifiManager() {
-        return directmanager;
-    }
 
 
     @SuppressWarnings("unused")

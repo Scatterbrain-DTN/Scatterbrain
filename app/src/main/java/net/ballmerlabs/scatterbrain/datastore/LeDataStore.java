@@ -2,6 +2,7 @@ package net.ballmerlabs.scatterbrain.datastore;
 
 import android.app.Service;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
@@ -63,7 +64,8 @@ public class LeDataStore {
 
     public synchronized void connect() {
         ScatterLogManager.v(TAG, "Connected to datastore");
-        helper = new MsgDbHelper(mainService.getApplicationContext());
+        Context c  = mainService.getApplicationContext();
+        helper = new MsgDbHelper(c);
         db = helper.getWritableDatabase();
         connected = true;
     }

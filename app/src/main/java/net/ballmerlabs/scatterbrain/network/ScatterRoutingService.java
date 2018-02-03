@@ -1,6 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -48,6 +49,7 @@ public class ScatterRoutingService extends Service {
     @SuppressWarnings("unused")
     private ArrayAdapter<String> logbuffer;
     public LeDataStore dataStore;
+    public Application fakeapp;
 
 
 
@@ -60,6 +62,20 @@ public class ScatterRoutingService extends Service {
 
     @SuppressWarnings("unused")
     public ScatterRoutingService() {
+        fakeapp = null;
+    }
+
+    public ScatterRoutingService(Application fakeapp) {
+        this.fakeapp = fakeapp;
+    }
+
+    @Override
+    public Context getApplicationContext() {
+        if(fakeapp == null) {
+            return super.getApplicationContext();
+        } else {
+            return fakeapp;
+        }
     }
 
     @Override

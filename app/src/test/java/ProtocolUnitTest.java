@@ -13,7 +13,12 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterReceiveThread;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.cglib.core.Block;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowSQLiteConnection;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -34,12 +39,16 @@ import static org.junit.Assert.assertThat;
 
 
 @SuppressWarnings("unused")
+
+
+@RunWith(RobolectricTestRunner.class)
 public class ProtocolUnitTest {
 
 
     @Test
     public void DataStoreTemplate() {
-        ScatterRoutingService mainService = new ScatterRoutingService();
+        ScatterRoutingService mainService = new ScatterRoutingService(RuntimeEnvironment.application);
+
         NetTrunk netTrunk = new NetTrunk(mainService);
         LeDataStore dataStore = new LeDataStore(mainService, netTrunk);
         byte[] senderluid = {1,2,3,4,5,6};

@@ -1,5 +1,8 @@
 package net.ballmerlabs.scatterbrain.network;
 
+import android.content.Context;
+
+import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.SettingsManager;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 import net.ballmerlabs.scatterbrain.network.filesystem.FileHelper;
@@ -26,6 +29,13 @@ public class NetTrunk {
         settings = new SettingsManager();
        // globnet.getWifiManager().startWifiDirctLoopThread();
         blman = new ScatterBluetoothManager(this);
-        filehelper = new FileHelper(mainService.getApplicationContext(), this);
+        Context c = null;
+        try {
+             c = mainService.getApplicationContext();
+        } catch(NullPointerException n) {
+            n.printStackTrace();
+        }
+        filehelper = new FileHelper(c, this);
+
     }
 }

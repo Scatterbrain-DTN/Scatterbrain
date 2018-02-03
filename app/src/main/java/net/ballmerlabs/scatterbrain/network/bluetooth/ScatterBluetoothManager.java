@@ -184,7 +184,11 @@ public class ScatterBluetoothManager {
         currentUUID = 0;
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothDevice.ACTION_UUID);
-        trunk.mainService.registerReceiver(mReceiver, filter);
+        try {
+            trunk.mainService.registerReceiver(mReceiver, filter);
+        } catch(NullPointerException n) {
+            ScatterLogManager.e("EMU", "running in emulated mode");
+        }
         adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter !=  null) {
             ScatterLogManager.e(TAG, "ERROR, bluetooth not supported");

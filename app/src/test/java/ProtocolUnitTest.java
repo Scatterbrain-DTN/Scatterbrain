@@ -2,6 +2,10 @@
  * Performs tests on the scatterbrain protocol outside android to
  * reduce the chance of bugged out packets.
  **/
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
@@ -15,6 +19,7 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterReceiveThread;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.cglib.core.Block;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -42,15 +47,17 @@ import static org.junit.Assert.assertThat;
 
 
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class ProtocolUnitTest {
-
 
     @Test
     public void DataStoreTemplate() {
-        ScatterRoutingService mainService = new ScatterRoutingService(RuntimeEnvironment.application);
+        ScatterRoutingService mainService = Robolectric.setupService(ScatterRoutingService.class);
 
         NetTrunk netTrunk = new NetTrunk(mainService);
-        LeDataStore dataStore = new LeDataStore(mainService, netTrunk);
+        SQLiteOpenHelper helper = new TestOpenHelper(RuntimeEnvironment.application,
+                "testpath", null, 1);
+        LeDataStore dataStore = new LeDataStore(mainService, netTrunk, helper);
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
@@ -541,6 +548,41 @@ public class ProtocolUnitTest {
         BlockDataPacket bd2 = new BlockDataPacket(randomdata2, false, senderluid2);
 
         assertThat(bd2.size == BlockDataPacket.getSizeFromData(bd2.getContents()), is(true));
+    }
+
+
+    private static class TestOpenHelper extends SQLiteOpenHelper {
+        public boolean onCreateCalled;
+        public boolean onUpgradeCalled;
+        public boolean onOpenCalled;
+
+        public TestOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+            super(context, name, factory, version);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase database) {
+            onCreateCalled = true;
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+            onUpgradeCalled = true;
+        }
+
+        @Override
+        public void onOpen(SQLiteDatabase database) {
+            onOpenCalled = true;
+        }
+
+        @Override
+        public synchronized void close() {
+            onCreateCalled = false;
+            onUpgradeCalled = false;
+            onOpenCalled = false;
+
+            super.close();
+        }
     }
 
 }

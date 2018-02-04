@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.datastore.MsgDbHelper;
 /**
  * Represents a background service for routing packets
  * for the scatterbrain protocol.
@@ -216,7 +218,8 @@ public class ScatterRoutingService extends Service {
             this.luid = Base64.decode(uuid, Base64.DEFAULT);
         }
         trunk = new NetTrunk(this);
-        this.dataStore = new LeDataStore(this, trunk);
+        SQLiteOpenHelper helper = new MsgDbHelper(this.getApplicationContext());
+        this.dataStore = new LeDataStore(this, trunk, helper);
         dataStore.connect();
     }
 

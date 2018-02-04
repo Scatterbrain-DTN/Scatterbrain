@@ -8,7 +8,7 @@ import net.ballmerlabs.scatterbrain.datastore.MsgDataDb;
  * Created by gnu3ra on 11/3/15.
  */
 @SuppressWarnings("DefaultFileTemplate")
-class MsgDbHelper extends SQLiteOpenHelper {
+public class MsgDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MessageQueue.db";
 

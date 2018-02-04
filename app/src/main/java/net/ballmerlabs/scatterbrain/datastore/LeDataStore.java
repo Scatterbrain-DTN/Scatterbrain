@@ -1,10 +1,12 @@
 package net.ballmerlabs.scatterbrain.datastore;
 
+
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Base64;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
@@ -15,7 +17,6 @@ import java.io.File;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 /**
  * Created by gnu3ra on 11/3/15.
  * <p/>
@@ -27,7 +28,7 @@ import java.util.Arrays;
 public class LeDataStore {
     private SQLiteDatabase db;
     @SuppressWarnings("FieldCanBeLocal")
-    private MsgDbHelper helper;
+    private SQLiteOpenHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";
     private final Service mainService;
@@ -51,9 +52,10 @@ public class LeDataStore {
             MsgDataDb.MessageQueue.COLUMN_NAME_SIG,
             MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS};
 
-    public LeDataStore(Service mainService , NetTrunk trunk) {
+    public LeDataStore(Service mainService , NetTrunk trunk, SQLiteOpenHelper helper) {
         dataTrimLimit = 100;
         this.mainService = mainService;
+        this.helper = helper;
         this.trunk = trunk;
 
     }
@@ -65,7 +67,6 @@ public class LeDataStore {
     public synchronized void connect() {
         ScatterLogManager.v(TAG, "Connected to datastore");
         Context c  = mainService.getApplicationContext();
-        helper = new MsgDbHelper(c);
         db = helper.getWritableDatabase();
         connected = true;
     }

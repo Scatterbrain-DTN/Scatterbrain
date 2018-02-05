@@ -67,19 +67,6 @@ public class ScatterRoutingService extends Service {
         fakeapp = null;
     }
 
-    public ScatterRoutingService(Application fakeapp) {
-        this.fakeapp = fakeapp;
-    }
-
-    @Override
-    public Context getApplicationContext() {
-        if(fakeapp == null) {
-            return super.getApplicationContext();
-        } else {
-            return fakeapp;
-        }
-    }
-
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
 

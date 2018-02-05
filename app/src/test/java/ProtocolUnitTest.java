@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import net.ballmerlabs.scatterbrain.DatastoreCommandActivity;
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.datastore.MsgDbHelper;
@@ -50,14 +51,30 @@ import static org.junit.Assert.assertThat;
 @Config(manifest = Config.NONE)
 public class ProtocolUnitTest {
 
-    @Test
-    public void DataStoreTemplate() {
+
+    public static LeDataStore getConnectedDatastore() {
         ScatterRoutingService mainService = Robolectric.setupService(ScatterRoutingService.class);
 
         NetTrunk netTrunk = new NetTrunk(mainService);
         SQLiteOpenHelper helper = new MsgDbHelper(RuntimeEnvironment.application);
         LeDataStore dataStore = new LeDataStore(mainService, netTrunk, helper);
         dataStore.connect();
+        return dataStore;
+    }
+
+    @Test
+    public void DataStoreConnectDisconnectTest() {
+        LeDataStore dataStore = getConnectedDatastore();
+        assertThat(dataStore.connected, is(true));
+        dataStore.disconnect();
+        assertThat(dataStore.connected, is(false));
+
+    }
+
+
+    @Test
+    public void datastoreBlockDataOperations() {
+        LeDataStore dataStore = getConnectedDatastore();
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
@@ -66,12 +83,49 @@ public class ProtocolUnitTest {
         ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(1);
         assertThat(res.size() == 1, is(true));
         assertThat(res.get(0).isInvalid(), is(false));
-
+        dataStore.disconnect();
     }
 
 
+    @Test
+    public void datastoreBlockDataAcceptsDuplicates() {
+        LeDataStore dataStore = getConnectedDatastore();
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+        dataStore.enqueueMessageNoDuplicate(bd);
+        dataStore.enqueueMessageNoDuplicate(bd);
+        ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(2);
+        assertThat(res.size() == 1, is(true));
+        assertThat(res.get(0).isInvalid(), is(false));
+        dataStore.flushDb();
+        dataStore.disconnect();
+    }
 
-
+    @Test
+    public void datastoreBlockDataAcceptsSingular() {
+        LeDataStore dataStore = getConnectedDatastore();
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] senderluid2 = {1,3,3,4,5,6};
+        byte[] randomdata2 = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 6, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 8, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+        BlockDataPacket bd1 = new BlockDataPacket(randomdata, false, senderluid);
+        BlockDataPacket bd2 = new BlockDataPacket(randomdata2, false, senderluid);
+        BlockDataPacket bd3 = new BlockDataPacket(randomdata, false, senderluid2);
+        dataStore.enqueueMessageNoDuplicate(bd1);
+        dataStore.enqueueMessageNoDuplicate(bd2);
+        dataStore.enqueueMessageNoDuplicate(bd3);
+        ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(3);
+        assertThat(res.size() == 3, is(true));
+        for(BlockDataPacket bd : res) {
+            assertThat(bd.isInvalid(), is(false));
+        }
+        dataStore.flushDb();
+        dataStore.disconnect();
+    }
 
     @SuppressWarnings("unused")
     @Test

@@ -136,7 +136,7 @@ public class LeDataStore {
             Cursor cu = db.rawQuery("SELECT * FROM " +
                             MsgDataDb.MessageQueue.TABLE_NAME +
                             " WHERE " +
-                            MsgDataDb.MessageQueue.COLUMN_NAME_HASH + " = " + "?",
+                            MsgDataDb.MessageQueue.COLUMN_NAME_HASH + " = ?",
                     new String[]{bd.getHash()});
 
             if (cu.getCount() == 0) {

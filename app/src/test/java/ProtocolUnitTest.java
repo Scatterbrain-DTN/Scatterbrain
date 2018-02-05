@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
+import net.ballmerlabs.scatterbrain.datastore.MsgDbHelper;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
@@ -42,7 +43,6 @@ import java.util.Arrays;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-
 @SuppressWarnings("unused")
 
 
@@ -55,9 +55,9 @@ public class ProtocolUnitTest {
         ScatterRoutingService mainService = Robolectric.setupService(ScatterRoutingService.class);
 
         NetTrunk netTrunk = new NetTrunk(mainService);
-        SQLiteOpenHelper helper = new TestOpenHelper(RuntimeEnvironment.application,
-                "testpath", null, 1);
+        SQLiteOpenHelper helper = new MsgDbHelper(RuntimeEnvironment.application);
         LeDataStore dataStore = new LeDataStore(mainService, netTrunk, helper);
+        dataStore.connect();
         byte[] senderluid = {1,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
@@ -66,7 +66,12 @@ public class ProtocolUnitTest {
         ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(1);
         assertThat(res.size() == 1, is(true));
         assertThat(res.get(0).isInvalid(), is(false));
+
     }
+
+
+
+
 
     @SuppressWarnings("unused")
     @Test

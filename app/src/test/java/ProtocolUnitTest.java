@@ -133,6 +133,118 @@ public class ProtocolUnitTest {
         dataStore.disconnect();
     }
 
+
+    @Test
+    public void datastoreBlockDataAcceptsFileSingular() {
+        final String tmp1_path = "/tmp/t29dn3d";
+        final String tmp2_path = "/tmp/i3f3jof";
+        File tmp1 = new File(tmp1_path);
+        File tmp2 = new File(tmp2_path);
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] senderluid2 = {1, 2, 3, 4, 5, 6};
+
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 1, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+        byte[] randomdata2 = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+
+        try {
+            FileOutputStream firstout = new FileOutputStream(tmp1);
+            FileOutputStream secondout = new FileOutputStream(tmp2);
+            FileOutputStream devnull = new FileOutputStream("/dev/null");
+            firstout.write(randomdata);
+            secondout.write(randomdata2);
+            File tmpin = new File(tmp1_path);
+            File tmpin2 = new File(tmp2_path);
+            FileInputStream in = new FileInputStream(tmpin);
+            FileInputStream in2 = new FileInputStream(tmpin2);
+            BlockDataPacket bd1 = new BlockDataPacket(in, "fakename", tmpin.length(), senderluid);
+            BlockDataPacket bd2 = new BlockDataPacket(in2, "fakename", tmpin2.length(), senderluid);
+            bd1.catBody(devnull);
+            bd2.catBody(devnull);
+            String hash1 = BlockDataPacket.bytesToHex(bd1.streamhash);
+            String hash2 = BlockDataPacket.bytesToHex(bd2.streamhash);
+            System.out.println("hash1 " + hash1);
+            System.out.println("hash2 " + hash2);
+
+            LeDataStore dataStore = getConnectedDatastore();
+            assertThat(dataStore.connected, is(true));
+            dataStore.enqueueMessageNoDuplicate(bd1);
+            dataStore.enqueueMessageNoDuplicate(bd2);
+            ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(2);
+            assertThat(res.size() == 2, is(true));
+
+            dataStore.disconnect();
+            assertThat(dataStore.connected, is(false));
+        } catch(IOException e) {
+            assertThat(false, is(true));
+        }
+    }
+
+    @Test
+    public void datastoreBlockDataAcceptsFileDuplicates() {
+        final String path1 = "/tmp/wfeefef3";
+        File tmp = new File(path1);
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] senderluid2 = {1, 2, 3, 4, 5, 6};
+
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+
+        try {
+            FileOutputStream firstout = new FileOutputStream(tmp);
+            FileOutputStream devnull = new FileOutputStream("/dev/null");
+            firstout.write(randomdata);
+            File tmpin = new File(path1);
+            File tmpin2 = new File(path1);
+            FileInputStream in = new FileInputStream(tmpin);
+            FileInputStream in2 = new FileInputStream(tmpin2);
+            BlockDataPacket bd = new BlockDataPacket(in, "fakename", tmpin.length(), senderluid);
+            BlockDataPacket bdnew = new BlockDataPacket(in2, "fakename", tmpin2.length(), senderluid);
+            bd.catBody(devnull);
+            bdnew.catBody(devnull);
+            String hash1 = BlockDataPacket.bytesToHex(bd.streamhash);
+            String hash2 = BlockDataPacket.bytesToHex(bdnew.streamhash);
+            System.out.println("insize: " + bd.size + "\noutsize " + bdnew.size);
+            System.out.println("hash1 " + hash1);
+            System.out.println("hash2 " + hash2);
+
+            LeDataStore dataStore = getConnectedDatastore();
+            assertThat(dataStore.connected, is(true));
+            dataStore.enqueueMessageNoDuplicate(bd);
+            dataStore.enqueueMessageNoDuplicate(bd);
+            ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(2);
+            assertThat(res.size() == 1, is(true));
+
+            dataStore.disconnect();
+            assertThat(dataStore.connected, is(false));
+        } catch(IOException e) {
+            assertThat(false, is(true));
+        }
+    }
+
+
     @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketFromProfileIsValid() {

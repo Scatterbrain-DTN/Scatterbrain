@@ -157,7 +157,7 @@ public class BlockDataPacket extends ScatterStanza {
                     combined[i] = body[i];
                 }
 
-                for (long i = size; i < senderluid.length; i++) {
+                for (long i = size; i < senderluid.length  + size; i++) {
                     combined[(int) i] = senderluid[(int) (i - size)];
                 }
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");

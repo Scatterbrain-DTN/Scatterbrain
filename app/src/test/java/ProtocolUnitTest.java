@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -116,9 +117,14 @@ public class ProtocolUnitTest {
         BlockDataPacket bd2 = new BlockDataPacket(randomdata2, false, senderluid);
         BlockDataPacket bd3 = new BlockDataPacket(randomdata, false, senderluid2);
         dataStore.enqueueMessageNoDuplicate(bd1);
+        ArrayList<BlockDataPacket> res0 = dataStore.getTopRandomMessages(3);
+        System.out.println("ins1 size " + res0.size());
         dataStore.enqueueMessageNoDuplicate(bd2);
+        ArrayList<BlockDataPacket> res1 = dataStore.getTopRandomMessages(3);
+        System.out.println("ins2 size " + res1.size());
         dataStore.enqueueMessageNoDuplicate(bd3);
         ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(3);
+        System.out.println("ins3 size " + res.size());
         assertThat(res.size() == 3, is(true));
         for(BlockDataPacket bd : res) {
             assertThat(bd.isInvalid(), is(false));
@@ -549,12 +555,24 @@ public class ProtocolUnitTest {
     @Test
     public void BlockDataPacketHasSameHashWhenReconstructed() {
         byte[] senderluid = {1,2,3,4,5,6};
+        byte[] senderluid2 = {9,2,3,4,5,6};
         byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
                 4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        byte[] randomdata2 = {9,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
+                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
+        BlockDataPacket bd2 = new BlockDataPacket(randomdata, false, senderluid2);
+        BlockDataPacket bd3 = new BlockDataPacket(randomdata2, false, senderluid);
         BlockDataPacket ne = new BlockDataPacket(bd.getContents());
+        BlockDataPacket ne2 = new BlockDataPacket(bd2.getContents());
+        BlockDataPacket ne3 = new BlockDataPacket(bd3.getContents());
 
         assertThat(bd.getHash().equals(ne.getHash()), is(true));
+        assertThat(bd2.getHash().equals(ne2.getHash()), is(true));
+        assertThat(bd3.getHash().equals(ne3.getHash()), is(true));
+        assertThat(bd.getHash().equals(bd2.getHash()), is(false));
+        assertThat(bd2.getHash().equals(bd3.getHash()), is(false));
     }
     @SuppressWarnings("unused")
     @Test

@@ -76,10 +76,10 @@ public class ProtocolUnitTest {
     @Test
     public void datastoreBlockDataOperations() {
         LeDataStore dataStore = getConnectedDatastore();
-        byte[] senderluid = {1,2,3,4,5,6};
-        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false,senderluid);
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         dataStore.enqueueMessageNoDuplicate(bd);
         ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(1);
         assertThat(res.size() == 1, is(true));
@@ -108,7 +108,7 @@ public class ProtocolUnitTest {
     public void datastoreBlockDataAcceptsSingular() {
         LeDataStore dataStore = getConnectedDatastore();
         byte[] senderluid = {1, 2, 3, 4, 5, 6};
-        byte[] senderluid2 = {1,3,3,4,5,6};
+        byte[] senderluid2 = {1, 3, 3, 4, 5, 6};
         byte[] randomdata2 = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 6, 87, 2, 78, 2,
                 4, 2, 26, 2, 6, 46, 2, 2, 8, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
         byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
@@ -126,7 +126,7 @@ public class ProtocolUnitTest {
         ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(3);
         System.out.println("ins3 size " + res.size());
         assertThat(res.size() == 3, is(true));
-        for(BlockDataPacket bd : res) {
+        for (BlockDataPacket bd : res) {
             assertThat(bd.isInvalid(), is(false));
         }
         dataStore.flushDb();
@@ -136,26 +136,26 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketFromProfileIsValid() {
-        byte[] test = {1,2,3,4,5,6};
+        byte[] test = {1, 2, 3, 4, 5, 6};
         DeviceProfile profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTH, test);
-        AdvertisePacket ap  = new AdvertisePacket(profile);
+        AdvertisePacket ap = new AdvertisePacket(profile);
 
-        assertThat(ap.isInvalid() , is(false));
+        assertThat(ap.isInvalid(), is(false));
     }
 
     @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketFromDataAndProfileIsValid() {
-        byte[] test = {1,2,3,4,5,6};
+        byte[] test = {1, 2, 3, 4, 5, 6};
         DeviceProfile profile = new DeviceProfile(DeviceProfile.deviceType.ANDROID, DeviceProfile.MobileStatus.MOBILE,
                 DeviceProfile.HardwareServices.BLUETOOTH, test);
-        AdvertisePacket ap  = new AdvertisePacket(profile);
+        AdvertisePacket ap = new AdvertisePacket(profile);
         byte[] data = ap.getContents();
         AdvertisePacket newpacket = new AdvertisePacket(data);
 
         System.out.println("AdvertisePacketFromDataAndProfileIsValid");
-        for(byte b : newpacket.err)  {
+        for (byte b : newpacket.err) {
             System.out.print(b + " ");
         }
         System.out.println();
@@ -165,10 +165,10 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketIsValid() {
-        byte[] senderluid = {1,2,3,4,5,6};
-        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
-        BlockDataPacket bd = new BlockDataPacket(randomdata, false,senderluid);
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+        BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         assertThat(bd.isInvalid(), is(false));
     }
 
@@ -177,16 +177,16 @@ public class ProtocolUnitTest {
     @Test
     public void BlockDataPacketFileStreamHashesWork() {
         File tmp = new File("/tmp/t3fghju2");
-        byte[] senderluid = {1,2,3,4,5,6};
-        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2, 4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
 
         try {
             FileOutputStream firstout = new FileOutputStream(tmp);
@@ -196,7 +196,7 @@ public class ProtocolUnitTest {
             File tmpin2 = new File("/tmp/t3fghju2");
             FileInputStream in = new FileInputStream(tmpin);
             FileInputStream in2 = new FileInputStream(tmpin2);
-            BlockDataPacket bd = new BlockDataPacket(in,"fakename", tmpin.length(), senderluid);
+            BlockDataPacket bd = new BlockDataPacket(in, "fakename", tmpin.length(), senderluid);
             BlockDataPacket bdnew = new BlockDataPacket(bd.getContents(), in2);
             bd.catBody(devnull);
             bdnew.catBody(devnull);
@@ -210,7 +210,7 @@ public class ProtocolUnitTest {
             assertThat(Arrays.equals(bd.getContents(), bdnew.getContents()), is(true));
             assertThat(Arrays.equals(bd.streamhash, bdnew.streamhash), is(true));
 
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -365,9 +365,9 @@ public class ProtocolUnitTest {
         NetTrunk trunk = new NetTrunk(service);
         ScatterBluetoothManager bman = new ScatterBluetoothManager(trunk);
 
-        byte[] senderluid = {1,2,3,4,5,6};
-        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         boolean go = true;
         try {
@@ -376,17 +376,16 @@ public class ProtocolUnitTest {
                 @Override
                 public void run() {
                     try {
-                       Socket sock =  ssocket.accept();
+                        Socket sock = ssocket.accept();
                         ScatterReceiveThread res = new ScatterReceiveThread(sock);
                         res.start();
                         res.join();
                         ssocket.close();
-                     //   assertThat(res.fakedone, is(true));
+                        //   assertThat(res.fakedone, is(true));
 
-                    } catch(IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
-                    }
-                    catch(InterruptedException i) {
+                    } catch (InterruptedException i) {
                         i.printStackTrace();
                     }
                 }
@@ -400,9 +399,9 @@ public class ProtocolUnitTest {
             t.join();
             assertThat(ssocket.isClosed(), is(true));
 
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }catch(InterruptedException i) {
+        } catch (InterruptedException i) {
             i.printStackTrace();
         }
 
@@ -411,7 +410,7 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketHandlesNullData() {
-        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
         byte[] randomdata = {};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         assertThat(bd.isInvalid(), is(false));
@@ -420,19 +419,19 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketHandlesFileBit() {
-        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
         boolean works = false;
         File testfile = new File("/dev/null");
         File infile = new File("/dev/zero");
         try {
             FileOutputStream out = new FileOutputStream(testfile);
             FileInputStream in = new FileInputStream(infile);
-            BlockDataPacket bd = new BlockDataPacket(in,"fakename", 4096, senderluid);
+            BlockDataPacket bd = new BlockDataPacket(in, "fakename", 4096, senderluid);
             int fileStatusFromData = BlockDataPacket.getFileStatusFromData(bd.getContents());
-            if(fileStatusFromData == 1) {
+            if (fileStatusFromData == 1) {
                 works = true;
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             works = false;
         }
 
@@ -442,12 +441,12 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataFilePacketHasStableContects() {
-        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
         boolean works;
         File f = new File("/dev/urandom");
         try {
             FileInputStream i = new FileInputStream(f);
-            BlockDataPacket bd = new BlockDataPacket(i,"fakename", 4096 , senderluid);
+            BlockDataPacket bd = new BlockDataPacket(i, "fakename", 4096, senderluid);
         } catch (IOException e) {
 
         }
@@ -458,9 +457,9 @@ public class ProtocolUnitTest {
     @Test
     public void BlockDataPacketHasSameHashWhenReconstructedFromFile() {
         //TODO: hangs here while cating file
-        byte[] senderluid = {1,2,3,4,5,6};
-        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
         final String filename = "/tmp/77246out";
         File out = new File(filename);
         File in = new File(filename);
@@ -470,13 +469,13 @@ public class ProtocolUnitTest {
             FileOutputStream os = new FileOutputStream(out);
             FileInputStream is = new FileInputStream(in);
             os.write(randomdata);
-            BlockDataPacket bd = new BlockDataPacket(is,"fakename", randomdata.length, senderluid);
+            BlockDataPacket bd = new BlockDataPacket(is, "fakename", randomdata.length, senderluid);
             bd.catBody(os);
             hash = BlockDataPacket.bytesToHex(bd.streamhash);
             System.out.println(BlockDataPacket.bytesToHex(bd.streamhash));
             works = true;
 
-        } catch(IOException e) {
+        } catch (IOException e) {
             works = false;
         }
 
@@ -488,7 +487,7 @@ public class ProtocolUnitTest {
     @Test
     public void blockDataStreamPacketHasSaneFileName() {
         File f = new File("/dev/zero");
-        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
         boolean err = false;
         try {
             FileInputStream fi = new FileInputStream(f);
@@ -496,7 +495,7 @@ public class ProtocolUnitTest {
             System.out.println(bd.getFilename());
             //names are not fully equal because encoding is UTF-8
             assertThat(bd.getFilename().equals("test name"), is(true));
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.err.println("IOException");
             err = true;
         }
@@ -534,14 +533,14 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketFromDataIsValid() {
-        byte[] senderluid = {1,2,3,4,5,6};
-        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         BlockDataPacket ne = new BlockDataPacket(bd.getContents());
 
         System.out.println("BlockDataPacketFromDataIsValid() ");
-        for(int x : ne.err) {
+        for (int x : ne.err) {
             System.out.print(x + " ");
         }
         System.out.println();
@@ -554,12 +553,12 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketHasSameHashWhenReconstructed() {
-        byte[] senderluid = {1,2,3,4,5,6};
-        byte[] senderluid2 = {9,2,3,4,5,6};
-        byte[] randomdata = {4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
-        byte[] randomdata2 = {9,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2,
-                4,2,26,2,6,46,2,2,6,21,6,5,1,7,1,7,1,87,2,78,2};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
+        byte[] senderluid2 = {9, 2, 3, 4, 5, 6};
+        byte[] randomdata = {4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+        byte[] randomdata2 = {9, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2,
+                4, 2, 26, 2, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
 
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         BlockDataPacket bd2 = new BlockDataPacket(randomdata, false, senderluid2);
@@ -574,6 +573,7 @@ public class ProtocolUnitTest {
         assertThat(bd.getHash().equals(bd2.getHash()), is(false));
         assertThat(bd2.getHash().equals(bd3.getHash()), is(false));
     }
+
     @SuppressWarnings("unused")
     @Test
     public void AdvertisePacketIsInvalidWithBogusLUID() {
@@ -593,17 +593,17 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataPacketWithNullDataIsValid() {
-        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
         byte[] randomdata = {};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
         BlockDataPacket ne = new BlockDataPacket(bd.getContents());
-        if(bd.getContents().length == BlockDataPacket.HEADERSIZE) {
+        if (bd.getContents().length == BlockDataPacket.HEADERSIZE) {
             System.out.println("HEADERSIZE");
         }
         System.out.println(bd.getContents().length);
         System.out.println(ne.getContents().length);
         System.out.println("err");
-        for(int b : ne.err) {
+        for (int b : ne.err) {
             System.out.print(b + " ");
         }
         System.out.println();
@@ -613,53 +613,17 @@ public class ProtocolUnitTest {
     @SuppressWarnings("unused")
     @Test
     public void BlockDataSizeOperatorReturnsCorrectSize() {
-        byte[] senderluid = {1,2,3,4,5,6};
+        byte[] senderluid = {1, 2, 3, 4, 5, 6};
         byte[] randomdata = {};
         BlockDataPacket bd = new BlockDataPacket(randomdata, false, senderluid);
 
         assertThat(bd.size == BlockDataPacket.getSizeFromData(bd.getContents()), is(true));
 
-        byte[] senderluid2 = {1,2,3,4,5,6};
-        byte[] randomdata2 = {3,3,65,34,6,3,52,52,5,2,5};
+        byte[] senderluid2 = {1, 2, 3, 4, 5, 6};
+        byte[] randomdata2 = {3, 3, 65, 34, 6, 3, 52, 52, 5, 2, 5};
 
         BlockDataPacket bd2 = new BlockDataPacket(randomdata2, false, senderluid2);
 
         assertThat(bd2.size == BlockDataPacket.getSizeFromData(bd2.getContents()), is(true));
     }
-
-
-    private static class TestOpenHelper extends SQLiteOpenHelper {
-        public boolean onCreateCalled;
-        public boolean onUpgradeCalled;
-        public boolean onOpenCalled;
-
-        public TestOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-            super(context, name, factory, version);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase database) {
-            onCreateCalled = true;
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-            onUpgradeCalled = true;
-        }
-
-        @Override
-        public void onOpen(SQLiteDatabase database) {
-            onOpenCalled = true;
-        }
-
-        @Override
-        public synchronized void close() {
-            onCreateCalled = false;
-            onUpgradeCalled = false;
-            onOpenCalled = false;
-
-            super.close();
-        }
-    }
-
 }

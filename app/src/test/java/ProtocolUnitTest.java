@@ -187,7 +187,7 @@ public class ProtocolUnitTest {
             dataStore.enqueueMessageNoDuplicate(bd2);
             ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(2);
             assertThat(res.size() == 2, is(true));
-
+            dataStore.flushDb();
             dataStore.disconnect();
             assertThat(dataStore.connected, is(false));
         } catch(IOException e) {
@@ -237,11 +237,33 @@ public class ProtocolUnitTest {
             ArrayList<BlockDataPacket> res = dataStore.getTopRandomMessages(2);
             assertThat(res.size() == 1, is(true));
 
+            dataStore.flushDb();
             dataStore.disconnect();
             assertThat(dataStore.connected, is(false));
         } catch(IOException e) {
             assertThat(false, is(true));
         }
+    }
+
+
+    @Test
+    public void datastoreTrimsWhenFull() {
+        LeDataStore dataStore = getConnectedDatastore();
+        dataStore.setDataTrimLimit(120);
+        for(byte x =0;x<127;x++) {
+            for (byte y = 0; y < 2; y++) {
+                byte[] senderluid = {1, 2, 3, 4, 5, 6};
+                byte[] randomdata = {4, 2, 26, x, 6, 46, 2, 2, 6, 21, 6, 5, 1, 7, 1, 7, 6, 87, 2, 78, 2,
+                        4, 2, 26, 2, 6, 46, 2, y, 8, 21, 6, 5, 1, 7, 1, 7, 1, 87, 2, 78, 2};
+                BlockDataPacket bd1 = new BlockDataPacket(randomdata, false, senderluid);
+                dataStore.enqueueMessageNoDuplicate(bd1);
+            }
+        }
+        assertThat(dataStore.getTopRandomMessages(127*2).size(), is(120));
+        dataStore.trimDatastore(10);
+        assertThat(dataStore.getTopRandomMessages(127*2).size(), is(10));
+        dataStore.flushDb();
+        dataStore.disconnect();
     }
 
 

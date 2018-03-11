@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     defaultConfig {
         applicationId "net.ballmerlabs.scatterbrain"
-        minSdkVersion 21
+        minSdkVersion 14
         //noinspection OldTargetApi
         targetSdkVersion 22
         versionCode 5

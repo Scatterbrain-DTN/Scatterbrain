@@ -241,16 +241,18 @@ public class SearchForSenpai extends AppCompatActivity {
             Intent enableAndDiscoverBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             enableAndDiscoverBtIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(enableAndDiscoverBtIntent);
-            mService.getBluetoothManager().init();
-            Handler handler = new Handler(this.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mService.getBluetoothManager().startDiscoverLoopThread();
-                    mService.getBluetoothManager().resetBluetoothDiscoverability();
+            if(mService != null) {
+                mService.getBluetoothManager().init();
+                Handler handler = new Handler(this.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mService.getBluetoothManager().startDiscoverLoopThread();
+                        mService.getBluetoothManager().resetBluetoothDiscoverability();
 
-                }
-            }, 5000);
+                    }
+                }, 5000);
+            }
         }
     }
 

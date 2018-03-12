@@ -39,7 +39,7 @@ public  class ScatterLogManager {
         if(fake) {
             System.out.println(tag + msg);
         }
-        else {
+        else if(msg != null && tag != null) {
             Log.v(tag, msg);
             if (adapter != null) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -58,7 +58,7 @@ public  class ScatterLogManager {
         if(fake) {
             System.out.println(tag + msg);
         }
-        else {
+        else if(msg != null && tag != null) {
             checkBuffer();
             Log.e(tag, msg);
             if (adapter != null) {
@@ -79,7 +79,7 @@ public  class ScatterLogManager {
         if(fake) {
             System.out.println(tag);
         }
-        else {
+        else if(tag != null) {
             checkBuffer();
             Log.d(tag, "onStartSuccess, settingInEffect is null");
             if (adapter != null) {
@@ -99,7 +99,7 @@ public  class ScatterLogManager {
         if(fake) {
             System.out.println(tag + msg);
         }
-        else {
+        else if(msg != null && tag != null) {
             checkBuffer();
             Log.i(tag, msg);
             if (adapter != null) {

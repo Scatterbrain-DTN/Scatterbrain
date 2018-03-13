@@ -142,7 +142,7 @@ public class WifiManager extends BroadcastReceiver {
     }
 
 
-    public WifiP2pManager.Channel getChannel() {
+    private WifiP2pManager.Channel getChannel() {
         return chan;
     }
 

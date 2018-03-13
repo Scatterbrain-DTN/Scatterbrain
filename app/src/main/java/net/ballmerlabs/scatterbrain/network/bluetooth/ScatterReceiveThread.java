@@ -21,8 +21,9 @@ public class ScatterReceiveThread extends Thread{
     private final BluetoothSocket socket;
     private final Socket fakesocket;
     private final NetTrunk trunk;
-    public BlockDataPacket fakeres;
-    public boolean fakedone;
+    @SuppressWarnings("FieldCanBeLocal")
+    private BlockDataPacket fakeres;
+    private boolean fakedone;
     private int errcount;
     private final boolean fake;
     private boolean go;
@@ -89,8 +90,8 @@ public class ScatterReceiveThread extends Thread{
 
 
 
-                if(file < 0)
-                    continue;
+                if(file < 0) {
+                }
                 else if(file == 0) {
                     if(!fake)
                         ScatterLogManager.v(trunk.blman.TAG, "Received blockdata size " + size);

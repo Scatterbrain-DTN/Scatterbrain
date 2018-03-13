@@ -8,7 +8,7 @@ public class Message {
 
 
 
-    public final String application;
+    private final String application;
     public final String body;
     @SuppressWarnings("unused")
     private final int ttl;

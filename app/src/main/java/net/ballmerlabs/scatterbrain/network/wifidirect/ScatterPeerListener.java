@@ -54,11 +54,11 @@ public class ScatterPeerListener implements WifiP2pManager.PeerListListener {
     }
 
     private String dumpStack () {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(WifiP2pDeviceList dev : peerstack) {
-            result = result + dev.toString() + "\n";
+            result.append(dev.toString()).append("\n");
         }
-        return result;
+        return result.toString();
     }
 
     public WifiP2pDeviceList getPeers() {

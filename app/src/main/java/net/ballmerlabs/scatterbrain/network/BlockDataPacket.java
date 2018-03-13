@@ -26,17 +26,17 @@ public class BlockDataPacket extends ScatterStanza {
     public final boolean text;
     public final byte[] senderluid;
     public byte[] receiverluid;
-    public byte[] filename;
-    public static final int FILENAMELEN = 256;
+    private byte[] filename;
+    private static final int FILENAMELEN = 256;
     public long size;
     public byte[] streamhash;
     public final int[] err;
     private final int ERRSIZE = 10;
     public boolean isfile;
-    public InputStream source;
-    public boolean sent;
-    public File diskfile;
-    public boolean streamresettable;
+    private InputStream source;
+    private boolean sent;
+    private File diskfile;
+    private boolean streamresettable;
     public static final int HEADERSIZE = 27 + FILENAMELEN;
     private static final byte MAGIC = 124;
 
@@ -81,7 +81,7 @@ public class BlockDataPacket extends ScatterStanza {
             }
             this.filename = Arrays.copyOf(b,FILENAMELEN);
         } catch(UnsupportedEncodingException e) {
-
+            ScatterLogManager.e("BlockDataPacket", "Unsupported Encoding");
         }
         if (len > Integer.MAX_VALUE)
             invalid = true;
@@ -118,7 +118,7 @@ public class BlockDataPacket extends ScatterStanza {
             }
             this.filename = Arrays.copyOf(b,FILENAMELEN);
         } catch(UnsupportedEncodingException e) {
-
+            ScatterLogManager.e("BlockDataPacket", "Unsupported Encoding");
         }
         if (len > Integer.MAX_VALUE)
             invalid = true;
@@ -187,7 +187,7 @@ public class BlockDataPacket extends ScatterStanza {
 
 
     //only call if you know the file is correct
-    public boolean updateStreamHash(FileInputStream f) {
+    private boolean updateStreamHash(FileInputStream f) {
         try {
             byte[] byteblock = new byte[16384];
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -266,10 +266,7 @@ public class BlockDataPacket extends ScatterStanza {
         else
             text = false;
 
-        if (contents[14] == 1)
-            isfile = true;
-        else
-            isfile = false;
+        isfile = contents[14] == 1;
 
         byte[] sizearr = new byte[8];
 
@@ -450,7 +447,7 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
 
-    public void catFile(File destination, long delaymillis) {
+    public void catFile(File destination) {
         try {
             FileOutputStream fo = new FileOutputStream(destination);
             this.diskfile = destination;
@@ -462,7 +459,7 @@ public class BlockDataPacket extends ScatterStanza {
     }
 
 
-    public boolean catFile(OutputStream destination) {
+    private boolean catFile(OutputStream destination) {
         final int MAXBLOCKSIZE = 512;
         if(isfile && diskfile != null) {
             if(diskfile.length() != size)
@@ -533,11 +530,11 @@ public class BlockDataPacket extends ScatterStanza {
         catBody(destination, 0);
     }
 
-    public void catBody(File destination, long delaymillis) {
+    public void catBody(File destination) {
         try {
             FileOutputStream fo = new FileOutputStream(destination);
             this.diskfile = destination;
-            catBody(fo, delaymillis);
+            catBody(fo, (long) 0);
         } catch(IOException e) {
             ScatterLogManager.e("BlockDataPacket" , "Tried to cat to bad file");
         }

@@ -17,15 +17,15 @@ import java.util.ArrayList;
  */
 
 public class FileHelper {
-    public static final String TAG = "FileHelper";
-    public static final int LOCATION_EXTERNAL = 1;
+    private static final String TAG = "FileHelper";
+    private static final int LOCATION_EXTERNAL = 1;
     public static final int LOCATION_PRIVATE = 0;
     public static final int SOURCE_STREAM = 2;
     public static final int SOURCE_FILE = 3;
     public String externalDir = "ScatterBrain";
     public String privateDir = "scatterbrainFiles";
-    private Context context;
-    private NetTrunk trunk;
+    private final Context context;
+    private final NetTrunk trunk;
 
     public FileHelper(Context c, NetTrunk t) {
         this.context = c;
@@ -33,12 +33,9 @@ public class FileHelper {
     }
 
 
-    public boolean isExternalStorageWritable() {
+    private boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     public BlockDataPacket bdPacketFromFilename(String name) {
@@ -51,7 +48,7 @@ public class FileHelper {
         return bd;
     }
 
-    public BlockDataPacket bdPacketFromFilename(String name, int location) {
+    private BlockDataPacket bdPacketFromFilename(String name, int location) {
         if(location != LOCATION_EXTERNAL && location != LOCATION_PRIVATE)
             return null;
 
@@ -81,7 +78,7 @@ public class FileHelper {
 
     }
 
-    public File getDirectory(int location) {
+    private File getDirectory(int location) {
         if(location != LOCATION_EXTERNAL && location != LOCATION_PRIVATE)
             return null;
 
@@ -116,9 +113,9 @@ public class FileHelper {
 
 
             if(source == SOURCE_STREAM)
-                bd.catBody(out,0);
+                bd.catBody(out);
             else if(source == SOURCE_FILE)
-                bd.catFile(out, 0);
+                bd.catFile(out);
         } else {
             return null;
         }

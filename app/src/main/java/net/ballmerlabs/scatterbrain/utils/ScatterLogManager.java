@@ -16,7 +16,7 @@ public  class ScatterLogManager {
     private static ArrayAdapter<String> adapter;
     private static final ArrayList<String> buffer = new ArrayList<>();
     private static final int MAXBUFFER = 1000;
-    public static boolean fake = false;
+    private static final boolean fake = false;
     public static void init(ArrayAdapter<String> madapter) {
         adapter = madapter;
         for(String line : buffer) {

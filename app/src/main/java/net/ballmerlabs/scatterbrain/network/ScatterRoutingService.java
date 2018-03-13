@@ -47,13 +47,13 @@ public class ScatterRoutingService extends Service
     private static NetTrunk trunk;
     private boolean bound = false;
     private final String TAG = "ScatterRoutingService";
-    public  PeersChangedCallback onDevicesFound;
+    private PeersChangedCallback onDevicesFound;
     private SharedPreferences sharedPreferences;
     public byte[] luid;
     @SuppressWarnings("unused")
     private ArrayAdapter<String> logbuffer;
     public LeDataStore dataStore;
-    public Application fakeapp;
+    private final Application fakeapp;
     public OnRecieveCallback onRecieveCallback;
 
 
@@ -341,11 +341,11 @@ public class ScatterRoutingService extends Service
     }
 
 
-    public ScatterBluetoothManager getBluetoothManager() {
+    private ScatterBluetoothManager getBluetoothManager() {
         return trunk.blman;
     }
 
-    public NetTrunk getTrunk() {
+    private NetTrunk getTrunk() {
         return trunk;
     }
 

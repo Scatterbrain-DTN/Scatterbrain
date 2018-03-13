@@ -22,10 +22,6 @@
         tools:replace="android:theme"
         tools:ignore="GoogleAppIndexingWarning">
         <service android:name=".network.ScatterRoutingService" />
-
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

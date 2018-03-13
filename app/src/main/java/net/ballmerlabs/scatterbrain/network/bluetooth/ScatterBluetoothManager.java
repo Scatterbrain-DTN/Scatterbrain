@@ -8,10 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 
 
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
@@ -66,8 +64,9 @@ public class ScatterBluetoothManager {
     private final int PARALLELUUID = 1; //number of devices to scan at a time.
     private Method setDuration;
     private String unpauseKey;
-    public final int UNPAUSEDELAY = 1000 * 30;
-    public final long CATBLOCK_DELAY = 0;
+    private final int UNPAUSEDELAY = 1000 * 30;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final long CATBLOCK_DELAY = 0;
 
 
     /* listens for events thrown by bluetooth adapter when scanning for devices
@@ -76,6 +75,7 @@ public class ScatterBluetoothManager {
 
 
     //TODO: this gets unpaused twice, which could be bad form
+    @SuppressWarnings("FieldCanBeLocal")
     private final String LOOPPAUSETAG = "mainscanningloop";
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -222,10 +222,6 @@ public class ScatterBluetoothManager {
         }
     }
 
-
-    public void getPeerByLUID(byte[] luid) {
-
-    }
 
     //returns a handle to the bluetooth adapter object
     public BluetoothAdapter getAdapter() {
@@ -464,6 +460,7 @@ public class ScatterBluetoothManager {
         bluetoothHan.postDelayed(unpauseRunnable, UNPAUSEDELAY);
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void sendStreamToBroadcast(final BlockDataPacket bd,
                                       final boolean fake) {
         final String SSTREMPAUSETAG = "sendstreambroadcast";
@@ -656,7 +653,7 @@ public class ScatterBluetoothManager {
 
     }
 
-    public void resetBluetoothDiscoverability() {
+    private void resetBluetoothDiscoverability() {
         try {
             setDuration.invoke(adapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 300);
         }

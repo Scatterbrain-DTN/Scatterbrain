@@ -1,11 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
 
 
-import android.content.IntentFilter;
-
-
 import net.ballmerlabs.scatterbrain.network.wifidirect.ScatterPeerListener;
-import net.ballmerlabs.scatterbrain.network.wifidirect.WifiManager;
 
 import java.util.ArrayList;
 

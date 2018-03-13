@@ -26,14 +26,14 @@ import java.util.Arrays;
 public class LeDataStore {
     private SQLiteDatabase db;
     @SuppressWarnings("FieldCanBeLocal")
-    private SQLiteOpenHelper helper;
+    private final SQLiteOpenHelper helper;
     private int dataTrimLimit;
     private final String TAG = "DataStore";
     private final Service mainService;
     @SuppressWarnings("unused")
     private Cursor c;
     public boolean connected;
-    private NetTrunk trunk;
+    private final NetTrunk trunk;
     @SuppressWarnings("unused")
     public final String[] names = {
             MsgDataDb.MessageQueue.COLUMN_NAME_HASH,
@@ -422,11 +422,7 @@ public class LeDataStore {
                     t = true;
                 }
 
-                if(file == 0) {
-                    f = false;
-                } else {
-                    f = true;
-                }
+                f = file != 0;
                 //ScatterLogManager.e(TAG, body);
                 if(file != 0) {
                     BlockDataPacket bd = trunk.filehelper.bdPacketFromFilename(filename);
@@ -503,11 +499,7 @@ public class LeDataStore {
                     t = true;
                 }
 
-                if(file == 0) {
-                    f = false;
-                } else {
-                    f = true;
-                }
+                f = file != 0;
                 //ScatterLogManager.e(TAG, body);
                 if (body.length() > 0) {
                     if(file != 0 ) {

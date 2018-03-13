@@ -18,6 +18,7 @@ import net.ballmerlabs.scatterbrain.DispMessage;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 
@@ -56,6 +57,7 @@ public class ScatterBluetoothManager {
     public final static int REQUEST_ENABLE_BT = 1;
     private final ArrayList<BluetoothDevice> foundList;
     public final HashMap<String, LocalPeer> connectedList; //devices that run scatterbrain and are connected
+    public final HashMap<DeviceProfile, LocalPeer> luidConnectedList;
     private final ArrayList<BluetoothDevice> scatterList; //devices confirmed to run scatterbrain
     private final NetTrunk trunk;
     private boolean runScanThread;
@@ -179,6 +181,7 @@ public class ScatterBluetoothManager {
         bluetoothHan = new Handler();
         foundList = new ArrayList<>();
         connectedList = new HashMap<>();
+        luidConnectedList = new HashMap<>();
         scatterList = new ArrayList<>();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         currentUUID = 0;
@@ -223,6 +226,11 @@ public class ScatterBluetoothManager {
             acceptThread.start();
             acceptThreadRunning = true;
         }
+    }
+
+
+    public void getPeerByLUID(byte[] luid) {
+
     }
 
     //returns a handle to the bluetooth adapter object
@@ -348,7 +356,10 @@ public class ScatterBluetoothManager {
 
                     ScatterLogManager.v(TAG, "Adding new device " + Arrays.toString(inpacket.convertToProfile().getLUID()));
                     synchronized (connectedList) {
-                        connectedList.put(socket.getRemoteDevice().getAddress(), new LocalPeer(inpacket.convertToProfile(), socket));
+                        LocalPeer l  = new LocalPeer(inpacket.convertToProfile(), socket);
+                        connectedList.put(socket.getRemoteDevice().getAddress(), l );
+
+                        luidConnectedList.put(inpacket.convertToProfile(), l);
 
                         //   ScatterLogManager.v(TAG, "List size = " + connectedList.size());
                     }

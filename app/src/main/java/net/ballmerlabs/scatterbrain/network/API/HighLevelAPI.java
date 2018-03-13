@@ -1,6 +1,9 @@
-package net.ballmerlabs.scatterbrain.network;
+package net.ballmerlabs.scatterbrain.network.API;
 
 import android.content.SharedPreferences;
+
+import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
+import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 
 import java.io.InputStream;
 
@@ -9,7 +12,7 @@ import java.io.InputStream;
  * external applications
  */
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
-interface HighLevelAPI {
+public interface HighLevelAPI {
 
     //system
     void startService();
@@ -18,25 +21,26 @@ interface HighLevelAPI {
     void setPref(SharedPreferences pref);
     DeviceProfile getProfile();
     void setProfile(DeviceProfile prof);
+    ScatterTransport[] getTransports();
 
     //peers
-    void scanOn();
-    void scanOff();
+    void scanOn(ScatterTransport transport);
+    void scanOff(ScatterTransport transport);
     DeviceProfile[] getPeers();
 
     //communications
-    void sendDataDirected(DeviceProfile target, byte[] data);
+    boolean sendDataDirected(DeviceProfile target, byte[] data);
     void sendDataMulticast(byte[] data);
-    void sendFile(InputStream file);
+    boolean sendFileDirected(DeviceProfile target, InputStream file, String name, long len);
+    void sendFileMulticast(InputStream file, String name, long len); //TODO: java file object
     void registerOnRecieveCallback(OnRecieveCallback callback);
-    void postMessagesRecievedHandler(Runnable run);
+
+
+   //datastore
     BlockDataPacket[] getTopMessages(int num);
     BlockDataPacket[] getRandomMessages(int num);
-    BlockDataPacket[] getTopMessages();
-    BlockDataPacket[] getRandomMessages();
 
     //datastore systems tasks
-    int getQueueSize();
     void flushDatastore();
     void setDatastoreLimit(int limit);
     int getDatastoreLimit();

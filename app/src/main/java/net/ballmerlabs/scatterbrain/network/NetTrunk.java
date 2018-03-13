@@ -15,7 +15,7 @@ public class NetTrunk {
 
     public final GlobalNet globnet;
     public final ScatterBluetoothManager blman;
-    public final DeviceProfile profile;
+    public DeviceProfile profile;
     public final SettingsManager settings;
     public final ScatterRoutingService mainService;
     public final FileHelper filehelper;

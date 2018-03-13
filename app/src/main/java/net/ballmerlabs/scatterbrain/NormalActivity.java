@@ -65,7 +65,7 @@ public class NormalActivity extends AppCompatActivity {
             mService.registerMessageArrayAdapter(Messages);
 
             //add some previously received messages.
-            for(BlockDataPacket b : mService.dataStore.getTopMessages()) {
+            for(BlockDataPacket b : mService.dataStore.getTopMessages(90)) {
                 Messages.data.add(new DispMessage(new String(b.body),
                         Base64.encodeToString(b.senderluid, Base64.DEFAULT)));
             }

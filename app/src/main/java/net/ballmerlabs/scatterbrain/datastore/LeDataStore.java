@@ -454,7 +454,7 @@ public class LeDataStore {
     * Gets n rows from the datastore 
     */
     @SuppressWarnings("Convert2Diamond")
-    public synchronized ArrayList<BlockDataPacket> getTopMessages() {
+    public synchronized ArrayList<BlockDataPacket> getTopMessages(int limit) {
         ArrayList<BlockDataPacket> finalresult = new ArrayList<BlockDataPacket>();
         try {
             final String SEP = ", ";
@@ -472,7 +472,7 @@ public class LeDataStore {
                     MsgDataDb.MessageQueue.COLUMN_NAME_RECEIVERLUID + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_SIG + SEP +
                     MsgDataDb.MessageQueue.COLUMN_NAME_FLAGS + " FROM " + MsgDataDb.MessageQueue.TABLE_NAME
-                    + " LIMIT " + 90, null);
+                    + " LIMIT " + limit, null);
 
 
             // ScatterLogManager.v(TAG, "Attempting to retrieve a random packet from datastore");

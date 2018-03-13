@@ -1,5 +1,6 @@
 package net.ballmerlabs.scatterbrain.network;
 
+
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.Notification;
@@ -18,11 +19,18 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+
 import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
 import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
 import net.ballmerlabs.scatterbrain.SearchForSenpai;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
+import net.ballmerlabs.scatterbrain.network.API.HighLevelAPI;
+import net.ballmerlabs.scatterbrain.network.API.OnRecieveCallback;
+import net.ballmerlabs.scatterbrain.network.API.ScatterTransport;
 import net.ballmerlabs.scatterbrain.network.bluetooth.LocalPeer;
 import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterBluetoothManager;
 
@@ -38,7 +46,8 @@ import net.ballmerlabs.scatterbrain.datastore.MsgDbHelper;
  * for the scatterbrain protocol.
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class ScatterRoutingService extends Service {
+public class ScatterRoutingService extends Service
+        implements HighLevelAPI {
 
     private final IBinder mBinder = new ScatterBinder();
     private static NetTrunk trunk;
@@ -52,24 +61,21 @@ public class ScatterRoutingService extends Service {
     private ArrayAdapter<String> logbuffer;
     public LeDataStore dataStore;
     public Application fakeapp;
+    private OnRecieveCallback onRecieveCallback;
 
 
-
-
-    public class ScatterBinder extends Binder {
-        public ScatterRoutingService getService() {
-            return ScatterRoutingService.this;
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public ScatterRoutingService() {
-        fakeapp = null;
+    @Override
+    public DeviceProfile getProfile() {
+        return this.getTrunk().profile;
     }
 
     @Override
-    public int onStartCommand(Intent i, int flags, int startId) {
+    public void setProfile(DeviceProfile profile) {
+        this.getTrunk().profile = profile;
+    }
 
+    @Override
+    public void startService() {
         NotificationCompat.Builder not = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle("Scatterbrain")
@@ -87,9 +93,184 @@ public class ScatterRoutingService extends Service {
 
         not.setContentIntent(resultPendingIntent);
 
-        int notificationId = 001;
+        int notificationId = 1;
         NotificationManager man = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        man.notify(notificationId, not.build());
+        try {
+            man.notify(notificationId, not.build());
+        } catch(NullPointerException e) {
+            ScatterLogManager.e(TAG, "Could not create notification, NullPointerException");
+        }
+    }
+
+
+    @Override
+    public void stopService() {
+        int notificationId = 1;
+        NotificationManager man = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        try {
+            man.cancel(notificationId);
+        } catch(NullPointerException e) {
+            ScatterLogManager.e(TAG, "Could not create notification, NullPointerException");
+        }
+        this.getTrunk().blman.stopDiscoverLoopThread();
+        //TODO: check this, stop additional components
+    }
+
+    @Override
+    public SharedPreferences getPref() {
+        return this.sharedPreferences;
+    }
+
+    @Override
+    public void setPref(SharedPreferences p) {
+        this.sharedPreferences = p;
+    }
+
+    @Override
+    public ScatterTransport[] getTransports() {
+        ScatterTransport[] t = new ScatterTransport[1];
+        t[0] = new ScatterTransport() {
+            @Override
+            public UUID getUUID() {
+                return trunk.blman.UID;
+            }
+
+            @Override
+            public String getNameString() {
+                return "Bluetooth";
+            }
+
+            @Override
+            public int getPriority() {
+                return 1;
+            }
+
+            @Override
+            public void setPriority(int priority) {
+
+            }
+        };
+
+        return t;
+    }
+
+
+    @Override
+    public void scanOn(ScatterTransport t) {
+        for(ScatterTransport n : getTransports()) {
+            if(t.getUUID().compareTo(n.getUUID()) == 0) {
+                this.getBluetoothManager().startDiscoverLoopThread();
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void scanOff(ScatterTransport t) {
+        for(ScatterTransport n : getTransports()) {
+            if(t.getUUID().compareTo(n.getUUID()) == 0) {
+                this.getBluetoothManager().stopDiscoverLoopThread();
+                return;
+            }
+        }
+    }
+
+
+    //TODO: expand
+    @Override
+    public DeviceProfile[] getPeers() {
+        ArrayList<DeviceProfile> res = new ArrayList<>();
+        for(Map.Entry<String, LocalPeer> e : this.getBluetoothManager().connectedList.entrySet()) {
+            res.add(e.getValue().getProfile());
+        }
+        return (DeviceProfile[]) res.toArray();
+    }
+
+    @Override
+    public boolean sendDataDirected(DeviceProfile target, byte[] data) {
+        BlockDataPacket bd = new BlockDataPacket(data, false, this.luid);
+        LocalPeer p = this.getBluetoothManager().luidConnectedList.get(target);
+        if(p == null)
+            return false;
+        else {
+            this.getBluetoothManager().sendMessageToLocalPeer(p.getSocket().getRemoteDevice().getAddress(), bd);
+            return true;
+        }
+    }
+
+
+    @Override
+    public void sendDataMulticast(byte[] data) {
+        BlockDataPacket bd = new BlockDataPacket(data, false, this.luid);
+        this.getBluetoothManager().sendMessageToBroadcast(bd);
+    }
+
+
+    //TODO: adjust enqueue
+    @Override
+    public boolean sendFileDirected(DeviceProfile target, InputStream file, String name, long len) {
+        LocalPeer p = this.getBluetoothManager().luidConnectedList.get(target);
+        if(p == null)
+            return false;
+
+        BlockDataPacket bd = new BlockDataPacket(file, name, len, this.luid);
+        this.getBluetoothManager().sendRawStream(p.getSocket().getRemoteDevice().getAddress(), bd,
+                false, true);
+        return true;
+    }
+
+
+    @Override
+    public void sendFileMulticast(InputStream file, String name, long len) {
+        BlockDataPacket bd = new BlockDataPacket(file, name, len, this.luid);
+        this.getBluetoothManager().sendStreamToBroadcast(bd, false);
+    }
+
+    @Override
+    public void registerOnRecieveCallback(OnRecieveCallback r) {
+        this.onRecieveCallback = r;
+    }
+
+    @Override
+    public BlockDataPacket[] getTopMessages(int num) {
+        return (BlockDataPacket[]) this.dataStore.getTopMessages(num).toArray();
+    }
+
+    @Override
+    public BlockDataPacket[] getRandomMessages(int num) {
+        return (BlockDataPacket[]) this.dataStore.getTopRandomMessages(num).toArray();
+    }
+
+    @Override
+    public void setDatastoreLimit(int size) {
+        this.dataStore.setDataTrimLimit(size);
+    }
+
+    @Override
+    public int getDatastoreLimit() {
+        return this.dataStore.getDataTrimLimit();
+    }
+
+    @Override
+    public void flushDatastore() {
+        this.dataStore.flushDb();
+    }
+
+    public class ScatterBinder extends Binder {
+        public ScatterRoutingService getService() {
+            return ScatterRoutingService.this;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public ScatterRoutingService() {
+        fakeapp = null;
+    }
+
+    @Override
+    public int onStartCommand(Intent i, int flags, int startId) {
+
+        this.startService();
 
         trunk.blman.startDiscoverLoopThread();
         return Service.START_STICKY_COMPATIBILITY;
@@ -170,7 +351,7 @@ public class ScatterRoutingService extends Service {
     public ScatterBluetoothManager getBluetoothManager() {
         return trunk.blman;
     }
-    @SuppressWarnings("unused")
+
     public NetTrunk getTrunk() {
         return trunk;
     }

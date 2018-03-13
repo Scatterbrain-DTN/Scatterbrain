@@ -10,7 +10,7 @@ import java.util.zip.CRC32;
 /**
  * AdvertisePacket. Represents an Advertise stanza
  */
-@SuppressWarnings("ManualArrayCopy")
+@SuppressWarnings({"ManualArrayCopy", "MismatchedReadAndWriteOfArray"})
 public class AdvertisePacket extends ScatterStanza {
 
     private static final String TAG = "AdvertisePacket";

@@ -57,6 +57,7 @@ public class ScatterReceiveThread extends Thread{
     }
 
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void run() {
         int errorcount = 0;
@@ -91,6 +92,8 @@ public class ScatterReceiveThread extends Thread{
 
 
                 if(file < 0) {
+                    ScatterLogManager.e("ScatterReceiveThread", "file less than zero");
+                    //TODO: fix this
                 }
                 else if(file == 0) {
                     if(!fake)

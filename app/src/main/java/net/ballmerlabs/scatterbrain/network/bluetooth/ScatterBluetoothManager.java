@@ -556,6 +556,7 @@ public class ScatterBluetoothManager {
             }
 
         }
+        //noinspection ConstantConditions
         if (isConnected) {
             try {
                 if (blockDataPacket.invalid) {

@@ -289,6 +289,7 @@ public class ScatterRoutingService extends Service
         return false;
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void noticeNotify() {
         NotificationCompat.Builder mBuilder =
                 new  NotificationCompat.Builder(this)
@@ -312,7 +313,11 @@ public class ScatterRoutingService extends Service
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         //2 is an id that should be updated to modify unique notifications
-        mNotificationManager.notify(2,mBuilder.build());
+        try {
+            mNotificationManager.notify(2, mBuilder.build());
+        } catch(NullPointerException e) {
+            ScatterLogManager.e(TAG, "NullPointerException on notification");
+        }
     }
 
     @SuppressWarnings({"EmptyMethod", "unused"})

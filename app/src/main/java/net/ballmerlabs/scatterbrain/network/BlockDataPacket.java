@@ -96,7 +96,7 @@ public class BlockDataPacket extends ScatterStanza {
         this.body = new byte[0];
         this.text = false;
         this.senderluid = senderluid;
-        FileInputStream f = null;
+        FileInputStream f;
         try {
             f = new FileInputStream(source);
         } catch(IOException e) {
@@ -129,7 +129,7 @@ public class BlockDataPacket extends ScatterStanza {
     public String getHash() {
         String hash = null;
         try {
-            FileInputStream fo = null;
+            FileInputStream fo;
             if (isfile) {
                 if(streamhash == null) {
                     if(diskfile == null)
@@ -192,7 +192,7 @@ public class BlockDataPacket extends ScatterStanza {
             byte[] byteblock = new byte[16384];
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             int count = (int)size;
-            int bytesread = 0;
+            int bytesread;
             boolean go = true;
             while (go) {
 
@@ -466,7 +466,7 @@ public class BlockDataPacket extends ScatterStanza {
                 return false;
 
 
-            int bytesread = 0;
+            int bytesread;
             final int read;
             if(size < MAXBLOCKSIZE) {
                 read = (int)size;
@@ -543,7 +543,7 @@ public class BlockDataPacket extends ScatterStanza {
     public void catBody(OutputStream destination, long delaymillis) {
         final int MAXBLOCKSIZE = 512;
         if(isfile) {
-            int bytesread = 0;
+            int bytesread;
             final int read;
             if(size < MAXBLOCKSIZE) {
                 read = (int)size;

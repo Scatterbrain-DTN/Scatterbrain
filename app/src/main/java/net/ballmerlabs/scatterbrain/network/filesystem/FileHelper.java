@@ -52,7 +52,12 @@ public class FileHelper {
         if(location != LOCATION_EXTERNAL && location != LOCATION_PRIVATE)
             return null;
 
-        File f = new File(getDirectory(location).getAbsolutePath() + name);
+        File f;
+        try {
+            f = new File(getDirectory(location).getAbsolutePath() + name);
+        } catch(NullPointerException e) {
+            return null;
+        }
         if(!f.exists())
             return null;
 
@@ -114,7 +119,7 @@ public class FileHelper {
 
             if(source == SOURCE_STREAM)
                 bd.catBody(out);
-            else if(source == SOURCE_FILE)
+            else
                 bd.catFile(out);
         } else {
             return null;

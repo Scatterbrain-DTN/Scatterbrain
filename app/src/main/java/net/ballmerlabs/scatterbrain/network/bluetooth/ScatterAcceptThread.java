@@ -9,7 +9,7 @@ import net.ballmerlabs.scatterbrain.network.NetTrunk;
 import java.io.IOException;
 import java.util.Arrays;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 /**
  * Listens for incoming bluetooth connections
  * without paring/security

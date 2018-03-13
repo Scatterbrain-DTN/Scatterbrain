@@ -1,4 +1,4 @@
-package net.ballmerlabs.scatterbrain;
+package net.ballmerlabs.scatterbrain.utils;
 
 import android.os.Handler;
 import android.os.Looper;

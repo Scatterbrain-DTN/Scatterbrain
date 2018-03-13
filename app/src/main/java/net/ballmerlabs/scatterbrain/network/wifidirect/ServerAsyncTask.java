@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 /**
  * Class to send text/sms messages over scatterbrain wifi p2p
  */

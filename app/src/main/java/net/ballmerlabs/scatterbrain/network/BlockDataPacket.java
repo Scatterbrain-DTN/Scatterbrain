@@ -1,6 +1,6 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;

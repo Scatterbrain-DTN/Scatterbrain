@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 /**
  * AsyncTask for creating a connection to the server started by the
  * ServerAsyncTask. This is simple and does not break up large messages

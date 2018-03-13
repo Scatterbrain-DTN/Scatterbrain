@@ -4,16 +4,12 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Base64;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
-import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.datastore.Message;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 
 /**

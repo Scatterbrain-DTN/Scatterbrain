@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 /**
  * Represents a thread used for asychronous connections to bluetooth
  * peers. It calls a callback function on successful connect

@@ -14,16 +14,12 @@ import android.preference.PreferenceManager;
 import android.util.Base64;
 
 
-import net.ballmerlabs.scatterbrain.DispMessage;
-import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.DeviceProfile;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,8 +27,6 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.filesystem.FileHelper;
 
 /**
@@ -271,8 +265,8 @@ public class ScatterBluetoothManager {
     //function called when a packet with an accompanying file stream is recieved.
     // don't call this on the main thread. Blocking.
     public void onSuccessfulFileRecieve(final BlockDataPacket in,final boolean fake) {
-        if(!NormalActivity.active && !fake)
-            trunk.mainService.startMessageActivity();
+        if(!fake)
+            trunk.mainService.onRecieveCallback.run(new BlockDataPacket[]{in});
 
         if(in.isInvalid()) {
             ScatterLogManager.e(TAG, "Recieved corrupt blockdatafilepacket");
@@ -286,25 +280,10 @@ public class ScatterBluetoothManager {
 
         final byte[] hash = trunk.filehelper.writeBlockDataPacket(in, FileHelper.LOCATION_PRIVATE,
                 FileHelper.SOURCE_STREAM);
-        if (NormalActivity.active || fake) {
-            if (hash != null && !fake) {
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run() {
-                        trunk.mainService.getMessageAdapter().data.add(
-                                new DispMessage(BlockDataPacket.bytesToHex(hash),
-                                        "FILE: len " + in.size + " name " + in.getFilename()));
-                        trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                    }
-                };
-                Handler h = new Handler(Looper.getMainLooper());
-                h.post(r);
-
-            } else if( hash == null) {
+        if( hash == null) {
                 ScatterLogManager.e(TAG, "Failed to store packet in filesystem");
             }
 
-        }
     }
 
 
@@ -314,28 +293,17 @@ public class ScatterBluetoothManager {
         if(fake) {
             System.out.println("entered onSuccessfulRecieve");
         }
-        if (!NormalActivity.active && !fake)
-            trunk.mainService.startMessageActivity();
+
         final BlockDataPacket bd = new BlockDataPacket(incoming);
         if (bd.isInvalid()) {
             ScatterLogManager.e(TAG, "Received corrupt blockdata packet.");
             return;
         }
+
+        if (!fake)
+            trunk.mainService.onRecieveCallback.run(new BlockDataPacket[]{bd});
         if(!fake) {
-            if (trunk.mainService.dataStore.enqueueMessageNoDuplicate(bd) == 0) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (NormalActivity.active) {
-                            trunk.mainService.getMessageAdapter().data.add(new DispMessage(new String(bd.body),
-                                    Base64.encodeToString(bd.senderluid, Base64.DEFAULT)));
-                            trunk.mainService.getMessageAdapter().notifyDataSetChanged();
-                            //    ScatterLogManager.e(TAG, "Appended message to message list");
-                        }
-                    }
-                });
-            }
+            trunk.mainService.dataStore.enqueueMessageNoDuplicate(bd);
         }
     }
 

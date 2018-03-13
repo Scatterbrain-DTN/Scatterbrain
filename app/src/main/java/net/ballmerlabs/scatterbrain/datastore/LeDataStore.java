@@ -9,12 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Base64;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
 
-import java.io.File;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 /**

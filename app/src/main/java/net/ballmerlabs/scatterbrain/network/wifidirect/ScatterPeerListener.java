@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import net.ballmerlabs.scatterbrain.network.GlobalNet;
 import net.ballmerlabs.scatterbrain.network.NetTrunk;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 import java.util.ArrayList;
 
 /**

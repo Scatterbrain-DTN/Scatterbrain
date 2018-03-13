@@ -1,6 +1,5 @@
 package net.ballmerlabs.scatterbrain.network.bluetooth;
 
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import net.ballmerlabs.scatterbrain.network.BlockDataPacket;
@@ -14,7 +13,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 /**
  * Thread started to wait for messages sent by peers
  */

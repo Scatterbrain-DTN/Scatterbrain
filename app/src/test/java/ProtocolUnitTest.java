@@ -2,12 +2,8 @@
  * Performs tests on the scatterbrain protocol outside android to
  * reduce the chance of bugged out packets.
  **/
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import net.ballmerlabs.scatterbrain.DatastoreCommandActivity;
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.datastore.MsgDbHelper;
 import net.ballmerlabs.scatterbrain.network.AdvertisePacket;
@@ -20,25 +16,17 @@ import net.ballmerlabs.scatterbrain.network.bluetooth.ScatterReceiveThread;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.cglib.core.Block;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowSQLiteConnection;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 

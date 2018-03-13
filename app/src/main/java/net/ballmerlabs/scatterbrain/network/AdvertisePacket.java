@@ -1,6 +1,6 @@
 package net.ballmerlabs.scatterbrain.network;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

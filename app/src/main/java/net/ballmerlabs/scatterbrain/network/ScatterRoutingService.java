@@ -1,9 +1,7 @@
 package net.ballmerlabs.scatterbrain.network;
 
 
-import android.annotation.SuppressLint;
 import android.app.Application;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -19,14 +17,10 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import net.ballmerlabs.scatterbrain.MessageBoxAdapter;
-import net.ballmerlabs.scatterbrain.NormalActivity;
 import net.ballmerlabs.scatterbrain.R;
-import net.ballmerlabs.scatterbrain.SearchForSenpai;
 import net.ballmerlabs.scatterbrain.datastore.LeDataStore;
 import net.ballmerlabs.scatterbrain.network.API.HighLevelAPI;
 import net.ballmerlabs.scatterbrain.network.API.OnRecieveCallback;
@@ -39,7 +33,7 @@ import java.security.MessageDigest;
 import java.util.Map;
 import java.util.Random;
 
-import net.ballmerlabs.scatterbrain.ScatterLogManager;
+import net.ballmerlabs.scatterbrain.utils.ScatterLogManager;
 import net.ballmerlabs.scatterbrain.datastore.MsgDbHelper;
 /**
  * Represents a background service for routing packets
@@ -53,15 +47,14 @@ public class ScatterRoutingService extends Service
     private static NetTrunk trunk;
     private boolean bound = false;
     private final String TAG = "ScatterRoutingService";
-    private  PeersChangedCallback onDevicesFound;
+    public  PeersChangedCallback onDevicesFound;
     private SharedPreferences sharedPreferences;
     public byte[] luid;
-    private MessageBoxAdapter Messages;
     @SuppressWarnings("unused")
     private ArrayAdapter<String> logbuffer;
     public LeDataStore dataStore;
     public Application fakeapp;
-    private OnRecieveCallback onRecieveCallback;
+    public OnRecieveCallback onRecieveCallback;
 
 
     @Override
@@ -81,7 +74,7 @@ public class ScatterRoutingService extends Service
                 .setContentTitle("Scatterbrain")
                 .setContentText("Discoverting Peers...");
 
-        Intent result = new Intent(this, SearchForSenpai.class);
+        Intent result = new Intent(this, ScatterRoutingService.class);
 
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
@@ -302,11 +295,11 @@ public class ScatterRoutingService extends Service
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle("Senpai NOTICED YOU!!")
                 .setContentText("There is a senpai in your area somewhere");
-        Intent resultIntent = new Intent(this, NormalActivity.class);
+        Intent resultIntent = new Intent(this, ScatterRoutingService.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 
-        stackBuilder.addParentStack(NormalActivity.class);
+        stackBuilder.addParentStack(ScatterRoutingService.class);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
@@ -430,16 +423,4 @@ public class ScatterRoutingService extends Service
         trunk.blman.stopDiscoverLoopThread();
     }
 
-    public MessageBoxAdapter getMessageAdapter() {
-        if(bound) {
-            return Messages;
-        }
-        else {
-            return null;
-        }
-    }
-
-    public void registerMessageArrayAdapter(MessageBoxAdapter messages) {
-        this.Messages = messages;
-    }
 }

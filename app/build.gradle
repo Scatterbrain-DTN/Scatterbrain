@@ -1,9 +1,8 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
     defaultConfig {
-        applicationId "net.ballmerlabs.scatterbrain"
         minSdkVersion 15
         //noinspection OldTargetApi
         targetSdkVersion 22

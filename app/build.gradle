@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
     defaultConfig {
         minSdkVersion 15
         //noinspection OldTargetApi
@@ -48,12 +48,7 @@ idea {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    //noinspection GradleDependency
-    implementation 'com.android.support:appcompat-v7:25.0.0'
-    //noinspection GradleDependency
-    implementation 'com.android.support:support-v4:25.0.0'
-
-    implementation 'com.github.angads25:filepicker:1.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
 
     testImplementation "org.robolectric:robolectric:3.6.1"
 
@@ -69,9 +64,9 @@ dependencies {
 
 dependencies {
     // Required -- JUnit 4 framework
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     // Optional -- Mockito framework
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
 }
 
 

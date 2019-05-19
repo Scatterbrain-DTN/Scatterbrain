@@ -5,7 +5,7 @@ android {
     defaultConfig {
         minSdkVersion 15
         //noinspection OldTargetApi
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode 5
         versionName "0.02"
     }

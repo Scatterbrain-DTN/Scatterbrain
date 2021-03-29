@@ -6,6 +6,20 @@ More info at the [development blog](https://scatterbrain.xyz)
 
 ***
 
+## NOTE: archival purposes only!
+This is the original implementation of a Scatterbrain router using bluetooth classic (3.0). It has
+many issues, including
+
+- reliance on broken, deprecated, and internal APIs not accessable on android 10+ phones  
+- SQL injection vulnerabilities  
+- kludgy homegrown protocol that only works with java  
+- no wakelocks, no workarounds for battery optimization  
+- it leaks your mac address on most phones  
+- it probably violates HIPAA, the geneva convention, and the outer space treaty  
+
+Anyone with any sense would never use this software except as an example of how NOT to implement a
+store-and-forward mesh. Use [this](https://github.com/Scatterbrain-DTN/ScatterRoutingService) instead.
+
 ### What does it do?
 Scatterbrain is a p2p internet platform using bluetooth, wifi, and various other protocols. Scatterbrain
 works without the internet and without the need to remain connected to a mesh. Messages are stored
